@@ -1,0 +1,623 @@
+/* styles.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+}
+
+.app-container {
+  padding: 20px;
+}
+
+.button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #0056b3;
+}
+
+.category-container {
+  padding: 24px;
+}
+
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.category-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.add-btn {
+  background-color: #00006f;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+}
+
+.search-input {
+ width: 100%;
+  padding: 10px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 16px;
+}
+
+.category-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.category-table th {
+  text-align: left;
+  padding: 12px;
+  color: #4b5563;
+  background-color: #f3f4f6;
+}
+
+.category-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* styles.css */
+
+/* Edit (Update) Button */
+.edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #ffffff;
+  border: 1px solid #d1d5db; /* Tailwind's gray-300 */
+  color: #374151; /* gray-700 */
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: background-color 0.2s, border-color 0.2s;
+  cursor: pointer;
+}
+
+.edit-btn:hover {
+  background-color: #f3f4f6; /* gray-100 */
+  border-color: #9ca3af; /* gray-400 */
+}
+
+/* Delete Button */
+.delete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #ffffff;
+  border: 1px solid #ef4444; /* red-500 */
+  color: #ef4444;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: background-color 0.2s, color 0.2s;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background-color: #fee2e2; /* red-100 */
+  color: #b91c1c; /* red-700 */
+  border-color: #dc2626; /* red-600 */
+}
+
+
+.modal-dialog {
+  border: none;
+  border-radius: 8px;
+  padding: 0;
+}
+
+.modal-content {
+  padding: 24px;
+  width: 600px;
+}
+
+.modal-title {
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+
+.modal-input {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.cancel-btn {
+  background-color: #e5e7eb;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.submit-btn {
+  background-color: #00006f;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+.custom-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-modal {
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  width: 450px;
+  max-width: 90%;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.custom-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.custom-close-btn {
+  font-size: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.custom-form-group {
+  margin-bottom: 15px;
+}
+
+.custom-input {
+  width: 100%;
+  padding: 10px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.custom-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.custom-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.custom-btn.primary {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.custom-btn.secondary {
+  background-color: #6c757d;
+  color: #fff;
+}
+.option-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 12px;
+  border-radius: 9999px;
+  margin-right: 4px;
+  margin-bottom: 4px;
+}
+
+.available {
+  background-color: #d1fae5; /* green-100 */
+  color: #065f46;           /* green-800 */
+}
+
+.unavailable {
+  background-color: #fee2e2; /* red-100 */
+  color: #991b1b;           /* red-800 */
+}
+
+.modifier-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: #fff;
+}
+
+.modifier-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.modifier-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.translation-display {
+  font-size: 0.85rem;
+  background: #f7f7f7;
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: #555;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.modifier-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.custom-input {
+  flex: 1;
+}
+
+.price-input {
+  width: 80px; /* Keeps price box smaller */
+}
+
+.checkbox-inline {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.item-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+}
+
+.menu-thumbnail {
+  width: 50px;
+  height: 50px;
+  object-fit: cover; /* Keeps the image cropped nicely */
+  border-radius: 6px; /* Rounded corners */
+  border: 1px solid #ddd;
+  background-color: #f9f9f9; /* in case image doesn't load */
+}
+
+.item-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.item-text strong {
+  font-size: 14px;
+  color: #333;
+}
+
+.item-desc {
+  font-size: 12px;
+  color: #777;
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
+
+
+
+/* Titles */
+
+.modal-subtitle {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+/* Form groups */
+.custom-form-group-menuitem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.custom-form-group-menuitem label {
+  font-weight: 500;
+}
+
+.custom-form-group-menuitem input,
+.custom-form-group-menuitem select,
+.custom-form-group-menuitem textarea {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  width: 100%;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.custom-form-group-menuitem-row {
+  display: flex;
+  gap: 12px;
+}
+
+.custom-form-group-menuitem-row > div {
+  flex: 1;
+}
+
+/* Category select with gear */
+.category-select-row {
+  display: flex;
+  gap: 8px;
+}
+
+.gear-btn {
+  background: #f3f3f3;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0 8px;
+  cursor: pointer;
+}
+
+/* Type buttons */
+.type-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.type-btn {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #f9f9f9;
+  cursor: pointer;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+.type-btn.active {
+  border-color: #007bff;
+  background: #e7f1ff;
+  font-weight: 600;
+}
+
+/* Prep time row */
+.prep-time-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.prep-time-row input {
+  width: 80px;
+}
+
+/* Actions */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.cancel-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  background: #eee;
+  border: none;
+  cursor: pointer;
+}
+
+.submit-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  background: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.submit-btn:hover {
+  background: #005fc5;
+}
+
+
+.type-btn {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  color: white;
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+/* Specific colors for each type */
+.type-btn.veg {
+  background-color: #28a745; /* green */
+}
+
+.type-btn.non-veg {
+  background-color: #dc3545; /* red */
+}
+
+.type-btn.egg {
+  background-color: #ffc107; /* yellow */
+  color: #333;
+}
+
+.type-btn.drink {
+  background-color: #17a2b8; /* teal-blue */
+}
+
+.type-btn.other {
+  background-color: #6c757d; /* gray */
+}
+
+/* Active state: slightly darker */
+.type-btn.active.veg { background-color: #218838; }
+.type-btn.active.non-veg { background-color: #c82333; }
+.type-btn.active.egg { background-color: #e0a800; }
+.type-btn.active.drink { background-color: #117a8b; }
+.type-btn.active.other { background-color: #5a6268; }
+
+
+.menu-management-container {
+  padding: 20px;
+  background: #fff;
+}
+
+.header-bar {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.header-buttons button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.organize-btn {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+}
+
+.add-menu-btn {
+  background: #001f80;
+  color: white;
+}
+
+.menu-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.menu-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.menu-tab.active {
+  background: #001f80;
+  color: white;
+}
+
+.menu-title-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.update-menu-btn {
+  background: #f5f5f5;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+}
+
+.delete-menu-btn {
+  background: #ff4d4d;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  color: white;
+}
+
+.menu-items-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.menu-items-table th,
+.menu-items-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+}
+
+.item-info-cell {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.item-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+
+
+
