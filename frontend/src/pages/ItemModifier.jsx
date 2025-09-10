@@ -10,6 +10,7 @@ import { ArrowUpDown, Edit, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
 import {
     Table,
     TableBody,
@@ -18,47 +19,93 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { Badge } from '../components/ui/badge';
 
 // Define table columns
 const columns = [
     {
-        accessorKey: "name",
+        accessorKey: "item_name",
         header: ({ column }) => (
             <Button
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 className="p-0 font-medium cursor-pointer text-gray-700 hover:bg-transparent"
             >
-                Group Name
+                Item Name
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
         cell: ({ row }) => (
             <div className="font-medium text-gray-600">
-                {row.getValue("name")}
+                {row.getValue("item_name")}
+            </div>
+
+        ),
+        width: "300px",
+    },
+    {
+        accessorKey: "modifier_group_name",
+        header: ({ column }) => (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                className="p-0 font-medium cursor-pointer text-gray-700 hover:bg-transparent"
+            >
+                Modifier Group
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+        ),
+        cell: ({ row }) => (
+            <div className="font-medium text-gray-600">
+                {row.getValue("modifier_group_name")}
             </div>
         ),
         width: "300px",
     },
     {
-        accessorKey: "options",
+        accessorKey: "is_required",
         header: ({ column }) => (
             <Button
                 variant="ghost"
                 className="p-0 font-medium cursor-pointer text-gray-700 hover:bg-transparent"
             >
-                Options
+                Is Required
             </Button>
         ),
         cell: ({ row }) => {
-            const options = row.getValue("options");
-            return (
-                options?.map((option) => {
-                    return <Badge className={'bg-emerald-100 text-emerald-800 hover:bg-emerald-100 mr-2'}>
-                        {option}
-                    </Badge>
-                })
-
+            const options = row.getValue("is_required");
+            return options ? (
+                <Badge className={'bg-red-600 text-white hover:bg-emerald-100 mr-2'}>
+                    Required
+                </Badge>
+            ) : (
+                <Badge className={'bg-gray-400 text-white hover:bg-emerald-100 mr-2'}>
+                    Optional
+                </Badge>
+            );
+        },
+    },
+    {
+        accessorKey: "allow_multiple_selection",
+        header: ({ column }) => (
+            <Button
+                variant="ghost"
+                className="p-0 font-medium cursor-pointer text-gray-700 hover:bg-transparent"
+            >
+                Allow Multiple Selection
+            </Button>
+        ),
+        cell: ({ row }) => {
+            const options = row.getValue("allow_multiple_selection");
+            console.log("hello this is row data", options);
+            return options ? (
+                <Badge className={'bg-green-600 text-white hover:bg-emerald-100 mr-2'}>
+                    Yes
+                </Badge>
+            ) : (
+                <Badge className={'bg-gray-400 text-white hover:bg-emerald-100 mr-2'}>
+                    No
+                </Badge>
             );
         },
     },
@@ -106,15 +153,15 @@ export function ItemModifiers() {
     const [globalFilter, setGlobalFilter] = useState(""); // 🔹 search state
     const [modifierGroups, setModifierGroups] = useState([]);
 
-  const loadModifiers = async () => {
-    try {
-      const data = await window.api.getModifiers();
-      console.log("hello this is item modifier",data)
-      setModifiers(data);
-    } catch (error) {
-      console.error("Error loading modifiers:", error);
-    }
-  };
+    const loadModifiers = async () => {
+        try {
+            const data = await window.api.getModifiers();
+            console.log("hello this is item modifier", data)
+            setModifierGroups(data);
+        } catch (error) {
+            console.error("Error loading modifiers:", error);
+        }
+    };
 
     const table = useReactTable({
         data: modifierGroups,
