@@ -1,8 +1,10 @@
 import axios from "axios";
 
-export async function syncFileStorage(subdomain, restaurantId, token) {
+export async function syncFileStorage(subdomain, restaurantId, token,fromDatetime,toDatetime) {
   try {
-    const url = `${subdomain}/api/file-storage?restaurant_id=${restaurantId}`;
+    const url = `${subdomain}/api/file-storage?restaurant_id=${restaurantId}&from_datetime=${encodeURIComponent(
+      fromDatetime
+    )}&to_datetime=${encodeURIComponent(toDatetime)}`;
   //const url = `${subdomain}/api/file-storage?restaurant_id=1`;
 
     const response = await axios.get(url, {
@@ -31,6 +33,7 @@ export async function syncFileStorage(subdomain, restaurantId, token) {
           size_format: file.size_format,
         });
       }
+      await window.api.saveSyncTime("file_storage", toDatetime);
     }
   } catch (err) {
     console.error("❌ File Storage sync error:", err);

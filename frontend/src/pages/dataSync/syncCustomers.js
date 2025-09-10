@@ -1,10 +1,11 @@
 import axios from "axios";
 
-export async function syncCustomers(subdomain, restaurantId, token,
-     //fromDatetime, toDatetime
+export async function syncCustomers(subdomain, restaurantId, token,fromDatetime,toDatetime
     ) {
   try {
-    let url = `${subdomain}/api/customers?restaurant_id=${restaurantId}`;
+    let url = `${subdomain}/api/customers?restaurant_id=${restaurantId}&from_datetime=${encodeURIComponent(
+      fromDatetime
+    )}&to_datetime=${encodeURIComponent(toDatetime)}`;
     // if (fromDatetime && toDatetime) {
     //   url += `&from_datetime=${encodeURIComponent(fromDatetime)}&to_datetime=${encodeURIComponent(toDatetime)}`;
     // }
@@ -33,6 +34,7 @@ export async function syncCustomers(subdomain, restaurantId, token,
           delivery_address: customer.delivery_address,
         });
       }
+      await window.api.saveSyncTime("customers", toDatetime);
     }
   } catch (err) {
     console.error("❌ Customers sync error:", err);

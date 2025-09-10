@@ -1,8 +1,10 @@
 import axios from "axios";
 
-export async function syncInventoryItemCategories(subdomain, branchId, token) {
+export async function syncInventoryItemCategories(subdomain, branchId, token,fromDatetime,toDatetime) {
   try {
-    const url = `${subdomain}/api/inventory-item-categories?branch_id=${branchId}`;
+    const url = `${subdomain}/api/inventory-item-categories?branch_id=${branchId}&from_datetime=${encodeURIComponent(
+      fromDatetime
+    )}&to_datetime=${encodeURIComponent(toDatetime)}`;
     const response = await axios.get(url, {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -22,6 +24,7 @@ export async function syncInventoryItemCategories(subdomain, branchId, token) {
           updated_at: category.updated_at,
         });
       }
+      await window.api.saveSyncTime("inventory_item_categories", toDatetime);
     }
   } catch (err) {
     console.error("❌ Inventory Item Categories sync error:", err);

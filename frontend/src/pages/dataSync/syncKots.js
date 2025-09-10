@@ -1,0 +1,114 @@
+import axios from "axios";
+
+
+export async function syncKots(subdomain, branchId, token, fromDatetime, toDatetime, setProgress, setStatus) {
+  try {
+    // 1. Fetch KOTs
+    setStatus?.("Syncing KOTs...");
+    const kotUrl = `${subdomain}/api/kots?branch_id=${branchId}&from_datetime=${encodeURIComponent(
+      fromDatetime
+    )}&to_datetime=${encodeURIComponent(toDatetime)}`;
+
+    const kotResponse = await axios.get(kotUrl, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (kotResponse.data.status && kotResponse.data.data) {
+      const kots = kotResponse.data.data;
+
+      for (const rawKot of kots) {
+        const kot = normalizeKot(rawKot);
+
+        // Save KOT
+        await window.api.addKotBackup(kot);
+
+        // 2. Fetch KOT Items for each KOT
+        setStatus?.(`Syncing items for KOT #${kot.kot_number || kot.id}...`);
+        const itemsUrl = `${subdomain}/api/kot-items?kot_id=${kot.id}`;
+        try {
+          const itemResponse = await axios.get(itemsUrl, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          if (itemResponse.data.status && itemResponse.data.data) {
+            const kotItems = itemResponse.data.data;
+
+            for (const rawItem of kotItems) {
+              const item = normalizeKotItem(rawItem);
+              await window.api.addKotItemBackup(item);
+
+              // 3. Fetch KOT Item Modifier Options for each item
+              setStatus?.(`Syncing modifiers for item ${item.menu_item_id || item.id}...`);
+              const optUrl = `${subdomain}/api/kot-item-modifier-options?kot_item_id=${item.id}`;
+              try {
+                const optResponse = await axios.get(optUrl, {
+                  headers: { Authorization: `Bearer ${token}` },
+                });
+
+                if (optResponse.data.status && optResponse.data.data) {
+                  const modifierOptions = optResponse.data.data;
+
+                  for (const rawOpt of modifierOptions) {
+                    const option = normalizeKotItemModifierOption(rawOpt);
+                    await window.api.addKotItemModifierOptionBackup(option);
+                  }
+                }
+              } catch (optErr) {
+                console.warn(`⚠️ Failed to sync modifier_options for kot_item ${item.id}`, optErr);
+              }
+            }
+          }
+        } catch (itemErr) {
+          console.warn(`⚠️ Failed to sync kot_items for kot ${kot.id}`, itemErr);
+        }
+      }
+      await window.api.saveSyncTime("kots", toDatetime);
+      await window.api.saveSyncTime("kot_item_modifier_options", toDatetime);
+      await window.api.saveSyncTime("kot_items   ", toDatetime);
+
+    }
+
+    setStatus?.("✅ KOT sync completed.");
+  } catch (err) {
+    console.error("❌ KOT sync error:", err);
+    setStatus?.("❌ Failed to sync KOTs.");
+    throw err;
+  }
+}
+
+
+// 🔹 Normalizers
+function normalizeKot(raw) {
+  return {
+    ...raw,
+    kot_number: raw.kot_number || 0,
+    status: raw.status || "pending",
+    note: raw.note || "",
+    transaction_id: raw.transaction_id || null,
+    cancel_reason_id: raw.cancel_reason_id || null,
+    cancel_reason_text: raw.cancel_reason_text || "",
+    branch_id: raw.branch_id || null,
+  };
+}
+
+function normalizeKotItem(raw) {
+  return {
+    ...raw,
+    kot_id: raw.kot_id,
+    transaction_id: raw.transaction_id || null,
+    menu_item_id: raw.menu_item_id || null,
+    menu_item_variation_id: raw.menu_item_variation_id || null,
+    note: raw.note || "",
+    quantity: raw.quantity != null ? String(raw.quantity) : "1",
+    status: raw.status || null,
+  };
+}
+
+function normalizeKotItemModifierOption(raw) {
+  return {
+    ...raw,
+    kot_item_id: raw.kot_item_id,
+    modifier_option_id: raw.modifier_option_id,
+    qty: raw.qty != null ? String(raw.qty) : "1",
+  };
+}

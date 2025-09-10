@@ -1,8 +1,10 @@
 import axios from "axios";
 
-export async function syncTables(subdomain, branchId, token) {
+export async function syncTables(subdomain, branchId, token,fromDatetime,toDatetime) {
   try {
-    const url = `${subdomain}/api/table/table-list?branch_id=${branchId}`;
+    const url = `${subdomain}/api/table/table-list?branch_id=${branchId}&from_datetime=${encodeURIComponent(
+      fromDatetime
+    )}&to_datetime=${encodeURIComponent(toDatetime)}`;
     const response = await axios.get(url, {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -27,6 +29,8 @@ export async function syncTables(subdomain, branchId, token) {
           updated_at: table.updated_at,
         });
       }
+          await window.api.saveSyncTime("tables", toDatetime);
+
     }
   } catch (err) {
     console.error("❌ Tables sync error:", err);

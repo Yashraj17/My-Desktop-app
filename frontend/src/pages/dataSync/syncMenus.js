@@ -1,18 +1,15 @@
 import axios from "axios";
 // syncMenus.js
-export async function syncMenus(subdomain, branchId, token, ) {
+export async function syncMenus(subdomain, branchId, token,fromDatetime,toDatetime) {
   try {
-    // const fromDatetime = "2025-08-10 10:00:00";
-    // const toDatetime = "2025-08-20 18:00:00";
+    
+const menuUrl = `${subdomain}/api/menu/list?branch_id=${branchId}&from_datetime=${encodeURIComponent(
+      fromDatetime
+    )}&to_datetime=${encodeURIComponent(toDatetime)}`;
 
-    // const menuUrlOLD = `${subdomain}/api/menu/list?branch_id=${branchId}&from_datetime=${encodeURIComponent(
-    //   fromDatetime
-    // )}&to_datetime=${encodeURIComponent(toDatetime)}`;
-    const menuUrl = `${subdomain}/api/menu/list?branch_id=${branchId}`;
     const menuResponse = await axios.get(menuUrl, {
       headers: { Authorization: `Bearer ${token}` },
     });
-
     if (menuResponse.data.status && menuResponse.data.data) {
       const menus = menuResponse.data.data;
 
@@ -32,6 +29,7 @@ export async function syncMenus(subdomain, branchId, token, ) {
 
         
       }
+      await window.api.saveSyncTime("menus", toDatetime);
     }
   } catch (err) {
     console.error("❌ Menu sync error:", err);

@@ -1,8 +1,10 @@
 import axios from "axios";
 
-export async function syncExpenseCategories(subdomain, branchId, token) {
+export async function syncExpenseCategories(subdomain, branchId, token,fromDatetime,toDatetime) {
   try {
-    const url = `${subdomain}/api/expense-categories?branch_id=${branchId}`;
+    const url = `${subdomain}/api/expense-categories?branch_id=${branchId}&from_datetime=${encodeURIComponent(
+      fromDatetime
+    )}&to_datetime=${encodeURIComponent(toDatetime)}`;
     //const url = `${subdomain}/api/expense-categories?branch_id=7`;
     const response = await axios.get(url, {
       headers: { Authorization: `Bearer ${token}` },
@@ -26,6 +28,7 @@ console.log("expence cat data...",response,url)
           updated_at: cat.updated_at,
         });
       }
+      await window.api.saveSyncTime("expense_categories", toDatetime);
     }
   } catch (err) {
     console.error("❌ Expense Categories sync error:", err);

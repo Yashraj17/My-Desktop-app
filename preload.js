@@ -158,5 +158,88 @@ contextBridge.exposeInMainWorld("api", {
     //addInventoryGlobalSettingBackup
     addInventoryGlobalSettingBackup: (Data) =>
     ipcRenderer.invoke("add-inventory-global-setting-backup", Data),
+    
+    //addFrontDetailBackup
+    addFrontDetailBackup: (Data) =>
+    ipcRenderer.invoke("add-front-detail-backup", Data),
+    //addFrontFaqSettingBackup
+    addFrontFaqSettingBackup: (Data) =>
+    ipcRenderer.invoke("add-front-faq-setting-backup", Data),
+    //addFrontFeatureBackup
+    addFrontFeatureBackup: (Data) =>
+    ipcRenderer.invoke("add-front-feature-backup", Data),
+    //addFrontReviewSettingBackup
+    addFrontReviewSettingBackup: (Data) =>
+    ipcRenderer.invoke("add-front-review-setting-backup", Data),
+    //addGlobalInvoiceBackup
+    addGlobalInvoiceBackup: (Data) =>
+    ipcRenderer.invoke("add-global-invoice-backup", Data),
+    //addGlobalSettingBackup
+    addGlobalSettingBackup: (Data) =>
+    ipcRenderer.invoke("add-global-setting-backup", Data),
+    //addGlobalSubscriptionBackup
+    addGlobalSubscriptionBackup: (Data) =>
+    ipcRenderer.invoke("add-global-subscription-backup", Data),
+    //addJobBackup
+    addJobBackup: (Data) =>
+    ipcRenderer.invoke("add-job-backup", Data),
+    //addModifierOptionBackup
+    addModifierOptionBackup: (Data) =>
+    ipcRenderer.invoke("add-modifire-option-backup", Data),
+    //addJobBatchBackup
+    addJobBatchBackup: (Data) =>
+    ipcRenderer.invoke("add-job-batch-backup", Data),
+    //addKotBackup
+    addKotBackup: (Data) =>
+    ipcRenderer.invoke("add-kot-backup", Data),
+    //addKotCancelReasonBackup
+    addKotCancelReasonBackup: (Data) =>
+    ipcRenderer.invoke("add-kot-cancel-reason-backup", Data),
+    //addKotItemBackup
+    addKotItemBackup: (Data) =>
+    ipcRenderer.invoke("add-kot-item-backup", Data),
+    //addKotItemModifierOptionBackup
+    addKotItemModifierOptionBackup: (Data) =>
+    ipcRenderer.invoke("add-kot-item-modifier-option-backup", Data),
+    //addKotPlaceBackup
+    addKotPlaceBackup: (Data) =>
+    ipcRenderer.invoke("add-kot-place-backup", Data),
+    //addKotSettingBackup
+    addKotSettingBackup: (Data) =>
+    ipcRenderer.invoke("add-kot-setting-backup", Data),
+    //addLanguageSettingBackup
+    addLanguageSettingBackup: (Data) =>
+    ipcRenderer.invoke("add-language-setting-backup", Data),
+    //addLtmTranslationBackup
+     addLtmTranslationBackup: (Data) =>
+    ipcRenderer.invoke("add-ltm-translation-backup", Data),
+    //addMigrationBackup
+     addMigrationBackup: (Data) =>
+    ipcRenderer.invoke("add-migration-backup", Data),
+     //addModelHasPermissionBackup
+     addModelHasPermissionBackup: (Data) =>
+    ipcRenderer.invoke("add-model-has-permission-backup", Data),
+     //addModelHasRoleBackup
+     addModelHasRoleBackup: (Data) =>
+    ipcRenderer.invoke("add-model-has-role-backup", Data),
+     //addModuleBackup
+     addModuleBackup: (Data) =>
+    ipcRenderer.invoke("add-module-backup", Data),
+     //addNotificationSettingBackup
+      addNotificationSettingBackup: (Data) =>
+    ipcRenderer.invoke("add-notification-setting-backup", Data),
+      //addOfflinePaymentMethodBackup
+      addOfflinePaymentMethodBackup: (Data) =>
+    ipcRenderer.invoke("add-offline-payment-method-backup", Data),
+      //addOfflinePlanChangeBackup
+      addOfflinePlanChangeBackup: (Data) =>
+    ipcRenderer.invoke("add-offline-plan-change-backup", Data),
+      //addOnboardingStepBackup
+      addOnboardingStepBackup: (Data) =>
+    ipcRenderer.invoke("add-onboarding-step-backup", Data),
+      //saveSyncTime
+      saveSyncTime: (Data) =>
+    ipcRenderer.invoke("save-sync-time", Data),
 });
+
 

@@ -1,9 +1,11 @@
 import axios from "axios";
 
-export async function syncArea(subdomain, branchId, token) {
+export async function syncArea(subdomain, branchId, token,fromDatetime,toDatetime) {
   try {
     // const url = `${subdomain}/api/table/areas?branch_id=1`;
-    const url = `${subdomain}/api/table/areas?branch_id=${branchId}`;
+    const url = `${subdomain}/api/table/areas?branch_id=${branchId}&from_datetime=${encodeURIComponent(
+      fromDatetime
+    )}&to_datetime=${encodeURIComponent(toDatetime)}`;
     const response = await axios.get(url, {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -24,6 +26,7 @@ export async function syncArea(subdomain, branchId, token) {
         
         });
       }
+      await window.api.saveSyncTime("areas", toDatetime);
     }
   } catch (err) {
     console.error("❌ Area sync error:", err);

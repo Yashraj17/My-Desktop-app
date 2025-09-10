@@ -465,6 +465,7 @@ function initDatabase() {
   "faq_description" TEXT   ,
   "contact_heading" TEXT   ,
   "footer_copyright_text" TEXT   ,
+   "image_url" TEXT   ,
   "created_at" TEXT   ,
   "updated_at" TEXT   ,
   "newfield1" TEXT,
@@ -496,6 +497,7 @@ function initDatabase() {
   "image" TEXT   ,
   "icon" TEXT   ,
   "type" TEXT NOT NULL DEFAULT 'image' ,
+    "image_url" TEXT   ,
   "created_at" TEXT   ,
   "updated_at" TEXT   ,
   "newfield1" TEXT,
@@ -843,6 +845,7 @@ function initDatabase() {
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   "kot_item_id" TEXT NOT NULL  ,
   "modifier_option_id" TEXT NOT NULL  ,
+  "qty" TEXT   ,
   "created_at" TEXT   ,
   "updated_at" TEXT   ,
   "newfield1" TEXT,
@@ -860,6 +863,7 @@ function initDatabase() {
   "menu_item_variation_id" TEXT   ,
   "quantity" INTEGER NOT NULL  ,
   "status" TEXT   ,
+  "note" TEXT   ,
   "created_at" TEXT   ,
   "updated_at" TEXT   ,
   "newfield1" TEXT,
@@ -885,6 +889,21 @@ function initDatabase() {
   "isSync" BOOLEAN DEFAULT 0
 );`,
 
+
+ // kot_cancel_reasons
+    `CREATE TABLE IF NOT EXISTS "kot_cancel_reasons" (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  "restaurant_id" INTEGER  ,
+  "reason" TEXT NOT NULL  ,
+  "cancel_order" TEXT   ,
+  "cancel_kot" TEXT,
+  "created_at" TEXT   ,
+  "updated_at" TEXT   ,
+  "newfield1" TEXT,
+  "newfield2" TEXT,
+  "newfield3" TEXT,
+  "isSync" BOOLEAN DEFAULT 0
+);`,
     // kot_settings
     `CREATE TABLE IF NOT EXISTS "kot_settings" (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -908,6 +927,8 @@ function initDatabase() {
   "transaction_id" TEXT   ,
   "note" TEXT   ,
   "status" TEXT NOT NULL DEFAULT 'in_kitchen' ,
+  "cancel_reason_id" TEXT   ,
+  "cancel_reason_text" TEXT   ,
   "created_at" TEXT   ,
   "updated_at" TEXT   ,
   "newfield1" TEXT,
@@ -1025,6 +1046,27 @@ function initDatabase() {
   "isSync" BOOLEAN DEFAULT 0
 );`,
 
+//model_has_permissions
+ `CREATE TABLE IF NOT EXISTS "model_has_permissions" (
+  permission_id INTEGER NOT NULL,
+  model_type TEXT NOT NULL,
+  model_id INTEGER NOT NULL,
+  newfield1 TEXT,
+  newfield2 TEXT,
+  newfield3 TEXT,
+  isSync BOOLEAN DEFAULT 0
+);`,
+
+//model_has_roles
+`CREATE TABLE IF NOT EXISTS "model_has_roles" (
+  role_id INTEGER NOT NULL,
+  model_type TEXT NOT NULL,
+  model_id INTEGER NOT NULL,
+  newfield1 TEXT,
+  newfield2 TEXT,
+  newfield3 TEXT,
+  isSync BOOLEAN DEFAULT 0
+);`,
     // modifier_groups
     `CREATE TABLE IF NOT EXISTS "modifier_groups" (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -1051,6 +1093,7 @@ function initDatabase() {
   "is_available" INTEGER NOT NULL DEFAULT '1' ,
   "sort_order" INTEGER NOT NULL DEFAULT '0' ,
   "is_preselected" INTEGER NOT NULL DEFAULT '0' ,
+  "qty" TEXT   ,
   "created_at" TEXT   ,
   "updated_at" TEXT   ,
   "newfield1" TEXT,
@@ -2064,6 +2107,12 @@ function initDatabase() {
   "newfield2" TEXT,
   "newfield3" TEXT,
   "isSync" BOOLEAN DEFAULT 0
+);`,
+// sync_table
+  `CREATE TABLE IF NOT EXISTS "sync_table" (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  "table_name" TEXT NOT NULL  ,
+  "sync_at" TEXT  
 );`
   ];
 

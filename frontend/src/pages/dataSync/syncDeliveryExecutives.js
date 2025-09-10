@@ -1,11 +1,13 @@
 import axios from "axios";
 
-export async function syncDeliveryExecutives(subdomain, branchId, token, 
+export async function syncDeliveryExecutives(subdomain, branchId, token,fromDatetime,toDatetime 
     //fromDatetime, toDatetime
 ) {
   try {
     // ✅ Build base URL
-    let url = `${subdomain}/api/delivery-executives?branch_id=${branchId}`;
+    let url = `${subdomain}/api/delivery-executives?branch_id=${branchId}&from_datetime=${encodeURIComponent(
+      fromDatetime
+    )}&to_datetime=${encodeURIComponent(toDatetime)}`;
 
     // ✅ Add optional datetime filters
     // if (fromDatetime && toDatetime) {
@@ -34,6 +36,7 @@ export async function syncDeliveryExecutives(subdomain, branchId, token,
           updated_at: exec.updated_at,
         });
       }
+      await window.api.saveSyncTime("delivery_executives", toDatetime);
     }
   } catch (err) {
     console.error("❌ Delivery Executives sync error:", err);
