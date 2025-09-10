@@ -1260,6 +1260,7 @@ function initDatabase() {
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   "order_id" TEXT NOT NULL  ,
   "tax_id" TEXT NOT NULL  ,
+  "tax_amount"TEXT,
   "newfield1" TEXT,
   "newfield2" TEXT,
   "newfield3" TEXT,

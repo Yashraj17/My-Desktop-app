@@ -199,6 +199,50 @@ function BackupRoutes() {
   ipcMain.handle("save-sync-time", (event, data) => {
     return controller.saveSyncTime(data);
   });
+  //getSyncTime
+  ipcMain.handle("get-sync-time", (event, data) => {
+    return controller.getSyncTime(data);
+  });
+  //addOrderChargeBackup
+  ipcMain.handle("add-order-charges-backup", (event, data) => {
+    return controller.addOrderChargeBackup(data);
+  });
+  //addOrderBackup
+  ipcMain.handle("add-order-backup", (event, data) => {
+    return controller.addOrderBackup(data);
+  });
+  //addOrderItemBackup
+  ipcMain.handle("add-order-item-backup", (event, data) => {
+    return controller.addOrderItemBackup(data);
+  });
+  //addOrderTaxBackup
+  ipcMain.handle("add-order-tax-backup", (event, data) => {
+    return controller.addOrderTaxBackup(data);
+  });
+  //addOrderItemModifierOptionBackup
+  ipcMain.handle("add-order-item-modifier-option-backup", (event, data) => {
+    return controller.addOrderItemModifierOptionBackup(data);
+  });
+  //addOrderHistoryBackup
+  ipcMain.handle("add-order-history-backup", (event, data) => {
+    return controller.addOrderHistoryBackup(data);
+  });
+  //addOrderPlaceBackup
+  ipcMain.handle("add-order-place-backup", (event, data) => {
+    return controller.addOrderPlaceBackup(data);
+  });
+  //addPackageModuleBackup
+  ipcMain.handle("add-package-module-backup", (event, data) => {
+    return controller.addPackageModuleBackup(data);
+  });
+  //addPasswordResetTokenBackup
+  ipcMain.handle("add-password-reset-token-backup", (event, data) => {
+    return controller.addPasswordResetTokenBackup(data);
+  });
+  //addPayfastPaymentBackup
+  ipcMain.handle("add-payfast-payment-backup", (event, data) => {
+    return controller.addPayfastPaymentBackup(data);
+  });
 }
 
 module.exports = BackupRoutes;

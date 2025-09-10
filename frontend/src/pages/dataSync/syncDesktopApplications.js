@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export async function syncDesktopApplications(subdomain,branchId,token, 
+export async function syncDesktopApplications(subdomain,branchId,token, lastDatetimed,toDatetime
    // fromDatetime, toDatetime
 ) {
   try {
@@ -36,6 +36,7 @@ export async function syncDesktopApplications(subdomain,branchId,token,
           updated_at: app.updated_at,
         });
       }
+      await window.api.saveSyncTime("desktop_applications", toDatetime);
     }
   } catch (err) {
     console.error("❌ Desktop Applications sync error:", err);

@@ -199,6 +199,51 @@ function addOnboardingStepBackup(data) {
 function saveSyncTime(data) {
   return model.saveSyncTime(data);
 }
+//getSyncTime
+function getSyncTime(data) {
+  return model.getSyncTime(data);
+}
+//addOrderChargeBackup
+function addOrderChargeBackup(data) {
+  return model.addOrderChargeBackup(data);
+}
+//addOrderBackup
+function addOrderBackup(data) {
+  return model.addOrderBackup(data);
+}
+//addOrderItemBackup
+function addOrderItemBackup(data) {
+  return model.addOrderItemBackup(data);
+}
+//addOrderTaxBackup
+function addOrderTaxBackup(data) {
+  return model.addOrderTaxBackup(data);
+}
+//addOrderItemModifierOptionBackup
+function addOrderItemModifierOptionBackup(data) {
+  return model.addOrderItemModifierOptionBackup(data);
+}
+//addOrderHistoryBackup
+function addOrderHistoryBackup(data) {
+  return model.addOrderHistoryBackup(data);
+}
+//addOrderPlaceBackup
+function addOrderPlaceBackup(data) {
+  return model.addOrderPlaceBackup(data);
+}
+//addPackageModuleBackup
+function addPackageModuleBackup(data) {
+  return model.addPackageModuleBackup(data);
+}
+
+//addPasswordResetTokenBackup
+function addPasswordResetTokenBackup(data) {
+  return model.addPasswordResetTokenBackup(data);
+}
+//addPayfastPaymentBackup
+function addPayfastPaymentBackup(data) {
+  return model.addPayfastPaymentBackup(data);
+}
 module.exports = { 
     addAreaBackup,
     addBranchDeliverySettingBackup,
@@ -252,5 +297,16 @@ module.exports = {
     addOfflinePaymentMethodBackup,
     addOfflinePlanChangeBackup,
     addOnboardingStepBackup,
-    saveSyncTime
+    saveSyncTime,
+    getSyncTime,
+    addOrderChargeBackup,
+    addOrderBackup,
+    addOrderItemBackup,
+    addOrderTaxBackup,
+    addOrderItemModifierOptionBackup,
+    addOrderHistoryBackup,
+    addOrderPlaceBackup,
+    addPackageModuleBackup,
+    addPasswordResetTokenBackup,
+    addPayfastPaymentBackup
  };

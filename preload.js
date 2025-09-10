@@ -240,6 +240,39 @@ contextBridge.exposeInMainWorld("api", {
       //saveSyncTime
       saveSyncTime: (Data) =>
     ipcRenderer.invoke("save-sync-time", Data),
+      //getSyncTime
+      getSyncTime: (Data) =>
+    ipcRenderer.invoke("get-sync-time", Data),
+      //addOrderChargeBackup
+      addOrderChargeBackup: (Data) =>
+    ipcRenderer.invoke("add-order-charges-backup", Data),
+      //addOrderBackup
+      addOrderBackup: (Data) =>
+    ipcRenderer.invoke("add-order-backup", Data),
+      //addOrderItemBackup
+      addOrderItemBackup: (Data) =>
+    ipcRenderer.invoke("add-order-item-backup", Data),
+      //addOrderTaxBackup
+      addOrderTaxBackup: (Data) =>
+    ipcRenderer.invoke("add-order-tax-backup", Data),
+      //addOrderItemModifierOptionBackup
+      addOrderItemModifierOptionBackup: (Data) =>
+    ipcRenderer.invoke("add-order-item-modifier-option-backup", Data),
+      //addOrderHistoryBackup
+       addOrderHistoryBackup: (Data) =>
+    ipcRenderer.invoke("add-order-history-backup", Data),
+       //addOrderPlaceBackup
+       addOrderPlaceBackup: (Data) =>
+    ipcRenderer.invoke("add-order-place-backup", Data),
+       //addPackageModuleBackup
+       addPackageModuleBackup: (Data) =>
+    ipcRenderer.invoke("add-package-module-backup", Data),
+       //addPasswordResetTokenBackup
+       addPasswordResetTokenBackup: (Data) =>
+    ipcRenderer.invoke("add-password-reset-token-backup", Data),
+       //addPayfastPaymentBackup
+       addPayfastPaymentBackup: (Data) =>
+    ipcRenderer.invoke("add-payfast-payment-backup", Data),
 });
 
 

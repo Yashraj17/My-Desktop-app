@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export async function syncEmailSettings(subdomain, branchId, token) {
+export async function syncEmailSettings(subdomain, branchId, token, lastDatetimed,toDatetime) {
   try {
     // ✅ Build base URL
     let url = `${subdomain}/api/email-settings`;
@@ -36,6 +36,7 @@ export async function syncEmailSettings(subdomain, branchId, token) {
           verified: setting.verified,
         });
       }
+      await window.api.saveSyncTime("email-settings", toDatetime);
     }
   } catch (err) {
     console.error("❌ Email Settings sync error:", err);

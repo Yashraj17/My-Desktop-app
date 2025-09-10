@@ -1656,6 +1656,340 @@ function saveSyncTime(tableName, toDatetime) {
   }
 }
 
+//last table sinck time
+function getSyncTime(tableName) {
+  const row = db.prepare("SELECT sync_at FROM sync_table WHERE table_name = ? LIMIT 1").get(tableName);
+  return row || null;
+}
+
+
+
+
+// ✅ Order Backup
+function addOrderBackup(order) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO orders
+        (
+          id, uuid, branch_id, order_number, date_time, table_id, customer_id, number_of_pax,
+          waiter_id, status, sub_total, tip_amount, tip_note, total, amount_paid,
+          created_at, updated_at, order_type, delivery_executive_id, delivery_address,
+          delivery_time, estimated_delivery_time, split_type, discount_type, discount_value,
+          discount_amount, order_status, delivery_fee, customer_lat, customer_lng,
+          is_within_radius, delivery_started_at, delivered_at, estimated_eta_min, estimated_eta_max,
+          newfield1, newfield2, newfield3, isSync
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        order.id,
+        order.uuid || null,
+        order.branch_id || null,
+        order.order_number || "0",
+        order.date_time || new Date().toISOString(),
+        order.table_id || null,
+        order.customer_id || null,
+        order.number_of_pax || 0,
+        order.waiter_id || null,
+        order.status || "kot",
+        order.sub_total != null ? Number(order.sub_total) : 0,
+        order.tip_amount != null ? Number(order.tip_amount) : 0,
+        order.tip_note || null,
+        order.total != null ? Number(order.total) : 0,
+        order.amount_paid != null ? Number(order.amount_paid) : 0,
+        order.created_at || new Date().toISOString(),
+        order.updated_at || new Date().toISOString(),
+        order.order_type || "dine_in",
+        order.delivery_executive_id || null,
+        order.delivery_address || null,
+        order.delivery_time || null,
+        order.estimated_delivery_time || null,
+        order.split_type || null,
+        order.discount_type || null,
+        order.discount_value != null ? Number(order.discount_value) : 0,
+        order.discount_amount != null ? Number(order.discount_amount) : 0,
+        order.order_status || "placed",
+        order.delivery_fee != null ? Number(order.delivery_fee) : 0,
+        order.customer_lat != null ? Number(order.customer_lat) : null,
+        order.customer_lng != null ? Number(order.customer_lng) : null,
+        order.is_within_radius != null ? Number(order.is_within_radius) : 0,
+        order.delivery_started_at || null,
+        order.delivered_at || null,
+        order.estimated_eta_min != null ? Number(order.estimated_eta_min) : null,
+        order.estimated_eta_max != null ? Number(order.estimated_eta_max) : null,
+        order.newfield1 || null,
+        order.newfield2 || null,
+        order.newfield3 || null,
+        1 // isSync
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert order:", err);
+      reject(err);
+    }
+  });
+}
+
+// ✅ Order Items Backup
+function addOrderItemBackup(orderItem) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO order_items
+        (
+          id, branch_id, order_id, transaction_id, menu_item_id, menu_item_variation_id,
+          quantity, price, amount, created_at, updated_at,
+          newfield1, newfield2, newfield3, isSync
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        orderItem.id,
+        orderItem.branch_id || null,
+        orderItem.order_id,
+        orderItem.transaction_id || null,
+        orderItem.menu_item_id,
+        orderItem.menu_item_variation_id || null,
+        orderItem.quantity != null ? Number(orderItem.quantity) : 1,
+        orderItem.price != null ? Number(orderItem.price) : 0,
+        orderItem.amount != null ? Number(orderItem.amount) : 0,
+        orderItem.created_at || new Date().toISOString(),
+        orderItem.updated_at || new Date().toISOString(),
+        orderItem.newfield1 || null,
+        orderItem.newfield2 || null,
+        orderItem.newfield3 || null,
+        1 // isSync
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert order_item:", err);
+      reject(err);
+    }
+  });
+}
+
+
+// ✅ Order Charges Backup (your existing one)
+function addOrderChargeBackup(orderCharge) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO order_charges
+        (id, order_id, charge_id, newfield1, newfield2, newfield3, isSync)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        orderCharge.id,
+        orderCharge.order_id,
+        orderCharge.charge_id,
+        orderCharge.newfield1 || null,
+        orderCharge.newfield2 || null,
+        orderCharge.newfield3 || null,
+        1
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert order_charge:", err);
+      reject(err);
+    }
+  });
+}
+
+function addOrderTaxBackup(orderTax) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO order_taxes
+        (id, order_id, tax_id, tax_amount, newfield1, newfield2, newfield3, isSync)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        orderTax.id,
+        orderTax.order_id,
+        orderTax.tax_id,
+        orderTax.tax_amount || 0,
+        orderTax.newfield1 || null,
+        orderTax.newfield2 || null,
+        orderTax.newfield3 || null,
+        1 // synced
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert order_tax:", err);
+      reject(err);
+    }
+  });
+}
+
+function addOrderItemModifierOptionBackup(modOption) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO order_item_modifier_options
+        (id, order_item_id, modifier_option_id, created_at, updated_at, newfield1, newfield2, newfield3, isSync)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        modOption.id,
+        modOption.order_item_id,
+        modOption.modifier_option_id,
+        modOption.created_at || null,
+        modOption.updated_at || null,
+        modOption.newfield1 || null,
+        modOption.newfield2 || null,
+        modOption.newfield3 || null,
+        1 // synced
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert order_item_modifier_option:", err);
+      reject(err);
+    }
+  });
+}
+
+function addOrderHistoryBackup(history) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO order_histories
+        (id, order_id, status, created_at, updated_at, newfield1, newfield2, newfield3, isSync)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        history.id,
+        history.order_id,
+        history.status,
+        history.created_at || null,
+        history.updated_at || null,
+        history.newfield1 || null,
+        history.newfield2 || null,
+        history.newfield3 || null,
+        1 // synced
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert order_history:", err);
+      reject(err);
+    }
+  });
+}
+
+function addOrderPlaceBackup(orderPlace) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO order_places
+        (id, printer_id, branch_id, name, type, is_active, is_default, created_at, updated_at, newfield1, newfield2, newfield3, isSync)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        orderPlace.id,
+        orderPlace.printer_id,
+        orderPlace.branch_id,
+        orderPlace.name || null,
+        orderPlace.type || null,
+        orderPlace.is_active ? 1 : 0,
+        orderPlace.is_default ? 1 : 0,
+        orderPlace.created_at || null,
+        orderPlace.updated_at || null,
+        orderPlace.newfield1 || null,
+        orderPlace.newfield2 || null,
+        orderPlace.newfield3 || null,
+        1 // synced
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert order_place:", err);
+      reject(err);
+    }
+  });
+}
+
+//addPackageModuleBackup
+function addPackageModuleBackup(packageModule) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO package_modules
+        (
+          id, package_id, module_id, created_at, updated_at,
+          newfield1, newfield2, newfield3, isSync
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        packageModule.id,
+        packageModule.package_id,
+        packageModule.module_id,
+        packageModule.created_at || new Date().toISOString(),
+        packageModule.updated_at || new Date().toISOString(),
+        packageModule.newfield1 || null,
+        packageModule.newfield2 || null,
+        packageModule.newfield3 || null,
+        1 // isSync
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert package_module:", err);
+      reject(err);
+    }
+  });
+}
+
+function addPasswordResetTokenBackup(token) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO password_reset_tokens
+        (
+          email, token, created_at,
+          newfield1, newfield2, newfield3, isSync
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        token.email,
+        token.token,
+        token.created_at || new Date().toISOString(),
+        token.newfield1 || null,
+        token.newfield2 || null,
+        token.newfield3 || null,
+        1 // isSync
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert password_reset_token:", err);
+      reject(err);
+    }
+  });
+}
+
+function addPayfastPaymentBackup(payment) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO payfast_payments
+        (
+          id, payfast_payment_id, order_id, amount, payment_status,
+          payment_date, payment_error_response, created_at, updated_at,
+          newfield1, newfield2, newfield3, isSync
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        payment.id,
+        payment.payfast_payment_id,
+        payment.order_id,
+        payment.amount,
+        payment.payment_status,
+        payment.payment_date,
+        payment.payment_error_response,
+        payment.created_at || new Date().toISOString(),
+        payment.updated_at || new Date().toISOString(),
+        payment.newfield1 || null,
+        payment.newfield2 || null,
+        payment.newfield3 || null,
+        1 // isSync
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert payfast_payment:", err);
+      reject(err);
+    }
+  });
+}
 
 module.exports = { 
     addAreaBackup,
@@ -1710,5 +2044,16 @@ module.exports = {
     addOfflinePaymentMethodBackup,
     addOfflinePlanChangeBackup,
     addOnboardingStepBackup,
-    saveSyncTime
+    saveSyncTime,
+    getSyncTime,
+    addOrderChargeBackup,
+    addOrderBackup,
+    addOrderItemBackup,
+    addOrderTaxBackup,
+    addOrderItemModifierOptionBackup,
+    addOrderHistoryBackup,
+    addOrderPlaceBackup,
+    addPackageModuleBackup,
+    addPasswordResetTokenBackup,
+    addPayfastPaymentBackup
  };
