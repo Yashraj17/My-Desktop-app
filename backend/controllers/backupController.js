@@ -90,6 +90,115 @@ function addInventoryItemBackup(data) {
 function addInventoryGlobalSettingBackup(data) {
   return model.addInventoryGlobalSettingBackup(data);
 }
+//addFrontDetailBackup
+function addFrontDetailBackup(data) {
+  return model.addFrontDetailBackup(data);
+}
+//addFrontFaqSettingBackup
+function addFrontFaqSettingBackup(data) {
+  return model.addFrontFaqSettingBackup(data);
+}
+//addFrontFeatureBackup
+function addFrontFeatureBackup(data) {
+  return model.addFrontFeatureBackup(data);
+}
+//addFrontReviewSettingBackup
+function addFrontReviewSettingBackup(data) {
+  return model.addFrontReviewSettingBackup(data);
+}
+//addGlobalInvoiceBackup
+function addGlobalInvoiceBackup(data) {
+  return model.addGlobalInvoiceBackup(data);
+}
+//addGlobalSettingBackup
+function addGlobalSettingBackup(data) {
+  return model.addGlobalSettingBackup(data);
+}
+//addGlobalSubscriptionBackup
+function addGlobalSubscriptionBackup(data) {
+  return model.addGlobalSubscriptionBackup(data);
+}
+//addJobBackup
+function addJobBackup(data) {
+  return model.addJobBackup(data);
+}
+//addModifierOptionBackup
+function addModifierOptionBackup(data) {
+  return model.addModifierOptionBackup(data);
+}
+//addJobBatchBackup
+function addJobBatchBackup(data) {
+  return model.addJobBatchBackup(data);
+}
+//addKotBackup
+function addKotBackup(data) {
+  return model.addKotBackup(data);
+}
+//addKotCancelReasonBackup
+function addKotCancelReasonBackup(data) {
+  return model.addKotCancelReasonBackup(data);
+}
+//addKotItemBackup
+function addKotItemBackup(data) {
+  return model.addKotItemBackup(data);
+}
+//addKotItemModifierOptionBackup
+function addKotItemModifierOptionBackup(data) {
+  return model.addKotItemModifierOptionBackup(data);
+}
+//addKotPlaceBackup
+function addKotPlaceBackup(data) {
+  return model.addKotPlaceBackup(data);
+}
+//addKotSettingBackup
+function addKotSettingBackup(data) {
+  return model.addKotSettingBackup(data);
+}
+//addLtmTranslationBackup
+function addLtmTranslationBackup(data) {
+  return model.addLtmTranslationBackup(data);
+}
+//addLanguageSettingBackup
+function addLanguageSettingBackup(data) {
+  return model.addLanguageSettingBackup(data);
+}
+//addMigrationBackup
+function addMigrationBackup(data) {
+  return model.addMigrationBackup(data);
+}
+//addModelHasPermissionBackup
+function addModelHasPermissionBackup(data) {
+  return model.addModelHasPermissionBackup(data);
+}
+//addModelHasRoleBackup
+function addModelHasRoleBackup(data) {
+  return model.addModelHasRoleBackup(data);
+}
+//addModuleBackup
+function addModuleBackup(data) {
+  return model.addModuleBackup(data);
+}
+//addNotificationSettingBackup
+function addNotificationSettingBackup(data) {
+  return model.addNotificationSettingBackup(data);
+}
+//addOfflinePaymentMethodBackup
+function addOfflinePaymentMethodBackup(data) {
+  return model.addOfflinePaymentMethodBackup(data);
+}
+
+//addOfflinePlanChangeBackup
+function addOfflinePlanChangeBackup(data) {
+  return model.addOfflinePlanChangeBackup(data);
+}
+//addOnboardingStepBackup
+function addOnboardingStepBackup(data) {
+  return model.addOnboardingStepBackup(data);
+}
+//saveSyncTime
+function saveSyncTime(data) {
+  return model.saveSyncTime(data);
+}
 module.exports = { 
     addAreaBackup,
     addBranchDeliverySettingBackup,
@@ -116,5 +225,32 @@ module.exports = {
     addInventoryMovementBackup,
     addInventoryItemCategoryBackup,
     addInventoryItemBackup,
-    addInventoryGlobalSettingBackup
+    addInventoryGlobalSettingBackup,
+    addFrontDetailBackup,
+    addFrontFaqSettingBackup,
+    addFrontFeatureBackup,
+    addFrontReviewSettingBackup,
+    addGlobalInvoiceBackup,
+    addGlobalSettingBackup,
+    addGlobalSubscriptionBackup,
+    addJobBackup,
+    addModifierOptionBackup,
+    addJobBatchBackup,
+    addKotBackup,
+    addKotCancelReasonBackup,
+    addKotItemBackup,
+    addKotItemModifierOptionBackup,
+    addKotPlaceBackup,
+    addKotSettingBackup,
+    addLanguageSettingBackup,
+    addLtmTranslationBackup,
+    addMigrationBackup,
+    addModelHasPermissionBackup,
+    addModelHasRoleBackup,
+    addModuleBackup,
+    addNotificationSettingBackup,
+    addOfflinePaymentMethodBackup,
+    addOfflinePlanChangeBackup,
+    addOnboardingStepBackup,
+    saveSyncTime
  };

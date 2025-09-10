@@ -1,8 +1,10 @@
 import axios from "axios";
 
-export async function syncInventoryStocks(subdomain, branchId, token) {
+export async function syncInventoryStocks(subdomain, branchId, token,fromDatetime,toDatetime) {
   try {
-    const url = `${subdomain}/api/inventory-stocks?branch_id=${branchId}`;
+    const url = `${subdomain}/api/inventory-stocks?branch_id=${branchId}&from_datetime=${encodeURIComponent(
+      fromDatetime
+    )}&to_datetime=${encodeURIComponent(toDatetime)}`;
     const response = await axios.get(url, {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -23,6 +25,7 @@ export async function syncInventoryStocks(subdomain, branchId, token) {
           updated_at: stock.updated_at,
         });
       }
+      await window.api.saveSyncTime("inventory_stocks", toDatetime);
     }
   } catch (err) {
     console.error("❌ Inventory Stocks sync error:", err);

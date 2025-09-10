@@ -1,9 +1,11 @@
 import axios from "axios";
 
-export async function syncContacts(subdomain, languageSettingId, token) {
+export async function syncContacts(subdomain, languageSettingId, token,fromDatetime,toDatetime) {
   try {
     //const url = `${subdomain}/api/contacts?language_setting_id=${languageSettingId}`;
-        const url = `${subdomain}/api/contacts?language_setting_id=1`;
+        const url = `${subdomain}/api/contacts?language_setting_id=1&from_datetime=${encodeURIComponent(
+      fromDatetime
+    )}&to_datetime=${encodeURIComponent(toDatetime)}`;
     const response = await axios.get(url, {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -27,6 +29,7 @@ export async function syncContacts(subdomain, languageSettingId, token) {
           image_url: contact.image_url,
         });
       }
+      await window.api.saveSyncTime("contacts", toDatetime);
     }
   } catch (err) {
     console.error("❌ Contacts sync error:", err);

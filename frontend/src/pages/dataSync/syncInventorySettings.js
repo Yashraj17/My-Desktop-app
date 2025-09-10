@@ -1,8 +1,10 @@
 import axios from "axios";
 
-export async function syncInventorySettings(subdomain, restaurantId, token) {
+export async function syncInventorySettings(subdomain, restaurantId, token,fromDatetime,toDatetime) {
   try {
-    const url = `${subdomain}/api/inventory-settings?restaurant_id=${restaurantId}`;
+    const url = `${subdomain}/api/inventory-settings?restaurant_id=${restaurantId}&from_datetime=${encodeURIComponent(
+      fromDatetime
+    )}&to_datetime=${encodeURIComponent(toDatetime)}`;
     //const url = `${subdomain}/api/inventory-settings?restaurant_id=1`;
     const response = await axios.get(url, {
       headers: { Authorization: `Bearer ${token}` },
@@ -23,6 +25,7 @@ export async function syncInventorySettings(subdomain, restaurantId, token) {
           updated_at: setting.updated_at,
         });
       }
+      await window.api.saveSyncTime("inventory_settings", toDatetime);
     }
   } catch (err) {
     console.error("❌ Inventory Settings sync error:", err);

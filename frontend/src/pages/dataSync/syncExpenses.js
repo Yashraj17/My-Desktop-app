@@ -1,11 +1,13 @@
 import axios from "axios";
 
-export async function syncExpenses(subdomain, branchId, token
+export async function syncExpenses(subdomain, branchId, token,fromDatetime,toDatetime
   // fromDatetime, toDatetime
 ) {
   try {
     // ✅ Build base URL
-    let url = `${subdomain}/api/expenses?branch_id=${branchId}`;
+    let url = `${subdomain}/api/expenses?branch_id=${branchId}&from_datetime=${encodeURIComponent(
+      fromDatetime
+    )}&to_datetime=${encodeURIComponent(toDatetime)}`;
 
     // ✅ Add optional datetime filters (uncomment if needed)
     // if (fromDatetime && toDatetime) {
@@ -42,6 +44,7 @@ console.log("expence data...",response,url)
           updated_at: exp.updated_at,
         });
       }
+      await window.api.saveSyncTime("expenses", toDatetime);
     }
   } catch (err) {
     console.error("❌ Expenses sync error:", err);

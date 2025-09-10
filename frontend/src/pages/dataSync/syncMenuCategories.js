@@ -1,8 +1,10 @@
 import axios from "axios";
 
-export async function syncMenuCategories(subdomain, branchId, token) {
+export async function syncMenuCategories(subdomain, branchId, token,fromDatetime,toDatetime) {
   try {
-    let url = `${subdomain}/api/menu/categories?branch_id=${branchId}`;
+    let url = `${subdomain}/api/menu/categories?branch_id=${branchId}&from_datetime=${encodeURIComponent(
+      fromDatetime
+    )}&to_datetime=${encodeURIComponent(toDatetime)}`;
     const response = await axios.get(url, {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -25,6 +27,7 @@ export async function syncMenuCategories(subdomain, branchId, token) {
           newfield3: null,
         });
       }
+      await window.api.saveSyncTime("item_categories", toDatetime);
     }
   } catch (err) {
     console.error("❌ Menu categories sync error:", err);

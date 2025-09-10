@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import icon from "/images/icon.ico";
-import { syncMasterData } from "../dataSync/syncMasterData"; // ✅ import sync
+import { syncMasterData } from "../../src/pages/dataSync/syncMasterData"; // ✅ import sync
 
 function RestaurantLogin({ setIsAuthenticated }) {
   const [subdomain, setSubdomain] = useState("https://www.prtechit.com");
@@ -40,7 +40,12 @@ function RestaurantLogin({ setIsAuthenticated }) {
 
       if (source === "remote") {
         // ✅ Sync master + menus with real progress + status
-        await syncMasterData(subdomain, token, setProgress, setStatus, user);
+        const fromDatetime = "2000-08-10 00:00:00";
+        const now = new Date();
+        const toDatetime = now.toISOString().slice(0, 19).replace("T", " ");
+        console.log("From:", fromDatetime);
+        console.log("To:", toDatetime); 
+       await syncMasterData(subdomain, token, setProgress, setStatus, user,fromDatetime,toDatetime);
       } else {
         // Local login → jump to 100% instantly
         setProgress(100);
