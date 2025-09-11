@@ -109,15 +109,6 @@ export function ItemCategory() {
             setCategories(data);
         } catch (error) {
             console.error("Failed to load categories:", error);
-            Swal.fire({
-                icon: "error",
-                title: "Error",
-                text: "Failed to load categories",
-                toast: true,
-                position: "top-end",
-                showConfirmButton: false,
-                timer: 3000,
-            });
         }
     };
 

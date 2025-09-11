@@ -15,6 +15,9 @@ const globalCurrencyRoutes= require("./backend/routes/globalCurrencyRoutes");
 const packageRoutes= require("./backend/routes/packageRoutes");
 const restaurantBackupRoutes= require("./backend/routes/restaurantBackupRoutes");
 const backupRoutes= require("./backend/routes/backupRoutes");
+const areaRoutes = require("./backend/routes/areaRoutes");
+const tableRoutes = require("./backend/routes/tableRoutes");
+
 
 const Store = require("electron-store");
 const store = new Store();
@@ -2218,6 +2221,8 @@ app.whenReady().then(() => {
   packageRoutes();
   restaurantBackupRoutes();
   backupRoutes();
+  areaRoutes();
+  tableRoutes();
   createWindow();
 
   app.on("activate", () => {

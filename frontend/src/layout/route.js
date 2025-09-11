@@ -24,6 +24,8 @@ import { MenuItems } from "../pages/MenuItems";
 //import MenuItem from "../pages/MenuItemManagement";
 import { ModifierGroup } from "../pages/ModifierGroup";
 import { ItemModifiers } from "../pages/ItemModifier";
+import { Areas } from "../pages/Areas";
+import Tables from "../pages/Tables";
 
 const routes = [
     { 
@@ -34,11 +36,22 @@ const routes = [
         hasDropdown: false
     },
     { 
-        icon: MenuIcon, 
-        label: "Staff", 
-        url: "/staff", 
-        component: Staff,
-        hasDropdown: false
+        icon: Bell, 
+        label: "Table", 
+        url: "/table", 
+        hasDropdown: true,
+        children:[
+           {
+            label:"Areas",
+            url:"/areas",
+            component:Areas
+            },
+             {
+            label:"Tables",
+            url:"/table",
+            component:Tables
+            },
+        ]
     },
     { 
         icon: Truck, 
