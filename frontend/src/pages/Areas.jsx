@@ -18,54 +18,46 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Badge } from '../components/ui/badge';
 
 // Define table columns
 const columns = [
     {
-        accessorKey: "name",
+        accessorKey: "area_name",
         header: ({ column }) => (
             <Button
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 className="p-0 font-medium cursor-pointer text-gray-700 hover:bg-transparent"
             >
-                Group Name
+                Area Name
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
         cell: ({ row }) => (
             <div className="font-medium text-gray-600">
-                {row.getValue("name")}
+                {row.getValue("area_name")}
             </div>
         ),
         width: "300px",
     },
     {
-        accessorKey: "options",
+        accessorKey: "area_name",
         header: ({ column }) => (
             <Button
                 variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 className="p-0 font-medium cursor-pointer text-gray-700 hover:bg-transparent"
             >
-                Options
+                No of Tables
+                <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
-        cell: ({ row }) => {
-            const options = row.getValue("options");
-            return (
-                <div>
-                    {options?.map((option, index) => (
-                        <Badge
-                            key={index}
-                            className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100 mr-2 mb-1"
-                        >
-                            {option.name}: AED{option.price.toFixed(2)}
-                        </Badge>
-                    ))}
-                </div>
-            );
-        },
+        cell: ({ row }) => (
+            <div className="text-gray-600">
+               3
+            </div>
+        ),
+        width: "300px",
     },
     {
         id: "actions",
@@ -105,19 +97,23 @@ const columns = [
     },
 ];
 
-export function ModifierGroup() {
+export function Areas() {
     const [sorting, setSorting] = useState([]);
     const [globalFilter, setGlobalFilter] = useState(""); // 🔹 search state
-    const [modifierGroups, setModifierGroups] = useState([]);
+    const [areas, setAreas] = useState([]);
 
     const loadData = async () => {
-        const data = await window.api.getModifierGroups();
-        console.log("hello this is modifier group data", data)
-        setModifierGroups(data);
+        try {
+            const data = await window.api.getAreas();
+            console.log("hello this is area data",data)
+            setAreas(data);
+        } catch (error) {
+            console.error("Failed to load areas:", error);
+        }
     };
 
     const table = useReactTable({
-        data: modifierGroups,
+        data: areas,
         columns,
         onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
@@ -140,7 +136,7 @@ export function ModifierGroup() {
                 <div className="w-full mb-1">
                     <div className="mb-4">
                         <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-                            Modifier Groups
+                            All Areas
                         </h1>
                     </div>
 
@@ -152,14 +148,15 @@ export function ModifierGroup() {
                                     type="text"
                                     value={globalFilter ?? ""}
                                     onChange={(e) => setGlobalFilter(e.target.value)}
-                                    placeholder="Search your category here"
+                                    placeholder="Search your area here"
                                 />
                             </div>
                         </div>
                         <div className="inline-flex gap-x-4 mb-4 sm:mb-0">
 
+
                             <Button className="bg-[#000080] cursor-pointer hover:bg-[#000060] dark:text-white">
-                                Add Modifier Group
+                                Add Area
                             </Button>
                         </div>
                     </div>

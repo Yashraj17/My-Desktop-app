@@ -799,7 +799,6 @@ const columns = [
             className="h-8 px-2 bg-red-50 text-red-700 hover:bg-red-100 border-red-200"
           >
             <Trash2 className="h-4 w-4 mr-1" />
-            Delete
           </Button>
         </div>
       );

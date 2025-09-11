@@ -240,6 +240,18 @@ contextBridge.exposeInMainWorld("api", {
       //saveSyncTime
       saveSyncTime: (Data) =>
     ipcRenderer.invoke("save-sync-time", Data),
+
+       /// Area functions
+    getAreas: () => ipcRenderer.invoke("get-areas"),
+    addAreas: (area) => ipcRenderer.invoke("add-areas", area),
+    updateAreas: (id, area) => ipcRenderer.invoke("update-areas", id, area),
+    deleteAreas: (id) => ipcRenderer.invoke("delete-areas", id),
+
+      /// Table functions
+    getTable: (areaId =null) => ipcRenderer.invoke("get-table",areaId),
+    addTable: (table) => ipcRenderer.invoke("add-table", table),
+    updateTable: (id, table) => ipcRenderer.invoke("update-table", id, table),
+    deleteTable: (id) => ipcRenderer.invoke("delete-table", id),
 });
 
 
