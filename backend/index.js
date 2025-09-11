@@ -6,6 +6,8 @@ const modifierRoutes = require("./routes/modifierRoutes");
 const modifierGroupRoutes = require("./routes/modifierGroupRoutes");
 const menuItemRoutes = require("./routes/menuItemRoutes");
 const menuRoutes = require("./routes/menuRoutes");
+const areaRoutes = require("./routes/areaRoutes");
+const tableRoutes = require("./routes/tableRoutes");
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -26,4 +28,6 @@ app.whenReady().then(() => {
   menuItemRoutes();
   menuRoutes();
   createWindow();
+  areaRoutes();
+  tableRoutes();
 });
