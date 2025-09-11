@@ -244,6 +244,38 @@ function addPasswordResetTokenBackup(data) {
 function addPayfastPaymentBackup(data) {
   return model.addPayfastPaymentBackup(data);
 }
+//addPaymentBackup
+function addPaymentBackup(data) {
+  return model.addPaymentBackup(data);
+}
+//addPaymentBackup1
+function addPaymentBackup1(data) {
+  return model.addPaymentBackup1(data);
+}
+//addPaymentMethodBackup
+function addPaymentMethodBackup(data) {
+  return model.addPaymentMethodBackup(data);
+}
+//addPaypalPaymentBackup
+function addPaypalPaymentBackup(data) {
+  return model.addPaypalPaymentBackup(data);
+}
+//addPaystackPaymentBackup
+function addPaystackPaymentBackup(data) {
+  return model.addPaystackPaymentBackup(data);
+}
+//addPermissionBackup
+function addPermissionBackup(data) {
+  return model.addPermissionBackup(data);
+}
+//addPersonalAccessTokenBackup
+function addPersonalAccessTokenBackup(data) {
+  return model.addPersonalAccessTokenBackup(data);
+}
+//addPosRegisterBackup
+function addPosRegisterBackup(data) {
+  return model.addPosRegisterBackup(data);
+}
 module.exports = { 
     addAreaBackup,
     addBranchDeliverySettingBackup,
@@ -308,5 +340,13 @@ module.exports = {
     addOrderPlaceBackup,
     addPackageModuleBackup,
     addPasswordResetTokenBackup,
-    addPayfastPaymentBackup
+    addPayfastPaymentBackup,
+    addPaymentBackup,
+    addPaymentBackup1,
+    addPaymentMethodBackup,
+    addPaypalPaymentBackup,
+    addPaystackPaymentBackup,
+    addPermissionBackup,
+    addPersonalAccessTokenBackup,
+    addPosRegisterBackup
  };

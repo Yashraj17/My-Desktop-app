@@ -285,6 +285,30 @@ contextBridge.exposeInMainWorld("api", {
        //addPayfastPaymentBackup
        addPayfastPaymentBackup: (Data) =>
     ipcRenderer.invoke("add-payfast-payment-backup", Data),
+       //addPaymentBackup
+       addPaymentBackup: (Data) =>
+    ipcRenderer.invoke("add-payment-backup", Data),
+       //addPaymentBackup1
+       addPaymentBackup1: (Data) =>
+    ipcRenderer.invoke("add-payment-backup1", Data),
+       //addPaymentMethodBackup
+       addPaymentMethodBackup: (Data) =>
+    ipcRenderer.invoke("add-payment-method-backup", Data),
+       //addPaypalPaymentBackup
+       addPaypalPaymentBackup: (Data) =>
+    ipcRenderer.invoke("add-paypal-payment-backup", Data),
+       //addPaystackPaymentBackup
+       addPaystackPaymentBackup: (Data) =>
+    ipcRenderer.invoke("add-paystack-payment-backup", Data),
+       //addPermissionBackup
+       addPermissionBackup: (Data) =>
+    ipcRenderer.invoke("add-permission-backup", Data),
+       //addPersonalAccessTokenBackup
+        addPersonalAccessTokenBackup: (Data) =>
+    ipcRenderer.invoke("add-personal-access-token-backup", Data),
+        //addPosRegisterBackup
+        addPosRegisterBackup: (Data) =>
+    ipcRenderer.invoke("add-pos-register-backup", Data),
 });
 
 

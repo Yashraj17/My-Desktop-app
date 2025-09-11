@@ -1,74 +1,84 @@
 import axios from "axios";
 
-
-export async function syncKots(subdomain, branchId, token, fromDatetime, toDatetime, setProgress, setStatus) {
+// -------------------- Sync Function --------------------
+export async function syncKots(
+  subdomain,
+  branchId,
+  token,
+  fromDatetime,
+  toDatetime,
+  setProgress,
+  setStatus
+) {
   try {
-    // 1. Fetch KOTs
-    setStatus?.("Syncing KOTs...");
+    setStatus?.("🔄 Syncing KOTs...");
+
+    // 1️⃣ Fetch KOTs
     const kotUrl = `${subdomain}/api/kots?branch_id=${branchId}&from_datetime=${encodeURIComponent(
       fromDatetime
     )}&to_datetime=${encodeURIComponent(toDatetime)}`;
 
-    const kotResponse = await axios.get(kotUrl, {
+    const kotRes = await axios.get(kotUrl, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    if (kotResponse.data.status && kotResponse.data.data) {
-      const kots = kotResponse.data.data;
-
-      for (const rawKot of kots) {
-        const kot = normalizeKot(rawKot);
-
-        // Save KOT
-        await window.api.addKotBackup(kot);
-
-        // 2. Fetch KOT Items for each KOT
-        setStatus?.(`Syncing items for KOT #${kot.kot_number || kot.id}...`);
-        const itemsUrl = `${subdomain}/api/kot-items?kot_id=${kot.id}`;
-        try {
-          const itemResponse = await axios.get(itemsUrl, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-
-          if (itemResponse.data.status && itemResponse.data.data) {
-            const kotItems = itemResponse.data.data;
-
-            for (const rawItem of kotItems) {
-              const item = normalizeKotItem(rawItem);
-              await window.api.addKotItemBackup(item);
-
-              // 3. Fetch KOT Item Modifier Options for each item
-              setStatus?.(`Syncing modifiers for item ${item.menu_item_id || item.id}...`);
-              const optUrl = `${subdomain}/api/kot-item-modifier-options?kot_item_id=${item.id}`;
-              try {
-                const optResponse = await axios.get(optUrl, {
-                  headers: { Authorization: `Bearer ${token}` },
-                });
-
-                if (optResponse.data.status && optResponse.data.data) {
-                  const modifierOptions = optResponse.data.data;
-
-                  for (const rawOpt of modifierOptions) {
-                    const option = normalizeKotItemModifierOption(rawOpt);
-                    await window.api.addKotItemModifierOptionBackup(option);
-                  }
-                }
-              } catch (optErr) {
-                console.warn(`⚠️ Failed to sync modifier_options for kot_item ${item.id}`, optErr);
-              }
-            }
-          }
-        } catch (itemErr) {
-          console.warn(`⚠️ Failed to sync kot_items for kot ${kot.id}`, itemErr);
-        }
-      }
-      await window.api.saveSyncTime("kots", toDatetime);
-      await window.api.saveSyncTime("kot_item_modifier_options", toDatetime);
-      await window.api.saveSyncTime("kot_items   ", toDatetime);
-
+    if (!kotRes.data.status || !Array.isArray(kotRes.data.data)) {
+      setStatus?.("⚠️ No KOTs found to sync.");
+      return;
     }
 
-    setStatus?.("✅ KOT sync completed.");
+    const kots = kotRes.data.data.map(normalizeKot);
+    const kotIds = new Set(kots.map((k) => k.id));
+
+    for (let kot of kots) {
+      await window.api.addKotBackup(kot);
+      setStatus?.(`💾 Saved KOT #${kot.kot_number}`);
+    }
+
+    // 2️⃣ Bulk fetch items + modifiers
+    const [itemsRes, modsRes] = await Promise.all([
+      axios.get(
+        `${subdomain}/api/kot-items?from_datetime=${encodeURIComponent(
+          fromDatetime
+        )}&to_datetime=${encodeURIComponent(toDatetime)}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      ),
+      axios.get(
+        `${subdomain}/api/kot-item-modifier-options`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      ),
+    ]);
+
+    // 3️⃣ KOT Items
+    const kotItems = (itemsRes.data.data || [])
+      .filter((i) => kotIds.has(i.kot_id))
+      .map(normalizeKotItem);
+
+    const kotItemIds = new Set(kotItems.map((i) => i.id));
+
+    for (let item of kotItems) {
+      await window.api.addKotItemBackup(item);
+      setStatus?.(`✅ Saved item ${item.menu_item_id} for KOT ${item.kot_id}`);
+    }
+
+    // 4️⃣ KOT Item Modifier Options
+    const modifierOptions = (modsRes.data.data || [])
+      .filter((m) => kotItemIds.has(m.kot_item_id))
+      .map(normalizeKotItemModifierOption);
+
+    for (let opt of modifierOptions) {
+      await window.api.addKotItemModifierOptionBackup(opt);
+      setStatus?.(
+        `✅ Saved modifier ${opt.modifier_option_id} for item ${opt.kot_item_id}`
+      );
+    }
+
+    // 5️⃣ Save Sync Times
+    await window.api.saveSyncTime("kots", toDatetime);
+    await window.api.saveSyncTime("kot_items", toDatetime);
+    await window.api.saveSyncTime("kot_item_modifier_options", toDatetime);
+
+    setStatus?.("🎉 KOT sync completed.");
   } catch (err) {
     console.error("❌ KOT sync error:", err);
     setStatus?.("❌ Failed to sync KOTs.");
@@ -76,8 +86,7 @@ export async function syncKots(subdomain, branchId, token, fromDatetime, toDatet
   }
 }
 
-
-// 🔹 Normalizers
+// -------------------- Normalizers --------------------
 function normalizeKot(raw) {
   return {
     ...raw,

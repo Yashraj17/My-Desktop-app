@@ -1470,6 +1470,41 @@ function initDatabase() {
   "isSync" BOOLEAN DEFAULT 0
 );`,
 
+//payments_backup
+ `CREATE TABLE IF NOT EXISTS "payments_backup" (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  "branch_id" INTEGER  ,
+  "order_id" TEXT NOT NULL  ,
+  "payment_method" TEXT NOT NULL DEFAULT 'cash' ,
+  "amount" REAL NOT NULL  ,
+  "balance" REAL  DEFAULT '0.00' ,
+  "transaction_id" TEXT   ,
+  "created_at" TEXT   ,
+  "updated_at" TEXT   ,
+  "newfield1" TEXT,
+  "newfield2" TEXT,
+  "newfield3" TEXT,
+  "isSync" BOOLEAN DEFAULT 0
+);`,
+
+
+ // payment_methods
+    `CREATE TABLE IF NOT EXISTS "payment_methods" (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  "branch_id" INTEGER  ,
+  "restaurant_id" TEXT NOT NULL  ,
+  "name" TEXT NOT NULL DEFAULT 'cash' ,
+  "value" TEXT  ,
+  "description" TEXT   ,
+  "is_active" TEXT   ,
+  "open_drawer" TEXT   ,
+  "created_at" TEXT   ,
+  "updated_at" TEXT   ,
+  "newfield1" TEXT,
+  "newfield2" TEXT,
+  "newfield3" TEXT,
+  "isSync" BOOLEAN DEFAULT 0
+);`,
     // paypal_payments
     `CREATE TABLE IF NOT EXISTS "paypal_payments" (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -1535,6 +1570,44 @@ function initDatabase() {
   "newfield3" TEXT,
   "isSync" BOOLEAN DEFAULT 0
 );`,
+
+//pos_registers
+`CREATE TABLE IF NOT EXISTS "pos_registers" (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  "user_id" TEXT,
+  "opened_by" TEXT,
+  "closed_by" TEXT,
+  "open_datetime" TEXT,
+  "close_datetime" TEXT,
+  "branch_id" TEXT,
+  "restaurant_id" TEXT,
+  "opening_cash" TEXT,
+  "opening_note" TEXT,
+  "total_sales" TEXT,
+  "total_refund" TEXT,
+  "total_payment" TEXT,
+  "taxes" TEXT,
+  "payment_summary" TEXT,
+  "closing_cash" TEXT,
+  "closing_note" TEXT,
+  "total_orders" INTEGER,
+  "total_customers" INTEGER,
+  "today_earning" TEXT,
+  "avg_earning" TEXT,
+  "delivery_fee" TEXT,
+  "discount" TEXT,
+  "tip" TEXT,
+  "card_slips" TEXT,
+  "check_slips" TEXT,
+  "note" TEXT,
+  "created_at" TEXT,
+  "updated_at" TEXT,
+  "newfield1" TEXT,
+  "newfield2" TEXT,
+  "newfield3" TEXT,
+  "isSync" BOOLEAN DEFAULT 0
+);`,
+
 
     // printers
     `CREATE TABLE IF NOT EXISTS "printers" (

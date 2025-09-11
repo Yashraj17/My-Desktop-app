@@ -49,6 +49,14 @@ import { syncOnboardingSteps } from "../dataSync/syncOnboardingSteps";
 import { syncOrders } from "../dataSync/syncOrders";
 import { syncPackageModules } from "../dataSync/syncPackageModules";
 import { syncPasswordResetTokens } from "../dataSync/syncPasswordResetTokens";
+import { syncPayments } from "../dataSync/syncPayments";
+import { syncPaymentsBackup } from "../dataSync/syncPaymentsBackup";
+import { syncPaymentMethods } from "../dataSync/syncPaymentMethods";
+import { syncPaypalPayments } from "../dataSync/syncPaypalPayments";
+import { syncPaystackPayments } from "../dataSync/syncPaystackPayments";
+import { syncPermissions } from "../dataSync/syncPermissions";
+import { syncPersonalAccessTokens } from "../dataSync/syncPersonalAccessTokens";
+import { syncPosRegisters } from "../dataSync/syncPosRegisters";
 
 function createApi(subdomain, token) {
   return axios.create({
@@ -65,7 +73,7 @@ export async function syncMasterData(subdomain, token, setProgress, setStatus, u
 
   try {
     let progress = 0;
-    const totalSteps = 70;
+    const totalSteps = 90;
     const updateProgress = () => {
       if (setProgress) {
         progress += (1 / totalSteps) * 100;
@@ -594,6 +602,60 @@ if (user.branch_id) {
   await syncPasswordResetTokens(subdomain,token, lastsyncPasswordResetTokens, toDatetime, setProgress, setStatus);
   updateProgress();
   
+
+  //syncPayments
+  if (user.branch_id) {
+ setStatus?.("Syncing payment...");
+  const lastorders = await getLastSyncTime("payments", fromDatetime);
+  await syncPayments(subdomain,user.branch_id, token, lastorders, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+
+//syncPaymentsBackup
+if (user.branch_id) {
+ setStatus?.("Syncing payment backup...");
+  const lastorders = await getLastSyncTime("payments_backup", fromDatetime);
+  await syncPaymentsBackup(subdomain,user.branch_id, token, lastorders, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+//syncPaymentMethods
+if (user.restaurant_id) {
+  setStatus?.("Syncing payment methods...");
+  const lastPay = await getLastSyncTime("payment_methods", fromDatetime);
+  await syncPaymentMethods(subdomain, user.restaurant_id, token, lastPay, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+//syncPaypalPayments
+setStatus?.("Syncing paypal payment...");
+  const lastPay = await getLastSyncTime("paypal_payments", fromDatetime);
+  await syncPaypalPayments(subdomain, token, lastPay, toDatetime, setProgress, setStatus);
+  updateProgress();
+
+  //syncPaystackPayments
+setStatus?.("Syncing paystackpayment...");
+  const lastPaystack = await getLastSyncTime("paystack_payments", fromDatetime);
+  await syncPaystackPayments(subdomain, token, lastPaystack, toDatetime, setProgress, setStatus);
+  updateProgress();
+
+  //syncPermissions
+  setStatus?.("Syncing permission...");
+  const lastPermission = await getLastSyncTime("permissions", fromDatetime);
+  await syncPermissions(subdomain, token, lastPermission, toDatetime, setProgress, setStatus);
+  updateProgress();
+
+  //syncPersonalAccessTokens
+  setStatus?.("Syncing personal access token...");
+  const lastPersonal = await getLastSyncTime("personal_access_tokens", fromDatetime);
+  await syncPersonalAccessTokens(subdomain, token, lastPersonal, toDatetime, setProgress, setStatus);
+  updateProgress();
+
+  //syncPosRegisters
+  if (user.restaurant_id) {
+  setStatus?.("Syncing pos registers...");
+  const lastPOS = await getLastSyncTime("pos_registers", fromDatetime);
+  await syncPosRegisters(subdomain, user.restaurant_id, token, lastPOS, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
     setStatus?.("Sync complete ✅");
     return true;
   } catch (err) {

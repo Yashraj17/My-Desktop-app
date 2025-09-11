@@ -243,6 +243,38 @@ function BackupRoutes() {
   ipcMain.handle("add-payfast-payment-backup", (event, data) => {
     return controller.addPayfastPaymentBackup(data);
   });
+  //addPaymentBackup
+  ipcMain.handle("add-payment-backup", (event, data) => {
+    return controller.addPaymentBackup(data);
+  });
+  //addPaymentBackup1
+  ipcMain.handle("add-payment-backup1", (event, data) => {
+    return controller.addPaymentBackup1(data);
+  });
+  //addPaymentMethodBackup
+  ipcMain.handle("add-payment-method-backup", (event, data) => {
+    return controller.addPaymentMethodBackup(data);
+  });
+  //addPaypalPaymentBackup
+  ipcMain.handle("add-paypal-payment-backup", (event, data) => {
+    return controller.addPaypalPaymentBackup(data);
+  });
+  //addPaystackPaymentBackup
+  ipcMain.handle("add-paystack-payment-backup", (event, data) => {
+    return controller.addPaystackPaymentBackup(data);
+  });
+  //addPermissionBackup
+  ipcMain.handle("add-permission-backup", (event, data) => {
+    return controller.addPermissionBackup(data);
+  });
+  //addPersonalAccessTokenBackup
+  ipcMain.handle("add-personal-access-token-backup", (event, data) => {
+    return controller.addPersonalAccessTokenBackup(data);
+  });
+  //addPosRegisterBackup
+  ipcMain.handle("add-pos-register-backup", (event, data) => {
+    return controller.addPosRegisterBackup(data);
+  });
 }
 
 module.exports = BackupRoutes;

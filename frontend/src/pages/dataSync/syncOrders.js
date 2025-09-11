@@ -89,7 +89,6 @@ function normalizePayfastPayment(raw) {
   };
 }
 
-
 // -------------------- Sync Function --------------------
 export async function syncOrders(
   subdomain,
@@ -104,159 +103,141 @@ export async function syncOrders(
     setStatus?.("🔄 Syncing orders...");
 
     // 1️⃣ Fetch Orders
-    const url = `${subdomain}/api/orders?branch_id=${branchId}&from_datetime=${encodeURIComponent(
+    const ordersUrl = `${subdomain}/api/orders?branch_id=${branchId}&from_datetime=${encodeURIComponent(
       fromDatetime
     )}&to_datetime=${encodeURIComponent(toDatetime)}`;
 
-    const response = await axios.get(url, {
+    const ordersRes = await axios.get(ordersUrl, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log("Orders API response:", response);
 
-    if (!response.data.status || !Array.isArray(response.data.data)) {
+    if (!ordersRes.data.status || !Array.isArray(ordersRes.data.data)) {
       setStatus?.("⚠️ No orders found to sync.");
       return;
     }
 
-    const orders = response.data.data;
+    const orders = ordersRes.data.data.map(normalizeOrder);
+    const orderIds = new Set(orders.map((o) => o.id));
 
-    for (let orderRaw of orders) {
-      const order = normalizeOrder(orderRaw);
-
-      // Save main order
-      setStatus?.(`💾 Saving order #${order.order_number}...`);
+    // 💾 Save main orders
+    for (let order of orders) {
       await window.api.addOrderBackup(order);
-
-      // 2️⃣ Order Charges
-      try {
-        const chargeRes = await axios.get(`${subdomain}/api/order-charges?order_id=${order.id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (chargeRes.data.status && Array.isArray(chargeRes.data.data)) {
-          for (let c of chargeRes.data.data) {
-            const charge = normalizeOrderCharge(c);
-            await window.api.addOrderChargeBackup(charge);
-            setStatus?.(`✅ Saved charge ${charge.charge_id} for order #${order.order_number}`);
-          }
-        }
-      } catch (e) {
-        console.warn(`⚠️ Charges fetch failed for order ${order.id}`, e);
-      }
-
-      // 3️⃣ Order Items
-      try {
-        const itemRes = await axios.get(`${subdomain}/api/order-items?order_id=${order.id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (itemRes.data.status && Array.isArray(itemRes.data.data)) {
-          for (let item of itemRes.data.data) {
-            const normalizedItem = normalizeOrderItem(item);
-            await window.api.addOrderItemBackup(normalizedItem);
-            setStatus?.(
-              `✅ Saved item ${normalizedItem.menu_item_id} for order #${order.order_number}`
-            );
-          }
-        }
-      } catch (e) {
-        console.warn(`⚠️ Items fetch failed for order ${order.id}`, e);
-      }
-
-      // 4️⃣ Order Item Modifier Options
-      try {
-        const modRes = await axios.get(
-          `${subdomain}/api/order-item-modifier-options?order_id=${order.id}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        if (modRes.data.status && Array.isArray(modRes.data.data)) {
-          for (let opt of modRes.data.data) {
-            const mod = normalizeOrderItemModifierOption(opt);
-            await window.api.addOrderItemModifierOptionBackup(mod);
-            setStatus?.(
-              `✅ Saved modifier ${mod.modifier_option_id} for item ${mod.order_item_id}`
-            );
-          }
-        }
-      } catch (e) {
-        console.warn(`⚠️ Modifier options fetch failed for order ${order.id}`, e);
-      }
-
-      // 5️⃣ Order Taxes
-      try {
-        const taxRes = await axios.get(`${subdomain}/api/order-taxes?order_id=${order.id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (taxRes.data.status && Array.isArray(taxRes.data.data)) {
-          for (let t of taxRes.data.data) {
-            const tax = normalizeOrderTax(t);
-            await window.api.addOrderTaxBackup(tax);
-            setStatus?.(
-              `✅ Saved tax ${tax.tax_id} for order #${order.order_number}`
-            );
-          }
-        }
-      } catch (e) {
-        console.warn(`⚠️ Taxes fetch failed for order ${order.id}`, e);
-      }
-
-      // 6️⃣ Order Histories (Optionally filter by status)
-      try {
-        const historyRes = await axios.get(`${subdomain}/api/order-histories?order_id=${order.id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (historyRes.data.status && Array.isArray(historyRes.data.data)) {
-          const histories = historyRes.data.data.filter(h => ["served", "paid"].includes(h.status));
-          for (let h of histories) {
-            const history = normalizeOrderHistory(h);
-            await window.api.addOrderHistoryBackup(history);
-            setStatus?.(
-              `✅ Saved history "${history.status}" for order #${order.order_number}`
-            );
-          }
-        }
-      } catch (e) {
-        console.warn(`⚠️ Order histories fetch failed for order ${order.id}`, e);
-      }
-
-      // 7️⃣ Order Places
-      try {
-        const placeRes = await axios.get(`${subdomain}/api/order-places?branch_id=${branchId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (placeRes.data.status && Array.isArray(placeRes.data.data)) {
-          for (let p of placeRes.data.data) {
-            const place = normalizeOrderPlace(p);
-            await window.api.addOrderPlaceBackup(place);
-            setStatus?.(`✅ Saved order place "${place.name}" for branch #${branchId}`);
-          }
-        }
-      } catch (e) {
-        console.warn(`⚠️ Order places fetch failed for branch ${branchId}`, e);
-      }
-      // 8️⃣ Payfast Payments
-
-      try {
-        const payRes = await axios.get(
-          `${subdomain}/api/payfast-payments?order_id=${order.id}&from_datetime=${encodeURIComponent(
-            fromDatetime
-          )}&to_datetime=${encodeURIComponent(toDatetime)}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        if (payRes.data.status && Array.isArray(payRes.data.data)) {
-          for (let pf of payRes.data.data) {
-            const payment = normalizePayfastPayment(pf);
-            await window.api.addPayfastPaymentBackup(payment);
-            setStatus?.(
-              `✅ Saved Payfast payment ${payment.payfast_payment_id} for order #${order.order_number}`
-            );
-          }
-        }
-      } catch (e) {
-        console.warn(`⚠️ Payfast payments fetch failed for order ${order.id}`, e);
-      }
+      setStatus?.(`💾 Saved order #${order.order_number}`);
     }
-    
 
-    // ✅ Save Sync Times
+    // 2️⃣ Bulk fetch related entities
+    const [
+      chargesRes,
+      itemsRes,
+      modsRes,
+      taxesRes,
+      historiesRes,
+      placesRes,
+      payRes,
+    ] = await Promise.all([
+      axios.get(
+        `${subdomain}/api/order-charges`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      ),
+      axios.get(
+        `${subdomain}/api/order-items?from_datetime=${encodeURIComponent(
+          fromDatetime
+        )}&to_datetime=${encodeURIComponent(toDatetime)}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      ),
+      axios.get(
+        `${subdomain}/api/order-item-modifier-options`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      ),
+      axios.get(
+        `${subdomain}/api/order-taxes?from_datetime=${encodeURIComponent(
+          fromDatetime
+        )}&to_datetime=${encodeURIComponent(toDatetime)}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      ),
+      axios.get(
+        `${subdomain}/api/order-histories?from_datetime=${encodeURIComponent(
+          fromDatetime
+        )}&to_datetime=${encodeURIComponent(toDatetime)}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      ),
+      axios.get(
+        `${subdomain}/api/order-places`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      ),
+      axios.get(
+        `${subdomain}/api/payfast-payments?from_datetime=${encodeURIComponent(
+          fromDatetime
+        )}&to_datetime=${encodeURIComponent(toDatetime)}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      ),
+    ]);
+
+const orderItemIds = new Set((itemsRes.data?.data || []).map((o) => o.id));
+    // 3️⃣ Filter + normalize + save
+    const charges = (chargesRes.data.data || [])
+      .filter((c) => orderIds.has(c.order_id))
+      .map(normalizeOrderCharge);
+    for (let c of charges) {
+      await window.api.addOrderChargeBackup(c);
+      setStatus?.(`✅ Saved charge ${c.charge_id} for order ${c.order_id}`);
+    }
+
+    const items = (itemsRes.data.data || [])
+      .filter((i) => orderIds.has(i.order_id))
+      .map(normalizeOrderItem);
+    for (let i of items) {
+      await window.api.addOrderItemBackup(i);
+      setStatus?.(`✅ Saved item ${i.menu_item_id} for order ${i.order_id}`);
+    }
+
+    const mods = (modsRes.data.data || [])
+      .filter((m) => orderItemIds.has(m.order_item_id))
+      .map(normalizeOrderItemModifierOption);
+    for (let m of mods) {
+      await window.api.addOrderItemModifierOptionBackup(m);
+      setStatus?.(
+        `✅ Saved modifier ${m.modifier_option_id} for item ${m.order_item_id}`
+      );
+    }
+
+    const taxes = (taxesRes.data.data || [])
+      .filter((t) => orderIds.has(t.order_id))
+      .map(normalizeOrderTax);
+    for (let t of taxes) {
+      await window.api.addOrderTaxBackup(t);
+      setStatus?.(`✅ Saved tax ${t.tax_id} for order ${t.order_id}`);
+    }
+
+    const histories = (historiesRes.data.data || [])
+      .filter(
+        (h) => orderIds.has(h.order_id) && ["served", "paid"].includes(h.status)
+      )
+      .map(normalizeOrderHistory);
+    for (let h of histories) {
+      await window.api.addOrderHistoryBackup(h);
+      setStatus?.(
+        `✅ Saved history "${h.status}" for order ${h.order_id}`
+      );
+    }
+
+    const places = (placesRes.data.data || []).map(normalizeOrderPlace);
+    for (let p of places) {
+      await window.api.addOrderPlaceBackup(p);
+      setStatus?.(`✅ Saved order place "${p.name}" for branch #${branchId}`);
+    }
+
+    const payments = (payRes.data.data || [])
+      .filter((p) => orderIds.has(p.order_id))
+      .map(normalizePayfastPayment);
+    for (let p of payments) {
+      await window.api.addPayfastPaymentBackup(p);
+      setStatus?.(
+        `✅ Saved Payfast payment ${p.payfast_payment_id} for order ${p.order_id}`
+      );
+    }
+
+    // 4️⃣ Save Sync Times
     await window.api.saveSyncTime("orders", toDatetime);
     await window.api.saveSyncTime("order_charges", toDatetime);
     await window.api.saveSyncTime("order_items", toDatetime);
