@@ -275,6 +275,66 @@ function BackupRoutes() {
   ipcMain.handle("add-pos-register-backup", (event, data) => {
     return controller.addPosRegisterBackup(data);
   });
+  //addPredefinedAmountBackup
+  ipcMain.handle("add-predefined-amount-backup", (event, data) => {
+    return controller.addPredefinedAmountBackup(data);
+  });
+  //addPrinterBackup
+  ipcMain.handle("add-printer-backup", (event, data) => {
+    return controller.addPrinterBackup(data);
+  });
+  //addPurchaseOrderBackup
+  ipcMain.handle("add-purchase-order-backup", (event, data) => {
+    return controller.addPurchaseOrderBackup(data);
+  });
+  //addPurchaseOrderItemBackup
+  ipcMain.handle("add-purchase-order-item-backup", (event, data) => {
+    return controller.addPurchaseOrderItemBackup(data);
+  });
+  //addPusherSettingBackup
+  ipcMain.handle("add-pusher-setting-backup", (event, data) => {
+    return controller.addPusherSettingBackup(data);
+  });
+  //addRazorpayPaymentBackup
+  ipcMain.handle("add-razorpay-payment-backup", (event, data) => {
+    return controller.addRazorpayPaymentBackup(data);
+  });
+  //addReceiptSettingBackup
+  ipcMain.handle("add-receipt-setting-backup", (event, data) => {
+    return controller.addReceiptSettingBackup(data);
+  });
+  //addRecipeBackup
+  ipcMain.handle("add-recipe-backup", (event, data) => {
+    return controller.addRecipeBackup(data);
+  });
+  //addReservationBackup
+  ipcMain.handle("add-reservation-backup", (event, data) => {
+    return controller.addReservationBackup(data);
+  });
+  //addReservationSettingBackup
+  ipcMain.handle("add-reservation-setting-backup", (event, data) => {
+    return controller.addReservationSettingBackup(data);
+  });
+  //addRestaurantChargeBackup
+  ipcMain.handle("add-restaurant-charge-backup", (event, data) => {
+    return controller.addRestaurantChargeBackup(data);
+  });
+  //addRestaurantPaymentBackup
+  ipcMain.handle("add-restaurant-payment-backup", (event, data) => {
+    return controller.addRestaurantPaymentBackup(data);
+  });
+  //addRestaurantTaxBackup
+  ipcMain.handle("add-restaurant-tax-backup", (event, data) => {
+    return controller.addRestaurantTaxBackup(data);
+  });
+  //addRoleBackup
+  ipcMain.handle("add-role-backup", (event, data) => {
+    return controller.addRoleBackup(data);
+  });
+  //addRoleHasPermissionBackup
+  ipcMain.handle("add-role-has-permission-backup", (event, data) => {
+    return controller.addRoleHasPermissionBackup(data);
+  });
 }
 
 module.exports = BackupRoutes;

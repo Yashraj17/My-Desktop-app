@@ -276,6 +276,66 @@ function addPersonalAccessTokenBackup(data) {
 function addPosRegisterBackup(data) {
   return model.addPosRegisterBackup(data);
 }
+//addPredefinedAmountBackup
+function addPredefinedAmountBackup(data) {
+  return model.addPredefinedAmountBackup(data);
+}
+//addPrinterBackup
+function addPrinterBackup(data) {
+  return model.addPrinterBackup(data);
+}
+//addPurchaseOrderBackup
+function addPurchaseOrderBackup(data) {
+  return model.addPurchaseOrderBackup(data);
+}
+//addPurchaseOrderItemBackup
+function addPurchaseOrderItemBackup(data) {
+  return model.addPurchaseOrderItemBackup(data);
+}
+//addPusherSettingBackup
+function addPusherSettingBackup(data) {
+  return model.addPusherSettingBackup(data);
+}
+//addRazorpayPaymentBackup
+function addRazorpayPaymentBackup(data) {
+  return model.addRazorpayPaymentBackup(data);
+}
+//addReceiptSettingBackup
+function addReceiptSettingBackup(data) {
+  return model.addReceiptSettingBackup(data);
+}
+//addRecipeBackup
+function addRecipeBackup(data) {
+  return model.addRecipeBackup(data);
+}
+//addReservationBackup
+function addReservationBackup(data) {
+  return model.addReservationBackup(data);
+}
+//addReservationSettingBackup
+function addReservationSettingBackup(data) {
+  return model.addReservationSettingBackup(data);
+}
+//addRestaurantChargeBackup
+function addRestaurantChargeBackup(data) {
+  return model.addRestaurantChargeBackup(data);
+}
+//addRestaurantPaymentBackup
+function addRestaurantPaymentBackup(data) {
+  return model.addRestaurantPaymentBackup(data);
+}
+//addRestaurantTaxBackup
+function addRestaurantTaxBackup(data) {
+  return model.addRestaurantTaxBackup(data);
+}
+//addRoleBackup
+function addRoleBackup(data) {
+  return model.addRoleBackup(data);
+}
+//addRoleHasPermissionBackup
+function addRoleHasPermissionBackup(data) {
+  return model.addRoleHasPermissionBackup(data);
+}
 module.exports = { 
     addAreaBackup,
     addBranchDeliverySettingBackup,
@@ -348,5 +408,20 @@ module.exports = {
     addPaystackPaymentBackup,
     addPermissionBackup,
     addPersonalAccessTokenBackup,
-    addPosRegisterBackup
+    addPosRegisterBackup,
+    addPredefinedAmountBackup,
+    addPrinterBackup,
+    addPurchaseOrderBackup,
+    addPurchaseOrderItemBackup,
+    addPusherSettingBackup,
+    addRazorpayPaymentBackup,
+    addReceiptSettingBackup,
+    addRecipeBackup,
+    addReservationBackup,
+    addReservationSettingBackup,
+    addRestaurantChargeBackup,
+    addRestaurantPaymentBackup,
+    addRestaurantTaxBackup,
+    addRoleBackup,
+    addRoleHasPermissionBackup
  };

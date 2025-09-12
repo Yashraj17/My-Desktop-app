@@ -1661,9 +1661,6 @@ function getSyncTime(tableName) {
   return row || null;
 }
 
-
-
-
 // ✅ Order Backup
 function addOrderBackup(order) {
   return new Promise((resolve, reject) => {
@@ -1765,7 +1762,6 @@ function addOrderItemBackup(orderItem) {
     }
   });
 }
-
 
 // ✅ Order Charges Backup (your existing one)
 function addOrderChargeBackup(orderCharge) {
@@ -2279,6 +2275,534 @@ function addPosRegisterBackup(register) {
   });
 }
 
+function addPredefinedAmountBackup(amount) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR IGNORE INTO predefined_amounts (
+          id, restaurant_id, amount,
+          created_at, updated_at,
+          newfield1, newfield2, newfield3, isSync
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        amount.id,
+        amount.restaurant_id,
+        amount.amount,
+        amount.created_at,
+        amount.updated_at,
+        amount.newfield1 || null,
+        amount.newfield2 || null,
+        amount.newfield3 || null,
+        1
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert predefined_amount:", err);
+      reject(err);
+    }
+  });
+}
+
+function addPrinterBackup(printer) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR IGNORE INTO printers (
+          id, restaurant_id, branch_id, name, printing_choice,
+          kots, orders, print_format, invoice_qr_code, open_cash_drawer,
+          ipv4_address, thermal_or_nonthermal, share_name, type, profile,
+          is_active, is_default, char_per_line, ip_address, port,
+          path, printer_name, created_at, updated_at,
+          newfield1, newfield2, newfield3, isSync
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        printer.id,
+        printer.restaurant_id,
+        printer.branch_id,
+        printer.name,
+        printer.printing_choice,
+        printer.kots,
+        printer.orders,
+        printer.print_format,
+        printer.invoice_qr_code,
+        printer.open_cash_drawer,
+        printer.ipv4_address,
+        printer.thermal_or_nonthermal,
+        printer.share_name,
+        printer.type,
+        printer.profile,
+        printer.is_active,
+        printer.is_default,
+        printer.char_per_line,
+        printer.ip_address,
+        printer.port,
+        printer.path,
+        printer.printer_name,
+        printer.created_at,
+        printer.updated_at,
+        printer.newfield1 || null,
+        printer.newfield2 || null,
+        printer.newfield3 || null,
+        1
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert printer:", err);
+      reject(err);
+    }
+  });
+}
+
+function addPurchaseOrderBackup(order) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR IGNORE INTO purchase_orders (
+          id, po_number, branch_id, supplier_id, order_date,
+          expected_delivery_date, total_amount, status, notes,
+          created_by, created_at, updated_at,
+          newfield1, newfield2, newfield3, isSync
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        order.id,
+        order.po_number,
+        order.branch_id,
+        order.supplier_id,
+        order.order_date,
+        order.expected_delivery_date,
+        order.total_amount,
+        order.status,
+        order.notes,
+        order.created_by,
+        order.created_at,
+        order.updated_at,
+        order.newfield1 || null,
+        order.newfield2 || null,
+        order.newfield3 || null,
+        1
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert purchase_order:", err);
+      reject(err);
+    }
+  });
+}
+
+function addPurchaseOrderItemBackup(item) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR IGNORE INTO purchase_order_items (
+          id, purchase_order_id, inventory_item_id,
+          quantity, received_quantity, unit_price, subtotal,
+          created_at, updated_at,
+          newfield1, newfield2, newfield3, isSync
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        item.id,
+        item.purchase_order_id,
+        item.inventory_item_id,
+        item.quantity,
+        item.received_quantity,
+        item.unit_price,
+        item.subtotal,
+        item.created_at,
+        item.updated_at,
+        item.newfield1 || null,
+        item.newfield2 || null,
+        item.newfield3 || null,
+        1
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert purchase_order_item:", err);
+      reject(err);
+    }
+  });
+}
+
+function addPusherSettingBackup(setting) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR IGNORE INTO pusher_settings (
+          id, beamer_status, instance_id, beam_secret,
+          created_at, updated_at,
+          pusher_broadcast, pusher_app_id, pusher_key,
+          pusher_secret, pusher_cluster, is_enabled_pusher_broadcast,
+          newfield1, newfield2, newfield3, isSync
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        setting.id,
+        setting.beamer_status,
+        setting.instance_id,
+        setting.beam_secret,
+        setting.created_at,
+        setting.updated_at,
+        setting.pusher_broadcast,
+        setting.pusher_app_id,
+        setting.pusher_key,
+        setting.pusher_secret,
+        setting.pusher_cluster,
+        setting.is_enabled_pusher_broadcast ? 1 : 0, // normalize boolean
+        setting.newfield1 || null,
+        setting.newfield2 || null,
+        setting.newfield3 || null,
+        1
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert pusher_setting:", err);
+      reject(err);
+    }
+  });
+}
+
+function addRazorpayPaymentBackup(payment) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR IGNORE INTO razorpay_payments (
+          id, order_id, payment_date, amount, payment_status,
+          payment_error_response, razorpay_order_id, razorpay_payment_id,
+          razorpay_signature, created_at, updated_at,
+          newfield1, newfield2, newfield3, isSync
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        payment.id,
+        payment.order_id,
+        payment.payment_date,
+        payment.amount,
+        payment.payment_status,
+        payment.payment_error_response,
+        payment.razorpay_order_id,
+        payment.razorpay_payment_id,
+        payment.razorpay_signature,
+        payment.created_at,
+        payment.updated_at,
+        payment.newfield1 || null,
+        payment.newfield2 || null,
+        payment.newfield3 || null,
+        1
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert razorpay_payment:", err);
+      reject(err);
+    }
+  });
+}
+
+function addReceiptSettingBackup(setting) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR IGNORE INTO receipt_settings (
+          id, restaurant_id, show_customer_name, show_customer_address,
+          show_table_number, payment_qr_code, show_payment_qr_code,
+          show_waiter, show_total_guest, show_restaurant_logo,
+          show_tax, show_payment_details, receipt_notes,
+          created_at, updated_at,
+          newfield1, newfield2, newfield3, isSync
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        setting.id,
+        setting.restaurant_id,
+        setting.show_customer_name,
+        setting.show_customer_address,
+        setting.show_table_number,
+        setting.payment_qr_code,
+        setting.show_payment_qr_code,
+        setting.show_waiter,
+        setting.show_total_guest,
+        setting.show_restaurant_logo,
+        setting.show_tax,
+        setting.show_payment_details,
+        setting.receipt_notes,
+        setting.created_at,
+        setting.updated_at,
+        setting.newfield1 || null,
+        setting.newfield2 || null,
+        setting.newfield3 || null,
+        1
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert receipt_setting:", err);
+      reject(err);
+    }
+  });
+}
+
+function addRecipeBackup(recipe) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR IGNORE INTO recipes (
+          id, menu_item_id, inventory_item_id, quantity, unit_id,
+          created_at, updated_at,
+          newfield1, newfield2, newfield3, isSync
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        recipe.id,
+        recipe.menu_item_id,
+        recipe.inventory_item_id,
+        recipe.quantity,
+        recipe.unit_id,
+        recipe.created_at,
+        recipe.updated_at,
+        recipe.newfield1 || null,
+        recipe.newfield2 || null,
+        recipe.newfield3 || null,
+        1
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert recipe:", err);
+      reject(err);
+    }
+  });
+}
+
+function addReservationBackup(reservation) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR IGNORE INTO reservations (
+          id, branch_id, table_id, customer_id, reservation_date_time,
+          party_size, special_requests, reservation_status,
+          reservation_slot_type, created_at, updated_at,
+          newfield1, newfield2, newfield3, isSync
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        reservation.id,
+        reservation.branch_id,
+        reservation.table_id,
+        reservation.customer_id,
+        reservation.reservation_date_time,
+        reservation.party_size,
+        reservation.special_requests,
+        reservation.reservation_status,
+        reservation.reservation_slot_type,
+        reservation.created_at,
+        reservation.updated_at,
+        reservation.newfield1 || null,
+        reservation.newfield2 || null,
+        reservation.newfield3 || null,
+        1
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert reservation:", err);
+      reject(err);
+    }
+  });
+}
+
+function addReservationSettingBackup(setting) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR IGNORE INTO reservation_settings (
+          id, branch_id, day_of_week, time_slot_start, time_slot_end,
+          time_slot_difference, slot_type, available,
+          created_at, updated_at,
+          newfield1, newfield2, newfield3, isSync
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        setting.id,
+        setting.branch_id,
+        setting.day_of_week,
+        setting.time_slot_start,
+        setting.time_slot_end,
+        setting.time_slot_difference,
+        setting.slot_type,
+        setting.available,
+        setting.created_at,
+        setting.updated_at,
+        setting.newfield1 || null,
+        setting.newfield2 || null,
+        setting.newfield3 || null,
+        1
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert reservation_setting:", err);
+      reject(err);
+    }
+  });
+}
+
+function addRestaurantChargeBackup(charge) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR IGNORE INTO restaurant_charges (
+          id, restaurant_id, charge_name, charge_type, charge_value,
+          order_types, is_enabled,
+          created_at, updated_at,
+          newfield1, newfield2, newfield3, isSync
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        charge.id,
+        charge.restaurant_id,
+        charge.charge_name,
+        charge.charge_type,
+        charge.charge_value,
+        // store array as JSON string
+        JSON.stringify(charge.order_types || []),
+        charge.is_enabled,
+        charge.created_at,
+        charge.updated_at,
+        charge.newfield1 || null,
+        charge.newfield2 || null,
+        charge.newfield3 || null,
+        1
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert restaurant_charge:", err);
+      reject(err);
+    }
+  });
+}
+function addRestaurantPaymentBackup(payment) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO restaurant_payments (
+          id, restaurant_id, amount, status, payment_source,
+          razorpay_order_id, razorpay_payment_id, razorpay_signature,
+          transaction_id, payment_date_time, created_at, updated_at,
+          stripe_payment_intent, stripe_session_id,
+          package_id, package_type, currency_id,
+          flutterwave_transaction_id, flutterwave_payment_ref,
+          paypal_payment_id,
+          newfield1, newfield2, newfield3, isSync
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        payment.id,
+        payment.restaurant_id,
+        payment.amount,
+        payment.status,
+        payment.payment_source,
+        payment.razorpay_order_id,
+        payment.razorpay_payment_id,
+        payment.razorpay_signature,
+        payment.transaction_id,
+        payment.payment_date_time,
+        payment.created_at,
+        payment.updated_at,
+        payment.stripe_payment_intent,
+        payment.stripe_session_id,
+        payment.package_id,
+        payment.package_type,
+        payment.currency_id,
+        payment.flutterwave_transaction_id,
+        payment.flutterwave_payment_ref,
+        payment.paypal_payment_id,
+        payment.newfield1,
+        payment.newfield2,
+        payment.newfield3,
+        1
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert restaurant_payment:", err);
+      reject(err);
+    }
+  });
+}
+
+function addRestaurantTaxBackup(tax) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO restaurant_taxes (
+          id, restaurant_id, tax_id, tax_name, tax_inclusive,
+          created_at, updated_at,
+          newfield1, newfield2, newfield3, isSync
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        tax.id,
+        tax.restaurant_id,
+        tax.tax_id,
+        tax.tax_name,
+        tax.tax_inclusive,
+        tax.created_at,
+        tax.updated_at,
+        tax.newfield1,
+        tax.newfield2,
+        tax.newfield3,
+        1
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert restaurant_tax:", err);
+      reject(err);
+    }
+  });
+}
+
+function addRoleBackup(role) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO roles (
+          id, name, display_name, guard_name,
+          created_at, updated_at, restaurant_id,
+          newfield1, newfield2, newfield3, isSync
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        role.id,
+        role.name,
+        role.display_name,
+        role.guard_name,
+        role.created_at,
+        role.updated_at,
+        role.restaurant_id,
+        role.newfield1,
+        role.newfield2,
+        role.newfield3,
+        1
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert role:", err);
+      reject(err);
+    }
+  });
+}
+function addRoleHasPermissionBackup(roleHasPermission) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO role_has_permissions (
+          id, permission_id, role_id,
+          created_at, updated_at, restaurant_id,
+          newfield1, newfield2, newfield3, isSync
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        roleHasPermission.id,
+        roleHasPermission.permission_id,
+        roleHasPermission.role_id,
+        roleHasPermission.created_at || null,
+        roleHasPermission.updated_at || null,
+        roleHasPermission.restaurant_id || null,
+        roleHasPermission.newfield1 || null,
+        roleHasPermission.newfield2 || null,
+        roleHasPermission.newfield3 || null,
+        1
+      );
+      resolve(true);
+    } catch (err) {
+      console.error("❌ Failed to insert role_has_permission:", err);
+      reject(err);
+    }
+  });
+}
+
 module.exports = { 
     addAreaBackup,
     addBranchDeliverySettingBackup,
@@ -2351,5 +2875,20 @@ module.exports = {
     addPaystackPaymentBackup,
     addPermissionBackup,
     addPersonalAccessTokenBackup,
-    addPosRegisterBackup
+    addPosRegisterBackup,
+    addPredefinedAmountBackup,
+    addPrinterBackup,
+    addPurchaseOrderBackup,
+    addPurchaseOrderItemBackup,
+    addPusherSettingBackup,
+    addRazorpayPaymentBackup,
+    addReceiptSettingBackup,
+    addRecipeBackup,
+    addReservationBackup,
+    addReservationSettingBackup,
+    addRestaurantChargeBackup,
+    addRestaurantPaymentBackup,
+    addRestaurantTaxBackup,
+    addRoleBackup,
+    addRoleHasPermissionBackup
  };
