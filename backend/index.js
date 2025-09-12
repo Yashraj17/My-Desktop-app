@@ -8,6 +8,9 @@ const menuItemRoutes = require("./routes/menuItemRoutes");
 const menuRoutes = require("./routes/menuRoutes");
 const areaRoutes = require("./routes/areaRoutes");
 const tableRoutes = require("./routes/tableRoutes");
+const customerRoutes = require("./routes/customerRoutes");
+const deliveryExecutiveRoutes = require("./routes/deliveryExecutiveRoutes");
+const staffRoutes = require("./routes/staffRoutes");
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -30,4 +33,7 @@ app.whenReady().then(() => {
   createWindow();
   areaRoutes();
   tableRoutes();
+  customerRoutes();
+  deliveryExecutiveRoutes();
+  staffRoutes();
 });

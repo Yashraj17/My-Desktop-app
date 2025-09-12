@@ -42,44 +42,62 @@ const columns = [
         width: "200px",
     },
     {
-        accessorKey: "email",
+        accessorKey: "phone",
         header: ({ column }) => (
             <Button
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 className="p-0 font-medium cursor-pointer text-gray-700 hover:bg-transparent"
             >
-                Email Address
+                Phone
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
         cell: ({ row }) => (
             <div className="text-gray-600">
-                {row.getValue("email")} 
+                {row.getValue("phone")} 
             </div>
         ),
         width: "200px",
     },
     {
-        accessorKey: "role",
+        accessorKey: "phone",
         header: ({ column }) => (
             <Button
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 className="p-0 font-medium cursor-pointer text-gray-700 hover:bg-transparent"
             >
-                Role
+                Status
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
-        // cell: ({ row }) => (
-        //    <Badge className={'bg-gray-200 text-gray-500 hover:bg-gray-200 mr-2'}>
-        //             0 ORDER
-        //         </Badge>
-        // ),
+        cell: ({ row }) => (
+           <Badge className={'bg-gray-200 text-gray-500 hover:bg-gray-200 mr-2'}>
+                    0 ORDER
+                </Badge>
+        ),
         width: "200px",
     },
-
+     {
+        accessorKey: "status",
+        header: ({ column }) => (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                className="p-0 font-medium cursor-pointer text-gray-700 hover:bg-transparent"
+            >
+                Total Orders
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+        ),
+        cell: ({ row }) => (
+           <Badge className={'bg-green-100 text-green-700 hover:bg-green-100 border-green-700 mr-2'}>
+                    Available
+                </Badge>
+        ),
+        width: "200px",
+    },
     {
         id: "actions",
         header: "Actions",
@@ -118,23 +136,23 @@ const columns = [
     },
 ];
 
-export function Staff() {
+export function DeliveryExecutive() {
     const [sorting, setSorting] = useState([]);
     const [globalFilter, setGlobalFilter] = useState(""); // 🔹 search state
-    const [staff, setStaff] = useState([]);
+    const [deliveryExecutive, setDeliveryExecutive] = useState([]);
 
     const loadData = async () => {
         try {
             const data = await window.api.getDeliveryExecutives();
-            setStaff(data);
-            console.log("hello Staff data",data)
+            setDeliveryExecutive(data);
+            console.log("hello delivery Executive",data)
         } catch (error) {
             console.error("Failed to load customer:", error);
         }
     };
 
     const table = useReactTable({
-        data: staff,
+        data: deliveryExecutive,
         columns,
         onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
@@ -157,7 +175,7 @@ export function Staff() {
                 <div className="w-full mb-1">
                     <div className="mb-4">
                         <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-                            Staff
+                            Delivery Executive
                         </h1>
                     </div>
 
@@ -178,7 +196,7 @@ export function Staff() {
                                 Export
                             </Button>
                             <Button className="bg-[#000080] cursor-pointer hover:bg-[#000060] dark:text-white">
-                                Add Member
+                                Add Executive
                             </Button>
                         </div>
                     </div>

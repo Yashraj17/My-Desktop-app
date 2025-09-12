@@ -17,6 +17,10 @@ const restaurantBackupRoutes= require("./backend/routes/restaurantBackupRoutes")
 const backupRoutes= require("./backend/routes/backupRoutes");
 const areaRoutes = require("./backend/routes/areaRoutes");
 const tableRoutes = require("./backend/routes/tableRoutes");
+const customerRoutes = require("./backend/routes/customerRoutes");
+const deliveryExecutiveRoutes = require("./backend/routes/deliveryExecutiveRoutes");
+const staffRoutes = require("./backend/routes/staffRoutes");
+
 
 
 const Store = require("electron-store");
@@ -2222,6 +2226,9 @@ app.whenReady().then(() => {
   backupRoutes();
   areaRoutes();
   tableRoutes();
+  customerRoutes();
+  deliveryExecutiveRoutes();
+  staffRoutes();
   createWindow();
 
   app.on("activate", () => {
