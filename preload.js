@@ -327,6 +327,51 @@ contextBridge.exposeInMainWorld("api", {
            /// Staff functions
     getStaffs: (search = "") => ipcRenderer.invoke("get-staff", search),
 
+        //addPredefinedAmountBackup
+        addPredefinedAmountBackup: (Data) =>
+    ipcRenderer.invoke("add-predefined-amount-backup", Data),
+        //addPrinterBackup
+        addPrinterBackup: (Data) =>
+    ipcRenderer.invoke("add-printer-backup", Data),
+        //addPurchaseOrderBackup
+        addPurchaseOrderBackup: (Data) =>
+    ipcRenderer.invoke("add-purchase-order-backup", Data),
+        //addPurchaseOrderItemBackup
+        addPurchaseOrderItemBackup: (Data) =>
+    ipcRenderer.invoke("add-purchase-order-item-backup", Data),
+        //addPusherSettingBackup
+        addPusherSettingBackup: (Data) =>
+    ipcRenderer.invoke("add-pusher-setting-backup", Data),
+        //addRazorpayPaymentBackup
+        addRazorpayPaymentBackup: (Data) =>
+    ipcRenderer.invoke("add-razorpay-payment-backup", Data),
+        //addReceiptSettingBackup
+        addReceiptSettingBackup: (Data) =>
+    ipcRenderer.invoke("add-receipt-setting-backup", Data),
+        //addRecipeBackup
+        addRecipeBackup: (Data) =>
+    ipcRenderer.invoke("add-recipe-backup", Data),
+        //addReservationBackup
+        addReservationBackup: (Data) =>
+    ipcRenderer.invoke("add-reservation-backup", Data),
+        //addReservationSettingBackup
+        addReservationSettingBackup: (Data) =>
+    ipcRenderer.invoke("add-reservation-setting-backup", Data),
+        //addRestaurantChargeBackup
+        addRestaurantChargeBackup: (Data) =>
+    ipcRenderer.invoke("add-restaurant-charge-backup", Data),
+        //addRestaurantPaymentBackup
+        addRestaurantPaymentBackup: (Data) =>
+    ipcRenderer.invoke("add-restaurant-payment-backup", Data),
+        //addRestaurantTaxBackup
+        addRestaurantTaxBackup: (Data) =>
+    ipcRenderer.invoke("add-restaurant-tax-backup", Data),
+        //addRoleBackup
+         addRoleBackup: (Data) =>
+    ipcRenderer.invoke("add-role-backup", Data),
+         //addRoleHasPermissionBackup
+         addRoleHasPermissionBackup: (Data) =>
+    ipcRenderer.invoke("add-role-has-permission-backup", Data),
 });
 
 

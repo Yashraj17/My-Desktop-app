@@ -1612,6 +1612,18 @@ function initDatabase() {
   "isSync" BOOLEAN DEFAULT 0
 );`,
 
+//predefined_amounts
+`CREATE TABLE IF NOT EXISTS "predefined_amounts" (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  "restaurant_id" TEXT,
+  "amount" TEXT,
+  "created_at" TEXT,
+  "updated_at" TEXT,
+  "newfield1" TEXT,
+  "newfield2" TEXT,
+  "newfield3" TEXT,
+  "isSync" BOOLEAN DEFAULT 0
+);`,
 
     // printers
     `CREATE TABLE IF NOT EXISTS "printers" (
@@ -1690,6 +1702,12 @@ function initDatabase() {
   "beam_secret" TEXT   ,
   "created_at" TEXT   ,
   "updated_at" TEXT   ,
+  "pusher_broadcast" TEXT   ,
+  "pusher_app_id" TEXT   ,
+  "pusher_key" TEXT   ,
+  "pusher_secret" TEXT   ,
+  "pusher_cluster" TEXT   ,
+  "is_enabled_pusher_broadcast" TEXT   ,
   "newfield1" TEXT,
   "newfield2" TEXT,
   "newfield3" TEXT,
@@ -1729,6 +1747,7 @@ function initDatabase() {
   "show_restaurant_logo" INTEGER NOT NULL DEFAULT '0' ,
   "show_tax" INTEGER NOT NULL DEFAULT '0' ,
   "show_payment_details" INTEGER NOT NULL DEFAULT '1' ,
+  "receipt_notes" TEXT   ,
   "created_at" TEXT   ,
   "updated_at" TEXT   ,
   "newfield1" TEXT,
@@ -1840,6 +1859,7 @@ function initDatabase() {
   "restaurant_id" TEXT NOT NULL  ,
   "tax_id" TEXT   ,
   "tax_name" TEXT   ,
+  "tax_inclusive" TEXT   ,
   "created_at" TEXT   ,
   "updated_at" TEXT   ,
   "newfield1" TEXT,
@@ -1924,6 +1944,20 @@ function initDatabase() {
   "name" TEXT NOT NULL  ,
   "display_name" TEXT   ,
   "guard_name" TEXT NOT NULL  ,
+  "created_at" TEXT   ,
+  "updated_at" TEXT   ,
+  "restaurant_id" TEXT   ,
+  "newfield1" TEXT,
+  "newfield2" TEXT,
+  "newfield3" TEXT,
+  "isSync" BOOLEAN DEFAULT 0
+);`,
+
+//role_has_permissions
+ `CREATE TABLE IF NOT EXISTS "role_has_permissions" (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  "permission_id" TEXT ,
+  "role_id" TEXT ,
   "created_at" TEXT   ,
   "updated_at" TEXT   ,
   "restaurant_id" TEXT   ,

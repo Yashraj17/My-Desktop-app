@@ -57,6 +57,20 @@ import { syncPaystackPayments } from "../dataSync/syncPaystackPayments";
 import { syncPermissions } from "../dataSync/syncPermissions";
 import { syncPersonalAccessTokens } from "../dataSync/syncPersonalAccessTokens";
 import { syncPosRegisters } from "../dataSync/syncPosRegisters";
+import { syncPredefinedAmounts } from "../dataSync/syncPredefinedAmounts";
+import { syncPrinters } from "../dataSync/syncPrinters";
+import { syncPurchaseOrders } from "../dataSync/syncPurchaseOrders";
+import { syncPurchaseOrderItems } from "../dataSync/syncPurchaseOrderItems";
+import { syncPusherSettings } from "../dataSync/syncPusherSettings";
+import { syncRazorpayPayments } from "../dataSync/syncRazorpayPayments";
+import { syncReceiptSettings } from "../dataSync/syncReceiptSettings";
+import { syncRecipes } from "../dataSync/syncRecipes";
+import { syncReservations } from "../dataSync/syncReservations";
+import { syncReservationSettings } from "../dataSync/syncReservationSettings";
+import { syncRestaurantCharges } from "../dataSync/syncRestaurantCharges";
+import { syncRestaurantPayments } from "../dataSync/syncRestaurantPayments";
+import { syncRestaurantTaxes } from "../dataSync/syncRestaurantTaxes";
+import { syncRolesAndPermissions } from "../dataSync/syncRolesAndPermissions";
 
 function createApi(subdomain, token) {
   return axios.create({
@@ -73,7 +87,7 @@ export async function syncMasterData(subdomain, token, setProgress, setStatus, u
 
   try {
     let progress = 0;
-    const totalSteps = 90;
+    const totalSteps = 100;
     const updateProgress = () => {
       if (setProgress) {
         progress += (1 / totalSteps) * 100;
@@ -654,6 +668,109 @@ setStatus?.("Syncing paystackpayment...");
   setStatus?.("Syncing pos registers...");
   const lastPOS = await getLastSyncTime("pos_registers", fromDatetime);
   await syncPosRegisters(subdomain, user.restaurant_id, token, lastPOS, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+
+//syncPredefinedAmounts
+ if (user.restaurant_id) {
+  setStatus?.("Syncing predefined amounts...");
+  const lastPOS = await getLastSyncTime("predefined_amounts", fromDatetime);
+  await syncPredefinedAmounts(subdomain, user.restaurant_id, token, lastPOS, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+
+//syncPrinters
+ if (user.branch_id) {
+ setStatus?.("Syncing printer...");
+  const lastorders = await getLastSyncTime("printers", fromDatetime);
+  await syncPrinters(subdomain,user.branch_id, token, lastorders, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+
+//syncPurchaseOrders
+if (user.branch_id) {
+ setStatus?.("Syncing purchase_orders...");
+  const lasto = await getLastSyncTime("purchase_orders", fromDatetime);
+  await syncPurchaseOrders(subdomain,user.branch_id, token, lasto, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+//syncPurchaseOrderItems
+setStatus?.("Syncing purchase order items...");
+  const lasto = await getLastSyncTime("purchase_order_items", fromDatetime);
+  await syncPurchaseOrderItems(subdomain,token, lasto, toDatetime, setProgress, setStatus);
+  updateProgress();
+
+  //syncPusherSettings
+  setStatus?.("Syncing pusher_settings...");
+  const last_pusher_settings = await getLastSyncTime("pusher_settings", fromDatetime);
+  await syncPusherSettings(subdomain,token, last_pusher_settings, toDatetime, setProgress, setStatus);
+  updateProgress();
+
+  //syncRazorpayPayments
+  setStatus?.("Syncing razorpay_payments...");
+  const last_razorpay_payments = await getLastSyncTime("razorpay_payments", fromDatetime);
+  await syncRazorpayPayments(subdomain,token, last_razorpay_payments, toDatetime, setProgress, setStatus);
+  updateProgress();
+
+  //syncReceiptSettings
+  if (user.restaurant_id) {
+  setStatus?.("Syncing receipt_settings...");
+  const last_receipt_settings = await getLastSyncTime("receipt_settings", fromDatetime);
+  await syncReceiptSettings(subdomain, user.restaurant_id, token, last_receipt_settings, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+
+//syncRecipes
+setStatus?.("Syncing recipes...");
+  const last_recipes = await getLastSyncTime("recipes", fromDatetime);
+  await syncRecipes(subdomain,token, last_recipes, toDatetime, setProgress, setStatus);
+  updateProgress();
+
+  //syncReservations
+  if (user.branch_id) {
+ setStatus?.("Syncing reservations...");
+  const lasto = await getLastSyncTime("reservations", fromDatetime);
+  await syncReservations(subdomain,user.branch_id, token, lasto, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+
+//syncReservationSettings
+ if (user.branch_id) {
+ setStatus?.("Syncing reservation_settings...");
+  const lasto = await getLastSyncTime("reservation_settings", fromDatetime);
+  await syncReservationSettings(subdomain,user.branch_id, token, lasto, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+
+//syncRestaurantCharges
+if (user.restaurant_id) {
+  setStatus?.("Syncing restaurant_charges...");
+  const last_date = await getLastSyncTime("restaurant_charges", fromDatetime);
+  await syncRestaurantCharges(subdomain, user.restaurant_id, token, last_date, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+
+//syncRestaurantPayments
+if (user.restaurant_id) {
+  setStatus?.("Syncing restaurant_payments...");
+  const last_date = await getLastSyncTime("restaurant_payments", fromDatetime);
+  await syncRestaurantPayments(subdomain, user.restaurant_id, token, last_date, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+
+//syncRestaurantTaxes
+if (user.restaurant_id) {
+  setStatus?.("Syncing restaurant_taxes...");
+  const last_date = await getLastSyncTime("restaurant_taxes", fromDatetime);
+  await syncRestaurantTaxes(subdomain, user.restaurant_id, token, last_date, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+
+//syncRolesAndPermissions
+if (user.restaurant_id) {
+  setStatus?.("Syncing roles...");
+  const last_date = await getLastSyncTime("roles", fromDatetime);
+  await syncRolesAndPermissions(subdomain, user.restaurant_id, token, last_date, toDatetime, setProgress, setStatus);
   updateProgress();
 }
     setStatus?.("Sync complete ✅");
