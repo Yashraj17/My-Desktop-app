@@ -199,6 +199,82 @@ function BackupRoutes() {
   ipcMain.handle("save-sync-time", (event, data) => {
     return controller.saveSyncTime(data);
   });
+  //getSyncTime
+  ipcMain.handle("get-sync-time", (event, data) => {
+    return controller.getSyncTime(data);
+  });
+  //addOrderChargeBackup
+  ipcMain.handle("add-order-charges-backup", (event, data) => {
+    return controller.addOrderChargeBackup(data);
+  });
+  //addOrderBackup
+  ipcMain.handle("add-order-backup", (event, data) => {
+    return controller.addOrderBackup(data);
+  });
+  //addOrderItemBackup
+  ipcMain.handle("add-order-item-backup", (event, data) => {
+    return controller.addOrderItemBackup(data);
+  });
+  //addOrderTaxBackup
+  ipcMain.handle("add-order-tax-backup", (event, data) => {
+    return controller.addOrderTaxBackup(data);
+  });
+  //addOrderItemModifierOptionBackup
+  ipcMain.handle("add-order-item-modifier-option-backup", (event, data) => {
+    return controller.addOrderItemModifierOptionBackup(data);
+  });
+  //addOrderHistoryBackup
+  ipcMain.handle("add-order-history-backup", (event, data) => {
+    return controller.addOrderHistoryBackup(data);
+  });
+  //addOrderPlaceBackup
+  ipcMain.handle("add-order-place-backup", (event, data) => {
+    return controller.addOrderPlaceBackup(data);
+  });
+  //addPackageModuleBackup
+  ipcMain.handle("add-package-module-backup", (event, data) => {
+    return controller.addPackageModuleBackup(data);
+  });
+  //addPasswordResetTokenBackup
+  ipcMain.handle("add-password-reset-token-backup", (event, data) => {
+    return controller.addPasswordResetTokenBackup(data);
+  });
+  //addPayfastPaymentBackup
+  ipcMain.handle("add-payfast-payment-backup", (event, data) => {
+    return controller.addPayfastPaymentBackup(data);
+  });
+  //addPaymentBackup
+  ipcMain.handle("add-payment-backup", (event, data) => {
+    return controller.addPaymentBackup(data);
+  });
+  //addPaymentBackup1
+  ipcMain.handle("add-payment-backup1", (event, data) => {
+    return controller.addPaymentBackup1(data);
+  });
+  //addPaymentMethodBackup
+  ipcMain.handle("add-payment-method-backup", (event, data) => {
+    return controller.addPaymentMethodBackup(data);
+  });
+  //addPaypalPaymentBackup
+  ipcMain.handle("add-paypal-payment-backup", (event, data) => {
+    return controller.addPaypalPaymentBackup(data);
+  });
+  //addPaystackPaymentBackup
+  ipcMain.handle("add-paystack-payment-backup", (event, data) => {
+    return controller.addPaystackPaymentBackup(data);
+  });
+  //addPermissionBackup
+  ipcMain.handle("add-permission-backup", (event, data) => {
+    return controller.addPermissionBackup(data);
+  });
+  //addPersonalAccessTokenBackup
+  ipcMain.handle("add-personal-access-token-backup", (event, data) => {
+    return controller.addPersonalAccessTokenBackup(data);
+  });
+  //addPosRegisterBackup
+  ipcMain.handle("add-pos-register-backup", (event, data) => {
+    return controller.addPosRegisterBackup(data);
+  });
 }
 
 module.exports = BackupRoutes;

@@ -1,5 +1,6 @@
 import axios from "axios";
 
+// 🔹 Normalizers
 function normalizeMenuItem(item) {
   return {
     ...item,
@@ -32,61 +33,67 @@ function normalizeVariation(v) {
   };
 }
 
-export async function syncMenuItems(subdomain, branchId, token, fromDatetime, toDatetime, setProgress, setStatus) {
+// 🔹 Syncer (all at once, filter by ID)
+export async function syncMenuItems(
+  subdomain,
+  branchId,
+  token,
+  fromDatetime,
+  toDatetime,
+  setProgress,
+  setStatus
+) {
   try {
-    setStatus?.("Syncing menu items...");
+    setStatus?.("📦 Fetching menu data...");
 
-    const url = `${subdomain}/api/menu/items?branch_id=${branchId}&from_datetime=${encodeURIComponent(
-      fromDatetime
-    )}&to_datetime=${encodeURIComponent(toDatetime)}`;
+    // 1️⃣ Fetch all three datasets at once
+    const [itemsRes, trRes, varRes] = await Promise.all([
+      axios.get(
+        `${subdomain}/api/menu/items?branch_id=${branchId}&from_datetime=${encodeURIComponent(
+          fromDatetime
+        )}&to_datetime=${encodeURIComponent(toDatetime)}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      ),
+      axios.get(`${subdomain}/api/menu/item-translations`, {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+      axios.get(`${subdomain}/api/menu/item-variations`, {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    ]);
 
-    const response = await axios.get(url, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const menuItems = itemsRes.data?.data || [];
+    const translations = trRes.data?.data || [];
+    const variations = varRes.data?.data || [];
 
-    if (response.data.status && Array.isArray(response.data.data)) {
-      const menuItems = response.data.data;
+    // Build quick lookup sets
+    const itemIds = new Set(menuItems.map((m) => m.id));
 
-      for (let i = 0; i < menuItems.length; i++) {
-        const rawItem = menuItems[i];
-        const item = normalizeMenuItem(rawItem);
-        const displayName = item.name || rawItem.item_name || `Item-${item.id}`;
-
-        // Save main item
-        setStatus?.(`Saving menu item: ${displayName}...`);
-        await window.api.addMenuItemBackup(item);
-
-        // Save translations
-        if (rawItem.translations?.length > 0) {
-          for (let tr of rawItem.translations) {
-            await window.api.addMenuItemTranslationBackup(normalizeTranslation(tr));
-          }
-        }
-
-        // Save variations
-        try {
-          setStatus?.(`Fetching variations for item: ${displayName}...`);
-          const varUrl = `${subdomain}/api/menu/item-variations?menu_item_id=${item.id}`;
-          const varResponse = await axios.get(varUrl, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-
-          if (varResponse.data.status && Array.isArray(varResponse.data.data)) {
-            for (let v of varResponse.data.data) {
-              await window.api.addMenuItemVariationBackup(normalizeVariation(v));
-            }
-          }
-        } catch (varErr) {
-          console.warn(`⚠️ Failed to sync variations for item ${item.id}`, varErr);
-          setStatus?.(`⚠️ Variations sync failed for ${displayName}`);
-        }
-      }
-
-      // ✅ Save sync times once at the end
-      await window.api.saveSyncTime("menu_items", toDatetime);
-      await window.api.saveSyncTime("menu_item_translations", toDatetime);
-      await window.api.saveSyncTime("menu_item_variations", toDatetime);
+    // 2️⃣ Save menu items
+    for (const raw of menuItems) {
+      const item = normalizeMenuItem(raw);
+      await window.api.addMenuItemBackup(item);
+      setStatus?.(`💾 Saved item ${item.id} - ${item.name || raw.item_name}`);
     }
+
+    // 3️⃣ Save translations linked to valid menu items
+    for (const tr of translations) {
+      if (itemIds.has(tr.menu_item_id)) {
+        await window.api.addMenuItemTranslationBackup(normalizeTranslation(tr));
+      }
+    }
+
+    // 4️⃣ Save variations linked to valid menu items
+    for (const v of variations) {
+      if (itemIds.has(v.menu_item_id)) {
+        await window.api.addMenuItemVariationBackup(normalizeVariation(v));
+      }
+    }
+
+    // ✅ Save sync times once
+    await window.api.saveSyncTime("menu_items", toDatetime);
+    await window.api.saveSyncTime("menu_item_translations", toDatetime);
+    await window.api.saveSyncTime("menu_item_variations", toDatetime);
 
     setStatus?.("✅ Menu items sync completed.");
   } catch (err) {

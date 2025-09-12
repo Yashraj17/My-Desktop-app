@@ -253,6 +253,65 @@ contextBridge.exposeInMainWorld("api", {
     updateTable: (id, table) => ipcRenderer.invoke("update-table", id, table),
     deleteTable: (id) => ipcRenderer.invoke("delete-table", id),
 
+      //getSyncTime
+      getSyncTime: (Data) =>
+    ipcRenderer.invoke("get-sync-time", Data),
+      //addOrderChargeBackup
+      addOrderChargeBackup: (Data) =>
+    ipcRenderer.invoke("add-order-charges-backup", Data),
+      //addOrderBackup
+      addOrderBackup: (Data) =>
+    ipcRenderer.invoke("add-order-backup", Data),
+      //addOrderItemBackup
+      addOrderItemBackup: (Data) =>
+    ipcRenderer.invoke("add-order-item-backup", Data),
+      //addOrderTaxBackup
+      addOrderTaxBackup: (Data) =>
+    ipcRenderer.invoke("add-order-tax-backup", Data),
+      //addOrderItemModifierOptionBackup
+      addOrderItemModifierOptionBackup: (Data) =>
+    ipcRenderer.invoke("add-order-item-modifier-option-backup", Data),
+      //addOrderHistoryBackup
+       addOrderHistoryBackup: (Data) =>
+    ipcRenderer.invoke("add-order-history-backup", Data),
+       //addOrderPlaceBackup
+       addOrderPlaceBackup: (Data) =>
+    ipcRenderer.invoke("add-order-place-backup", Data),
+       //addPackageModuleBackup
+       addPackageModuleBackup: (Data) =>
+    ipcRenderer.invoke("add-package-module-backup", Data),
+       //addPasswordResetTokenBackup
+       addPasswordResetTokenBackup: (Data) =>
+    ipcRenderer.invoke("add-password-reset-token-backup", Data),
+       //addPayfastPaymentBackup
+       addPayfastPaymentBackup: (Data) =>
+    ipcRenderer.invoke("add-payfast-payment-backup", Data),
+       //addPaymentBackup
+       addPaymentBackup: (Data) =>
+    ipcRenderer.invoke("add-payment-backup", Data),
+       //addPaymentBackup1
+       addPaymentBackup1: (Data) =>
+    ipcRenderer.invoke("add-payment-backup1", Data),
+       //addPaymentMethodBackup
+       addPaymentMethodBackup: (Data) =>
+    ipcRenderer.invoke("add-payment-method-backup", Data),
+       //addPaypalPaymentBackup
+       addPaypalPaymentBackup: (Data) =>
+    ipcRenderer.invoke("add-paypal-payment-backup", Data),
+       //addPaystackPaymentBackup
+       addPaystackPaymentBackup: (Data) =>
+    ipcRenderer.invoke("add-paystack-payment-backup", Data),
+       //addPermissionBackup
+       addPermissionBackup: (Data) =>
+    ipcRenderer.invoke("add-permission-backup", Data),
+       //addPersonalAccessTokenBackup
+        addPersonalAccessTokenBackup: (Data) =>
+    ipcRenderer.invoke("add-personal-access-token-backup", Data),
+        //addPosRegisterBackup
+        addPosRegisterBackup: (Data) =>
+    ipcRenderer.invoke("add-pos-register-backup", Data),
+
+
        /// Customer functions
     getCustomer: (search = "") => ipcRenderer.invoke("get-customer", search),
     addCustomer: (customer) => ipcRenderer.invoke("add-customer", customer),

@@ -199,6 +199,83 @@ function addOnboardingStepBackup(data) {
 function saveSyncTime(data) {
   return model.saveSyncTime(data);
 }
+//getSyncTime
+function getSyncTime(data) {
+  return model.getSyncTime(data);
+}
+//addOrderChargeBackup
+function addOrderChargeBackup(data) {
+  return model.addOrderChargeBackup(data);
+}
+//addOrderBackup
+function addOrderBackup(data) {
+  return model.addOrderBackup(data);
+}
+//addOrderItemBackup
+function addOrderItemBackup(data) {
+  return model.addOrderItemBackup(data);
+}
+//addOrderTaxBackup
+function addOrderTaxBackup(data) {
+  return model.addOrderTaxBackup(data);
+}
+//addOrderItemModifierOptionBackup
+function addOrderItemModifierOptionBackup(data) {
+  return model.addOrderItemModifierOptionBackup(data);
+}
+//addOrderHistoryBackup
+function addOrderHistoryBackup(data) {
+  return model.addOrderHistoryBackup(data);
+}
+//addOrderPlaceBackup
+function addOrderPlaceBackup(data) {
+  return model.addOrderPlaceBackup(data);
+}
+//addPackageModuleBackup
+function addPackageModuleBackup(data) {
+  return model.addPackageModuleBackup(data);
+}
+
+//addPasswordResetTokenBackup
+function addPasswordResetTokenBackup(data) {
+  return model.addPasswordResetTokenBackup(data);
+}
+//addPayfastPaymentBackup
+function addPayfastPaymentBackup(data) {
+  return model.addPayfastPaymentBackup(data);
+}
+//addPaymentBackup
+function addPaymentBackup(data) {
+  return model.addPaymentBackup(data);
+}
+//addPaymentBackup1
+function addPaymentBackup1(data) {
+  return model.addPaymentBackup1(data);
+}
+//addPaymentMethodBackup
+function addPaymentMethodBackup(data) {
+  return model.addPaymentMethodBackup(data);
+}
+//addPaypalPaymentBackup
+function addPaypalPaymentBackup(data) {
+  return model.addPaypalPaymentBackup(data);
+}
+//addPaystackPaymentBackup
+function addPaystackPaymentBackup(data) {
+  return model.addPaystackPaymentBackup(data);
+}
+//addPermissionBackup
+function addPermissionBackup(data) {
+  return model.addPermissionBackup(data);
+}
+//addPersonalAccessTokenBackup
+function addPersonalAccessTokenBackup(data) {
+  return model.addPersonalAccessTokenBackup(data);
+}
+//addPosRegisterBackup
+function addPosRegisterBackup(data) {
+  return model.addPosRegisterBackup(data);
+}
 module.exports = { 
     addAreaBackup,
     addBranchDeliverySettingBackup,
@@ -252,5 +329,24 @@ module.exports = {
     addOfflinePaymentMethodBackup,
     addOfflinePlanChangeBackup,
     addOnboardingStepBackup,
-    saveSyncTime
+    saveSyncTime,
+    getSyncTime,
+    addOrderChargeBackup,
+    addOrderBackup,
+    addOrderItemBackup,
+    addOrderTaxBackup,
+    addOrderItemModifierOptionBackup,
+    addOrderHistoryBackup,
+    addOrderPlaceBackup,
+    addPackageModuleBackup,
+    addPasswordResetTokenBackup,
+    addPayfastPaymentBackup,
+    addPaymentBackup,
+    addPaymentBackup1,
+    addPaymentMethodBackup,
+    addPaypalPaymentBackup,
+    addPaystackPaymentBackup,
+    addPermissionBackup,
+    addPersonalAccessTokenBackup,
+    addPosRegisterBackup
  };

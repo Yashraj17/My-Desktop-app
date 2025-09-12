@@ -46,6 +46,17 @@ import { syncNotificationSettings } from "../dataSync/syncNotificationSettings";
 import { syncOfflinePaymentMethods } from "../dataSync/syncOfflinePaymentMethods";
 import { syncOfflinePlanChanges } from "../dataSync/syncOfflinePlanChanges";
 import { syncOnboardingSteps } from "../dataSync/syncOnboardingSteps";
+import { syncOrders } from "../dataSync/syncOrders";
+import { syncPackageModules } from "../dataSync/syncPackageModules";
+import { syncPasswordResetTokens } from "../dataSync/syncPasswordResetTokens";
+import { syncPayments } from "../dataSync/syncPayments";
+import { syncPaymentsBackup } from "../dataSync/syncPaymentsBackup";
+import { syncPaymentMethods } from "../dataSync/syncPaymentMethods";
+import { syncPaypalPayments } from "../dataSync/syncPaypalPayments";
+import { syncPaystackPayments } from "../dataSync/syncPaystackPayments";
+import { syncPermissions } from "../dataSync/syncPermissions";
+import { syncPersonalAccessTokens } from "../dataSync/syncPersonalAccessTokens";
+import { syncPosRegisters } from "../dataSync/syncPosRegisters";
 
 function createApi(subdomain, token) {
   return axios.create({
@@ -62,7 +73,7 @@ export async function syncMasterData(subdomain, token, setProgress, setStatus, u
 
   try {
     let progress = 0;
-    const totalSteps = 50;
+    const totalSteps = 90;
     const updateProgress = () => {
       if (setProgress) {
         progress += (1 / totalSteps) * 100;
@@ -71,8 +82,27 @@ export async function syncMasterData(subdomain, token, setProgress, setStatus, u
       
     };
 
+    async function getLastSyncTime(tableName, defaultFromDatetime) {
+  try {
+    // Call backend (or preload API in Electron)
+    const lastSync = await window.api.getSyncTime(tableName);
+
+    if (lastSync && lastSync.sync_at) {
+      return lastSync.sync_at;  // ✅ Use stored sync time
+    } else {
+      return defaultFromDatetime; // ✅ Fallback if no entry
+    }
+  } catch (error) {
+    console.error("Error getting last sync time:", error);
+    return defaultFromDatetime;
+  }
+}
+
+
     // 1. COUNTRIES
     setStatus?.("Syncing countries...");
+    const lastSyncCountries = await getLastSyncTime("countries", fromDatetime);
+    console.log("Syncing countries from:", lastSyncCountries);
     const countryRes = await api.get("/api/countries");
     if (countryRes.data.status) {
       for (let c of countryRes.data.data) {
@@ -207,7 +237,9 @@ export async function syncMasterData(subdomain, token, setProgress, setStatus, u
     if(user.branch_id)
     {
     setStatus?.("Syncing menus...");
-    await syncMenus(subdomain, user.branch_id, token,fromDatetime,toDatetime,setProgress, setStatus);
+    const lastDatetime = await getLastSyncTime("menus", fromDatetime);
+    console.log("Syncing menus from:", lastDatetime);
+    await syncMenus(subdomain, user.branch_id, token,lastDatetime,toDatetime,setProgress, setStatus);
     updateProgress();
     }
 
@@ -215,27 +247,35 @@ export async function syncMasterData(subdomain, token, setProgress, setStatus, u
     if(user.branch_id)
     {
     setStatus?.("Syncing area...");
-    await syncArea(subdomain, user.branch_id, token,fromDatetime,toDatetime, setProgress, setStatus);
+    const lastDatetime = await getLastSyncTime("areas", fromDatetime);
+    console.log("Syncing areas from:", lastDatetime);
+    await syncArea(subdomain, user.branch_id, token,lastDatetime,toDatetime, setProgress, setStatus);
     updateProgress();
     }
      //syncBranchDeliverySettings 
     if(user.branch_id)
     {
     setStatus?.("Syncing branch delivery setting...");
-    await syncBranchDeliverySettings(subdomain, user.branch_id, token,fromDatetime,toDatetime, setProgress, setStatus);
+    const lastDatetime = await getLastSyncTime("branch_delivery_settings", fromDatetime);
+    console.log("Syncing branch_delivery_settings from:", lastDatetime);
+    await syncBranchDeliverySettings(subdomain, user.branch_id, token,lastDatetime,toDatetime, setProgress, setStatus);
     updateProgress();
     }
 
     //syncContacts
      setStatus?.("Syncing contacts...");
-    await syncContacts(subdomain, user.branch_id, token,fromDatetime,toDatetime, setProgress, setStatus);
+     const lastDatetime = await getLastSyncTime("contacts", fromDatetime);
+    console.log("Syncing contacts from:", lastDatetime);
+    await syncContacts(subdomain, user.branch_id, token,lastDatetime,toDatetime, setProgress, setStatus);
     updateProgress();
 
    //syncCustomers 
     if(user.restaurant_id)
     {
     setStatus?.("Syncing customer...");
-    await syncCustomers(subdomain, user.restaurant_id, token,fromDatetime,toDatetime, setProgress, setStatus);
+    const lastDatetime = await getLastSyncTime("customers", fromDatetime);
+    console.log("Syncing customers from:", lastDatetime);
+    await syncCustomers(subdomain, user.restaurant_id, token,lastDatetime,toDatetime, setProgress, setStatus);
     updateProgress();
     }
 
@@ -243,270 +283,379 @@ export async function syncMasterData(subdomain, token, setProgress, setStatus, u
     if(user.branch_id)
     {
     setStatus?.("Syncing delivery executives...");
-    await syncDeliveryExecutives(subdomain, user.branch_id, token,fromDatetime,toDatetime, setProgress, setStatus);
+    const lastDatetime = await getLastSyncTime("delivery_executives", fromDatetime);
+    console.log("Syncing delivery_executives from:", lastDatetime);
+    await syncDeliveryExecutives(subdomain, user.branch_id, token,lastDatetime,toDatetime, setProgress, setStatus);
     updateProgress();
     }
 
     //syncDesktopApplications
     setStatus?.("Syncing dsektop application...");
-    await syncDesktopApplications(subdomain, user.branch_id, token, setProgress, setStatus);
+    const lastDatetimed = await getLastSyncTime("desktop_applications", fromDatetime);
+    console.log("Syncing desktop_applications from:", lastDatetime);
+    await syncDesktopApplications(subdomain, user.branch_id, token,lastDatetimed,toDatetime,setProgress, setStatus);
     updateProgress();
 
     //syncEmailSettings
      setStatus?.("Syncing email setting...");
-    await syncEmailSettings(subdomain, user.branch_id, token, setProgress, setStatus);
+     const lastDatetimee= await getLastSyncTime("email_settings", fromDatetime);
+    console.log("Syncing email_settings from:", lastDatetimee);
+    await syncEmailSettings(subdomain, user.branch_id, token,lastDatetimee,toDatetime, setProgress, setStatus);
     updateProgress();
 
-    //syncExpenseCategories
-    if(user.branch_id)
-    {
-    setStatus?.("Syncing expense category...");
-    await syncExpenseCategories(subdomain, user.branch_id, token,fromDatetime,toDatetime, setProgress, setStatus);
-    updateProgress();
-    }
+   // syncExpenseCategories
+if (user.branch_id) {
+  setStatus?.("Syncing expense category...");
+  const lastExpenseCategory = await getLastSyncTime("expense_categories", fromDatetime);
+  await syncExpenseCategories(subdomain, user.branch_id, token, lastExpenseCategory, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
 
-    //syncExpenses
-    if(user.branch_id)
-    {
-    setStatus?.("Syncing expense...");
-    await syncExpenses(subdomain, user.branch_id, token,fromDatetime,toDatetime, setProgress, setStatus);
-    updateProgress();
-    }
+// syncExpenses
+if (user.branch_id) {
+  setStatus?.("Syncing expense...");
+  const lastExpenses = await getLastSyncTime("expenses", fromDatetime);
+  await syncExpenses(subdomain, user.branch_id, token, lastExpenses, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
 
-    //syncMenuItems
-     if(user.branch_id)
-    {
-    setStatus?.("Syncing menu items...");
-    await syncMenuItems(subdomain, user.branch_id, token,fromDatetime,toDatetime, setProgress, setStatus);
-    updateProgress();
-    }
+// syncMenuItems
+if (user.branch_id) {
+  setStatus?.("Syncing menu items...");
+  const lastMenuItems = await getLastSyncTime("menu_items", fromDatetime);
+  await syncMenuItems(subdomain, user.branch_id, token, lastMenuItems, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
 
-    //syncMenuCategories
-     if(user.branch_id)
-    {
-    setStatus?.("Syncing menu categories...");
-    await syncMenuCategories(subdomain, user.branch_id, token,fromDatetime,toDatetime, setProgress, setStatus);
-    updateProgress();
-    }
+// syncMenuCategories
+if (user.branch_id) {
+  setStatus?.("Syncing menu categories...");
+  const lastMenuCategories = await getLastSyncTime("menu_categories", fromDatetime);
+  await syncMenuCategories(subdomain, user.branch_id, token, lastMenuCategories, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
 
-    //syncModifiers
-     if(user.branch_id)
-    {
-    setStatus?.("Syncing item modifiers...");
-    await syncModifiers(subdomain, user.branch_id, token,fromDatetime,toDatetime, setProgress, setStatus);
-    updateProgress();
-    }
+// syncModifiers
+if (user.branch_id) {
+  setStatus?.("Syncing item modifiers...");
+  const lastModifiers = await getLastSyncTime("item_modifiers", fromDatetime);
+  await syncModifiers(subdomain, user.branch_id, token, lastModifiers, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
 
-    //syncFailedJobs
-    setStatus?.("Syncing faild jobs...");
-    await syncFailedJobs(subdomain,token,user.branch_id, setProgress, setStatus);
-    updateProgress();
+// syncFailedJobs
+setStatus?.("Syncing failed jobs...");
+const lastFailedJobs = await getLastSyncTime("failed_jobs", fromDatetime);
+await syncFailedJobs(subdomain, token, user.branch_id, lastFailedJobs, toDatetime, setProgress, setStatus);
+updateProgress();
 
-    //syncFileStorage
-    if(user.restaurant_id)
-    {
-    setStatus?.("Syncing file storage...");
-    await syncFileStorage(subdomain, user.restaurant_id, token, setProgress, setStatus);
-    updateProgress();
-    }
+// syncFileStorage
+if (user.restaurant_id) {
+  setStatus?.("Syncing file storage...");
+  const lastFileStorage = await getLastSyncTime("file_storage", fromDatetime);
+  await syncFileStorage(subdomain, user.restaurant_id, token, lastFileStorage, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
 
-    //syncFileStorageSettings
-    setStatus?.("Syncing file storage setting...");
-    await syncFileStorageSettings(subdomain,token,fromDatetime,toDatetime,user.restaurant_id, setProgress, setStatus);
-    updateProgress();
-    //syncFlags
-    setStatus?.("Syncing flage...");
-    await syncFlags(subdomain,token,user.restaurant_id, setProgress, setStatus);
-    updateProgress();
-    //syncTables
-     if(user.branch_id)
-    {
-    setStatus?.("Syncing table...");
-    await syncTables(subdomain, user.branch_id, token,fromDatetime,toDatetime, setProgress, setStatus);
-    updateProgress();
-    }
+// syncFileStorageSettings
+setStatus?.("Syncing file storage setting...");
+const lastFileStorageSettings = await getLastSyncTime("file_storage_settings", fromDatetime);
+await syncFileStorageSettings(subdomain, token, lastFileStorageSettings, toDatetime, user.restaurant_id, setProgress, setStatus);
+updateProgress();
 
-    //syncInventorySettings
-    if(user.restaurant_id)
-    {
-    setStatus?.("Syncing inventory setting...");
-    await syncInventorySettings(subdomain, user.restaurant_id, token,fromDatetime,toDatetime, setProgress, setStatus);
-    updateProgress();
-    }
+// syncFlags
+setStatus?.("Syncing flags...");
+const lastFlags = await getLastSyncTime("flags", fromDatetime);
+await syncFlags(subdomain, token, user.restaurant_id, lastFlags, toDatetime, setProgress, setStatus);
+updateProgress();
 
-    //syncInventoryStocks
-    if(user.branch_id)
-    {
-    setStatus?.("Syncing inventory stocks...");
-    await syncInventoryStocks(subdomain, user.branch_id, token,fromDatetime,toDatetime, setProgress, setStatus);
-    updateProgress();
-    }
-    //syncInventoryMovements
-    if(user.branch_id)
-    {
-    setStatus?.("Syncing inventory movements...");
-    await syncInventoryMovements(subdomain, user.branch_id, token,fromDatetime,toDatetime, setProgress, setStatus);
-    updateProgress();
-    }
+// syncTables
+if (user.branch_id) {
+  setStatus?.("Syncing table...");
+  const lastTables = await getLastSyncTime("tables", fromDatetime);
+  await syncTables(subdomain, user.branch_id, token, lastTables, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
 
-    //syncInventoryItemCategories
-    if(user.branch_id)
-    {
-    setStatus?.("Syncing inventory item categories...");
-    await syncInventoryItemCategories(subdomain, user.branch_id, token,fromDatetime,toDatetime, setProgress, setStatus);
-    updateProgress();
-    }
+// syncInventorySettings
+if (user.restaurant_id) {
+  setStatus?.("Syncing inventory setting...");
+  const lastInvSettings = await getLastSyncTime("inventory_settings", fromDatetime);
+  await syncInventorySettings(subdomain, user.restaurant_id, token, lastInvSettings, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
 
-    //syncInventoryItems
-     if(user.branch_id)
-    {
-    setStatus?.("Syncing inventory item...");
-    await syncInventoryItems(subdomain, user.branch_id, token,fromDatetime,toDatetime, setProgress, setStatus);
-    updateProgress();
-    }
+// syncInventoryStocks
+if (user.branch_id) {
+  setStatus?.("Syncing inventory stocks...");
+  const lastInvStocks = await getLastSyncTime("inventory_stocks", fromDatetime);
+  await syncInventoryStocks(subdomain, user.branch_id, token, lastInvStocks, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
 
-    //syncInventoryGlobalSettings
-    setStatus?.("Syncing inventory global setting...");
-    await syncInventoryGlobalSettings(subdomain,token, user.branch_id,  setProgress, setStatus);
-    updateProgress();
-    
-    //syncFrontDetails
-    setStatus?.("Syncing front details...");
-    await syncFrontDetails(subdomain,token, user.branch_id,  setProgress, setStatus);
-    updateProgress();
+// syncInventoryMovements
+if (user.branch_id) {
+  setStatus?.("Syncing inventory movements...");
+  const lastInvMovements = await getLastSyncTime("inventory_movements", fromDatetime);
+  await syncInventoryMovements(subdomain, user.branch_id, token, lastInvMovements, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
 
-    //syncFrontFaqSettings
-    setStatus?.("Syncing front faq setting...");
-    await syncFrontFaqSettings(subdomain,token,user.branch_id,  setProgress, setStatus);
-    updateProgress();
-    //syncFrontFeatures
-    setStatus?.("Syncing front features...");
-    await syncFrontFeatures(subdomain,token, user.branch_id,  setProgress, setStatus);
-    updateProgress();
-    //syncFrontReviewSettings
-    setStatus?.("Syncing front review setting...");
-    await syncFrontReviewSettings(subdomain,token,user.branch_id,  setProgress, setStatus);
-    updateProgress();
-    //syncGlobalInvoices
-    if(user.restaurant_id)
-    {
-    setStatus?.("Syncing global invoices...");
-    await syncGlobalInvoices(subdomain, user.restaurant_id, token,fromDatetime,toDatetime, setProgress, setStatus);
-    updateProgress();
-    }
-    //syncGlobalSettings
-    setStatus?.("Syncing global setting...");
-    await syncGlobalSettings(subdomain, token,user.restaurant_id, setProgress, setStatus);
-    updateProgress();
+// syncInventoryItemCategories
+if (user.branch_id) {
+  setStatus?.("Syncing inventory item categories...");
+  const lastInvItemCategories = await getLastSyncTime("inventory_item_categories", fromDatetime);
+  await syncInventoryItemCategories(subdomain, user.branch_id, token, lastInvItemCategories, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
 
-    //syncGlobalSubscriptions
-     if(user.restaurant_id)
-    {
-    setStatus?.("Syncing global subscription...");
-    await syncGlobalSubscriptions(subdomain, user.restaurant_id, token, setProgress, setStatus);
-    updateProgress();
-    }
-    //syncJobs
-     if(user.branch_id)
-    {
-    setStatus?.("Syncing job...");
-    await syncJobs(subdomain, user.branch_id, token,fromDatetime,toDatetime, setProgress, setStatus);
-    updateProgress();
-    }
+// syncInventoryItems
+if (user.branch_id) {
+  setStatus?.("Syncing inventory items...");
+  const lastInvItems = await getLastSyncTime("inventory_items", fromDatetime);
+  await syncInventoryItems(subdomain, user.branch_id, token, lastInvItems, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
 
-    //syncJobBatches
-     if(user.branch_id)
-    {
-    setStatus?.("Syncing job batches...");
-    await syncJobBatches(subdomain, user.branch_id, token,fromDatetime,toDatetime, setProgress, setStatus);
-    updateProgress();
-    }
+// syncInventoryGlobalSettings
+setStatus?.("Syncing inventory global setting...");
+const lastInvGlobalSettings = await getLastSyncTime("inventory_global_settings", fromDatetime);
+await syncInventoryGlobalSettings(subdomain, token, user.branch_id, lastInvGlobalSettings, toDatetime, setProgress, setStatus);
+updateProgress();
 
-    //syncKots
-     if(user.branch_id)
-    {
-    setStatus?.("Syncing kots...");
-    await syncKots(subdomain, user.branch_id, token,fromDatetime,toDatetime, setProgress, setStatus);
-    updateProgress();
-    }
-    //syncKotCancelReasons
-    if(user.restaurant_id)
-    {
-    setStatus?.("Syncing kot cancel reasons...");
-    await syncKotCancelReasons(subdomain, user.restaurant_id, token,fromDatetime,toDatetime, setProgress, setStatus);
-    updateProgress();
-    }
+// syncFrontDetails
+setStatus?.("Syncing front details...");
+const lastFrontDetails = await getLastSyncTime("front_details", fromDatetime);
+await syncFrontDetails(subdomain, token, user.branch_id, lastFrontDetails, toDatetime, setProgress, setStatus);
+updateProgress();
 
-    //syncKotPlaces
-     if(user.branch_id)
-    {
-    setStatus?.("Syncing kots places...");
-    await syncKotPlaces(subdomain, user.branch_id, token,fromDatetime,toDatetime, setProgress, setStatus);
-    updateProgress();
-    }
+// syncFrontFaqSettings
+setStatus?.("Syncing front faq setting...");
+const lastFrontFaq = await getLastSyncTime("front_faq_settings", fromDatetime);
+await syncFrontFaqSettings(subdomain, token, user.branch_id, lastFrontFaq, toDatetime, setProgress, setStatus);
+updateProgress();
 
-    //syncKotSettings
-     if(user.branch_id)
-    {
-    setStatus?.("Syncing kots setting...");
-   await syncKotSettings(subdomain, user.branch_id, token,fromDatetime,toDatetime, setProgress, setStatus);
-    updateProgress();
-    }
+// syncFrontFeatures
+setStatus?.("Syncing front features...");
+const lastFrontFeatures = await getLastSyncTime("front_features", fromDatetime);
+await syncFrontFeatures(subdomain, token, user.branch_id, lastFrontFeatures, toDatetime, setProgress, setStatus);
+updateProgress();
 
-    //syncLanguageSettings
-    setStatus?.("Syncing language setting...");
-    await syncLanguageSettings(subdomain, token, user.branch_id,setProgress, setStatus);
-    updateProgress();
+// syncFrontReviewSettings
+setStatus?.("Syncing front review setting...");
+const lastFrontReview = await getLastSyncTime("front_review_settings", fromDatetime);
+await syncFrontReviewSettings(subdomain, token, user.branch_id, lastFrontReview, toDatetime, setProgress, setStatus);
+updateProgress();
 
-    //syncLtmTranslations
-    setStatus?.("Syncing ltm translation...");
-    await syncLtmTranslations(subdomain, token, user.branch_id,setProgress, setStatus);
-    updateProgress();
+// syncGlobalInvoices
+if (user.restaurant_id) {
+  setStatus?.("Syncing global invoices...");
+  const lastGlobalInvoices = await getLastSyncTime("global_invoices", fromDatetime);
+  await syncGlobalInvoices(subdomain, user.restaurant_id, token, lastGlobalInvoices, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
 
-    //syncMigrations
-    setStatus?.("Syncing migrations...");
-    await syncMigrations(subdomain, token,  user.branch_id,setProgress, setStatus);
-    updateProgress();
-    //syncModelHasPermissions
-    setStatus?.("Syncing model has permission...");
-    await syncModelHasPermissions(subdomain, token, user.branch_id,setProgress, setStatus);
-    updateProgress();
-    //syncModelHasRoles
-    setStatus?.("Syncing model has role...");
-    await syncModelHasRoles(subdomain, token, user.branch_id,setProgress, setStatus);
-    updateProgress();
-    //syncModules
-    setStatus?.("Syncing module...");
-    await syncModules(subdomain, token,user.branch_id,setProgress, setStatus);
-    updateProgress();
+// syncGlobalSettings
+setStatus?.("Syncing global setting...");
+const lastGlobalSettings = await getLastSyncTime("global_settings", fromDatetime);
+await syncGlobalSettings(subdomain, token, user.restaurant_id, lastGlobalSettings, toDatetime, setProgress, setStatus);
+updateProgress();
 
-    //syncNotificationSettings
-    if(user.restaurant_id)
-    {
-    setStatus?.("Syncing notification setting...");
-    await syncNotificationSettings(subdomain, user.restaurant_id, token,fromDatetime,toDatetime, setProgress, setStatus);
-    updateProgress();
-    }
-    //syncOfflinePaymentMethods
-    if(user.restaurant_id)
-    {
-    setStatus?.("Syncing offline payment methods...");
-    await syncOfflinePaymentMethods(subdomain, user.restaurant_id, token,fromDatetime,toDatetime, setProgress, setStatus);
-    updateProgress();
-    }
+// syncGlobalSubscriptions
+if (user.restaurant_id) {
+  setStatus?.("Syncing global subscriptions...");
+  const lastGlobalSubs = await getLastSyncTime("global_subscriptions", fromDatetime);
+  await syncGlobalSubscriptions(subdomain, user.restaurant_id, token, lastGlobalSubs, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
 
-    //syncOfflinePlanChanges
-    setStatus?.("Syncing offline plan changes...");
-    await syncOfflinePlanChanges(subdomain,  token, user.restaurant_id,setProgress, setStatus);
-    updateProgress();
+// syncJobs
+if (user.branch_id) {
+  setStatus?.("Syncing jobs...");
+  const lastJobs = await getLastSyncTime("jobs", fromDatetime);
+  await syncJobs(subdomain, user.branch_id, token, lastJobs, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
 
-    //syncOnboardingSteps
-     if(user.branch_id)
-    {
-    setStatus?.("Syncing onboarding steps...");
-    await syncOnboardingSteps(subdomain, user.branch_id, token,fromDatetime,toDatetime, setProgress, setStatus);
-    updateProgress();
-    }
+// syncJobBatches
+if (user.branch_id) {
+  setStatus?.("Syncing job batches...");
+  const lastJobBatches = await getLastSyncTime("job_batches", fromDatetime);
+  await syncJobBatches(subdomain, user.branch_id, token, lastJobBatches, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+
+// syncKots
+if (user.branch_id) {
+  setStatus?.("Syncing kots...");
+  const lastKots = await getLastSyncTime("kots", fromDatetime);
+  await syncKots(subdomain, user.branch_id, token, lastKots, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+
+// syncKotCancelReasons
+if (user.restaurant_id) {
+  setStatus?.("Syncing kot cancel reasons...");
+  const lastKotCancel = await getLastSyncTime("kot_cancel_reasons", fromDatetime);
+  await syncKotCancelReasons(subdomain, user.restaurant_id, token, lastKotCancel, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+
+// syncKotPlaces
+if (user.branch_id) {
+  setStatus?.("Syncing kot places...");
+  const lastKotPlaces = await getLastSyncTime("kot_places", fromDatetime);
+  await syncKotPlaces(subdomain, user.branch_id, token, lastKotPlaces, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+
+// syncKotSettings
+if (user.branch_id) {
+  setStatus?.("Syncing kot settings...");
+  const lastKotSettings = await getLastSyncTime("kot_settings", fromDatetime);
+  await syncKotSettings(subdomain, user.branch_id, token, lastKotSettings, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+
+// syncLanguageSettings
+setStatus?.("Syncing language settings...");
+const lastLangSettings = await getLastSyncTime("language_settings", fromDatetime);
+await syncLanguageSettings(subdomain, token, user.branch_id, lastLangSettings, toDatetime, setProgress, setStatus);
+updateProgress();
+
+// syncLtmTranslations
+setStatus?.("Syncing ltm translations...");
+const lastTranslations = await getLastSyncTime("ltm_translations", fromDatetime);
+await syncLtmTranslations(subdomain, token, user.branch_id, lastTranslations, toDatetime, setProgress, setStatus);
+updateProgress();
+
+// syncMigrations
+setStatus?.("Syncing migrations...");
+const lastMigrations = await getLastSyncTime("migrations", fromDatetime);
+await syncMigrations(subdomain, token, user.branch_id, lastMigrations, toDatetime, setProgress, setStatus);
+updateProgress();
+
+// syncModelHasPermissions
+setStatus?.("Syncing model has permissions...");
+const lastModelPerms = await getLastSyncTime("model_has_permissions", fromDatetime);
+await syncModelHasPermissions(subdomain, token, user.branch_id, lastModelPerms, toDatetime, setProgress, setStatus);
+updateProgress();
+
+// syncModelHasRoles
+setStatus?.("Syncing model has roles...");
+const lastModelRoles = await getLastSyncTime("model_has_roles", fromDatetime);
+await syncModelHasRoles(subdomain, token, user.branch_id, lastModelRoles, toDatetime, setProgress, setStatus);
+updateProgress();
+
+// syncModules
+setStatus?.("Syncing modules...");
+const lastModules = await getLastSyncTime("modules", fromDatetime);
+await syncModules(subdomain, token, user.branch_id, lastModules, toDatetime, setProgress, setStatus);
+updateProgress();
+
+// syncNotificationSettings
+if (user.restaurant_id) {
+  setStatus?.("Syncing notification settings...");
+  const lastNotifSettings = await getLastSyncTime("notification_settings", fromDatetime);
+  await syncNotificationSettings(subdomain, user.restaurant_id, token, lastNotifSettings, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+
+// syncOfflinePaymentMethods
+if (user.restaurant_id) {
+  setStatus?.("Syncing offline payment methods...");
+  const lastOfflinePay = await getLastSyncTime("offline_payment_methods", fromDatetime);
+  await syncOfflinePaymentMethods(subdomain, user.restaurant_id, token, lastOfflinePay, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+
+// syncOfflinePlanChanges
+setStatus?.("Syncing offline plan changes...");
+const lastOfflinePlans = await getLastSyncTime("offline_plan_changes", fromDatetime);
+await syncOfflinePlanChanges(subdomain, token, user.restaurant_id, lastOfflinePlans, toDatetime, setProgress, setStatus);
+updateProgress();
+
+// syncOnboardingSteps
+if (user.branch_id) {
+  setStatus?.("Syncing onboarding steps...");
+  const lastOnboarding = await getLastSyncTime("onboarding_steps", fromDatetime);
+  await syncOnboardingSteps(subdomain, user.branch_id, token, lastOnboarding, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+//syncOrders
+if (user.branch_id) {
+ setStatus?.("Syncing orders...");
+  const lastorders = await getLastSyncTime("orders", fromDatetime);
+  await syncOrders(subdomain,user.branch_id, token, lastorders, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+
+//syncPackageModules
+ setStatus?.("Syncing package_modules...");
+  const lastorders = await getLastSyncTime("package_modules", fromDatetime);
+  await syncPackageModules(subdomain,token, lastorders, toDatetime, setProgress, setStatus);
+  updateProgress();
+
+
+   setStatus?.("Syncing password reset tokens...");
+  const lastsyncPasswordResetTokens = await getLastSyncTime("password_reset_tokens", fromDatetime);
+  await syncPasswordResetTokens(subdomain,token, lastsyncPasswordResetTokens, toDatetime, setProgress, setStatus);
+  updateProgress();
+  
+
+  //syncPayments
+  if (user.branch_id) {
+ setStatus?.("Syncing payment...");
+  const lastorders = await getLastSyncTime("payments", fromDatetime);
+  await syncPayments(subdomain,user.branch_id, token, lastorders, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+
+//syncPaymentsBackup
+if (user.branch_id) {
+ setStatus?.("Syncing payment backup...");
+  const lastorders = await getLastSyncTime("payments_backup", fromDatetime);
+  await syncPaymentsBackup(subdomain,user.branch_id, token, lastorders, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+//syncPaymentMethods
+if (user.restaurant_id) {
+  setStatus?.("Syncing payment methods...");
+  const lastPay = await getLastSyncTime("payment_methods", fromDatetime);
+  await syncPaymentMethods(subdomain, user.restaurant_id, token, lastPay, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+//syncPaypalPayments
+setStatus?.("Syncing paypal payment...");
+  const lastPay = await getLastSyncTime("paypal_payments", fromDatetime);
+  await syncPaypalPayments(subdomain, token, lastPay, toDatetime, setProgress, setStatus);
+  updateProgress();
+
+  //syncPaystackPayments
+setStatus?.("Syncing paystackpayment...");
+  const lastPaystack = await getLastSyncTime("paystack_payments", fromDatetime);
+  await syncPaystackPayments(subdomain, token, lastPaystack, toDatetime, setProgress, setStatus);
+  updateProgress();
+
+  //syncPermissions
+  setStatus?.("Syncing permission...");
+  const lastPermission = await getLastSyncTime("permissions", fromDatetime);
+  await syncPermissions(subdomain, token, lastPermission, toDatetime, setProgress, setStatus);
+  updateProgress();
+
+  //syncPersonalAccessTokens
+  setStatus?.("Syncing personal access token...");
+  const lastPersonal = await getLastSyncTime("personal_access_tokens", fromDatetime);
+  await syncPersonalAccessTokens(subdomain, token, lastPersonal, toDatetime, setProgress, setStatus);
+  updateProgress();
+
+  //syncPosRegisters
+  if (user.restaurant_id) {
+  setStatus?.("Syncing pos registers...");
+  const lastPOS = await getLastSyncTime("pos_registers", fromDatetime);
+  await syncPosRegisters(subdomain, user.restaurant_id, token, lastPOS, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
     setStatus?.("Sync complete ✅");
     return true;
   } catch (err) {
