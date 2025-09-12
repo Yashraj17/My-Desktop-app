@@ -1,7 +1,6 @@
 import { MenuIcon } from "../components/svgIcons";
 import Dashboard from "../pages/Dashboard";
 import { ItemCategory } from "../pages/ItemCategory";
-import Staff from "../pages/Staff";
 import Menus from "../pages/Menus";
 import {
     Home,
@@ -26,70 +25,94 @@ import { ModifierGroup } from "../pages/ModifierGroup";
 import { ItemModifiers } from "../pages/ItemModifier";
 import { Areas } from "../pages/Areas";
 import Tables from "../pages/Tables";
+import { Customer } from "../pages/Customer";
+import { DeliveryExecutive } from "../pages/DeliveryExecutive";
+import { Staff } from "../pages/Staff";
 
 const routes = [
-    { 
-        icon: Home, 
-        label: "Dashboard", 
-        url: "/", 
+    {
+        icon: Home,
+        label: "Dashboard",
+        url: "/",
         component: Dashboard,
         hasDropdown: false
     },
-    { 
-        icon: Bell, 
-        label: "Table", 
-        url: "/table", 
+    {
+        icon: Truck,
+        label: "Menu",
+        url: "/menu",
         hasDropdown: true,
-        children:[
-           {
-            label:"Areas",
-            url:"/areas",
-            component:Areas
+        children: [
+            {
+                icon: Bell,
+                label: "Menus",
+                url: "/menus",
+                component: Menus,
             },
-             {
-            label:"Tables",
-            url:"/table",
-            component:Tables
+            {
+                icon: Utensils,
+                label: "Item Categories",
+                url: "/item-categories",
+                component: ItemCategory,
+            },
+            {
+                icon: Utensils,
+                label: "Menu Items",
+                url: "/menu-items",
+                component: MenuItems,
+            },
+            {
+                icon: Utensils,
+                label: "Modifier Group",
+                url: "/modifier-group",
+                component: ModifierGroup,
+            },
+            {
+                icon: Utensils,
+                label: "Item Modifiers",
+                url: "/item-modifier",
+                component: ItemModifiers,
             },
         ]
     },
-    { 
-        icon: Truck, 
-        label: "Menu", 
-        url: "/menu", 
+    {
+        icon: Bell,
+        label: "Table",
+        url: "/table",
         hasDropdown: true,
-        children:[
-           {
-            icon:Bell,
-            label:"Menus",
-            url:"/menus",
-            component:Menus,
+        children: [
+            {
+                label: "Areas",
+                url: "/areas",
+                component: Areas
             },
-           {
-            icon:Utensils,
-            label:"Item Categories",
-            url:"/item-categories",
-            component:ItemCategory,
-            },
-           {
-            icon:Utensils,
-            label:"Menu Items",
-            url:"/menu-items",
-            component:MenuItems,
-            },
-           {
-            icon:Utensils,
-            label:"Modifier Group",
-            url:"/modifier-group",
-            component:ModifierGroup,
-            },
-           {
-            icon:Utensils,
-            label:"Item Modifiers",
-            url:"/item-modifier",
-            component:ItemModifiers,
+            {
+                label: "Tables",
+                url: "/table",
+                component: Tables
             },
         ]
+    },
+    {
+        icon: Users,
+        label: "Customers",
+        url: "/cutomers",
+        hasDropdown: false,
+        component: Customer
+    },
+    {
+        icon: Triangle,
+        label: "Staff",
+        url: "/staff",
+        hasDropdown: false,
+        component: Staff
+    },
+    {
+        icon: Truck,
+        label: "Delivery Executive",
+        url: "/delivery-executive",
+        hasDropdown: false,
+        component: DeliveryExecutive
     }
 ].filter(v => (!v.hidden) || v.children?.length);
 

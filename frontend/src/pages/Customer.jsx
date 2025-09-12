@@ -61,25 +61,43 @@ const columns = [
         width: "200px",
     },
     {
-        accessorKey: "role",
+        accessorKey: "phone",
         header: ({ column }) => (
             <Button
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 className="p-0 font-medium cursor-pointer text-gray-700 hover:bg-transparent"
             >
-                Role
+                Phone
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
-        // cell: ({ row }) => (
-        //    <Badge className={'bg-gray-200 text-gray-500 hover:bg-gray-200 mr-2'}>
-        //             0 ORDER
-        //         </Badge>
-        // ),
+        cell: ({ row }) => (
+            <div className="text-gray-600">
+                {row.getValue("phone")} 
+            </div>
+        ),
         width: "200px",
     },
-
+    {
+        accessorKey: "phone",
+        header: ({ column }) => (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                className="p-0 font-medium cursor-pointer text-gray-700 hover:bg-transparent"
+            >
+                Total Orders
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+        ),
+        cell: ({ row }) => (
+           <Badge className={'bg-gray-200 text-gray-500 hover:bg-gray-200 mr-2'}>
+                    0 ORDER
+                </Badge>
+        ),
+        width: "200px",
+    },
     {
         id: "actions",
         header: "Actions",
@@ -118,23 +136,23 @@ const columns = [
     },
 ];
 
-export function Staff() {
+export function Customer() {
     const [sorting, setSorting] = useState([]);
     const [globalFilter, setGlobalFilter] = useState(""); // 🔹 search state
-    const [staff, setStaff] = useState([]);
+    const [customer, setCustomer] = useState([]);
 
     const loadData = async () => {
         try {
-            const data = await window.api.getDeliveryExecutives();
-            setStaff(data);
-            console.log("hello Staff data",data)
+            const data = await window.api.getCustomer();
+            setCustomer(data);
+            console.log("hello customer data",data)
         } catch (error) {
             console.error("Failed to load customer:", error);
         }
     };
 
     const table = useReactTable({
-        data: staff,
+        data: customer,
         columns,
         onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
@@ -157,7 +175,7 @@ export function Staff() {
                 <div className="w-full mb-1">
                     <div className="mb-4">
                         <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-                            Staff
+                            Customers
                         </h1>
                     </div>
 
@@ -169,16 +187,19 @@ export function Staff() {
                                     type="text"
                                     value={globalFilter ?? ""}
                                     onChange={(e) => setGlobalFilter(e.target.value)}
-                                    placeholder="Search by name phone number"
+                                    placeholder="Search by name,email or phone number"
                                 />
                             </div>
                         </div>
                         <div className="inline-flex gap-x-4 mb-4 sm:mb-0">
                             <Button className="px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600">
+                                Import
+                            </Button>
+                            <Button className="px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600">
                                 Export
                             </Button>
                             <Button className="bg-[#000080] cursor-pointer hover:bg-[#000060] dark:text-white">
-                                Add Member
+                                Add Customer
                             </Button>
                         </div>
                     </div>

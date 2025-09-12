@@ -252,6 +252,7 @@ contextBridge.exposeInMainWorld("api", {
     addTable: (table) => ipcRenderer.invoke("add-table", table),
     updateTable: (id, table) => ipcRenderer.invoke("update-table", id, table),
     deleteTable: (id) => ipcRenderer.invoke("delete-table", id),
+
       //getSyncTime
       getSyncTime: (Data) =>
     ipcRenderer.invoke("get-sync-time", Data),
@@ -309,6 +310,23 @@ contextBridge.exposeInMainWorld("api", {
         //addPosRegisterBackup
         addPosRegisterBackup: (Data) =>
     ipcRenderer.invoke("add-pos-register-backup", Data),
+
+
+       /// Customer functions
+    getCustomer: (search = "") => ipcRenderer.invoke("get-customer", search),
+    addCustomer: (customer) => ipcRenderer.invoke("add-customer", customer),
+    updateCustomer: (id, customer) => ipcRenderer.invoke("update-customer", id, customer),
+    deleteCustomer: (id) => ipcRenderer.invoke("delete-customer", id),
+
+          /// Delivery Executive functions
+    getDeliveryExecutives: (search = "") => ipcRenderer.invoke("get-delivery-executive", search),
+    addDeliveryExecutive: (deliveryExecutive) => ipcRenderer.invoke("add-delivery-executive", deliveryExecutive),
+    updateDeliveryExecutive: (id, deliveryExecutive) => ipcRenderer.invoke("update-delivery-executive", id, deliveryExecutive),
+    deleteDeliveryExecutive: (id) => ipcRenderer.invoke("delete-delivery-executive", id),
+
+           /// Staff functions
+    getStaffs: (search = "") => ipcRenderer.invoke("get-staff", search),
+
 });
 
 
