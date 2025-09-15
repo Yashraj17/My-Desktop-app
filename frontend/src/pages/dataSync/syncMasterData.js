@@ -71,6 +71,16 @@ import { syncRestaurantCharges } from "../dataSync/syncRestaurantCharges";
 import { syncRestaurantPayments } from "../dataSync/syncRestaurantPayments";
 import { syncRestaurantTaxes } from "../dataSync/syncRestaurantTaxes";
 import { syncRolesAndPermissions } from "../dataSync/syncRolesAndPermissions";
+import { syncSessions } from "../dataSync/syncSessions";
+import { syncSplitOrders } from "../dataSync/syncSplitOrders";
+import { syncSplitOrderItems } from "../dataSync/syncSplitOrderItems";
+import { syncStripePayments } from "../dataSync/syncStripePayments";
+import { syncSubDomainModuleSettings } from "../dataSync/syncSubDomainModuleSettings";
+import { syncSuperadminPaymentGateways } from "../dataSync/syncSuperadminPaymentGateways";
+import { syncSuppliers } from "../dataSync/syncSuppliers";
+import { syncTaxes } from "../dataSync/syncTaxes";
+import { syncUnits } from "../dataSync/syncUnits";
+import { syncWaiterRequests } from "../dataSync/syncWaiterRequests";
 
 function createApi(subdomain, token) {
   return axios.create({
@@ -771,6 +781,73 @@ if (user.restaurant_id) {
   setStatus?.("Syncing roles...");
   const last_date = await getLastSyncTime("roles", fromDatetime);
   await syncRolesAndPermissions(subdomain, user.restaurant_id, token, last_date, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+
+//syncSessions
+setStatus?.("Syncing sessions...");
+  const last_sessions = await getLastSyncTime("sessions", fromDatetime);
+  await syncSessions(subdomain,token, last_sessions, toDatetime, setProgress, setStatus);
+  updateProgress();
+
+  //syncSplitOrders
+  setStatus?.("Syncing split_orders...");
+  const last_split_orders = await getLastSyncTime("split_orders", fromDatetime);
+  await syncSplitOrders(subdomain,token, last_split_orders, toDatetime, setProgress, setStatus);
+  updateProgress();
+
+  //syncSplitOrderItems
+  setStatus?.("Syncing split_order_items...");
+  const last_split_order_items = await getLastSyncTime("split_order_items", fromDatetime);
+  await syncSplitOrderItems(subdomain,token, last_split_order_items, toDatetime, setProgress, setStatus);
+  updateProgress();
+
+  //syncStripePayments
+  setStatus?.("Syncing stripe_payments...");
+  const last_stripe_payments = await getLastSyncTime("stripe_payments", fromDatetime);
+  await syncStripePayments(subdomain,token, last_stripe_payments, toDatetime, setProgress, setStatus);
+  updateProgress();
+
+  //syncSubDomainModuleSettings
+  setStatus?.("Syncing sub_domain_module_settings...");
+  const last_sub_domain_module_settings = await getLastSyncTime("sub_domain_module_settings", fromDatetime);
+  await syncSubDomainModuleSettings(subdomain,token, last_sub_domain_module_settings, toDatetime, setProgress, setStatus);
+  updateProgress();
+
+  //syncSuperadminPaymentGateways
+  setStatus?.("Syncing superadmin_payment_gateways...");
+  const last_superadmin_payment_gateways = await getLastSyncTime("superadmin_payment_gateways", fromDatetime);
+  await syncSuperadminPaymentGateways(subdomain,token, last_superadmin_payment_gateways, toDatetime, setProgress, setStatus);
+  updateProgress();
+  
+  //syncSuppliers
+  if (user.restaurant_id) {
+  setStatus?.("Syncing suppliers...");
+  const last_date = await getLastSyncTime("suppliers", fromDatetime);
+  await syncSuppliers(subdomain, user.restaurant_id, token, last_date, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+
+//syncTaxes
+if (user.restaurant_id) {
+  setStatus?.("Syncing taxes...");
+  const last_date = await getLastSyncTime("taxes", fromDatetime);
+  await syncTaxes(subdomain, user.restaurant_id, token, last_date, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+//syncUnits
+if (user.branch_id) {
+ setStatus?.("Syncing units...");
+  const lasto = await getLastSyncTime("units", fromDatetime);
+  await syncUnits(subdomain,user.branch_id, token, lasto, toDatetime, setProgress, setStatus);
+  updateProgress();
+}
+
+//syncWaiterRequests
+if (user.branch_id) {
+ setStatus?.("Syncing waiter_requests...");
+  const lasto = await getLastSyncTime("waiter_requests", fromDatetime);
+  await syncWaiterRequests(subdomain,user.branch_id, token, lasto, toDatetime, setProgress, setStatus);
   updateProgress();
 }
     setStatus?.("Sync complete ✅");

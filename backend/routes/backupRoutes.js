@@ -335,6 +335,46 @@ function BackupRoutes() {
   ipcMain.handle("add-role-has-permission-backup", (event, data) => {
     return controller.addRoleHasPermissionBackup(data);
   });
+  //addSessionBackup
+  ipcMain.handle("add-session-backup", (event, data) => {
+    return controller.addSessionBackup(data);
+  });
+  //addSplitOrderBackup
+  ipcMain.handle("add-split-order-backup", (event, data) => {
+    return controller.addSplitOrderBackup(data);
+  });
+  //addSplitOrderItemBackup
+  ipcMain.handle("add-split-order-item-backup", (event, data) => {
+    return controller.addSplitOrderItemBackup(data);
+  });
+  //addStripePaymentBackup
+  ipcMain.handle("add-stripe-payment-backup", (event, data) => {
+    return controller.addStripePaymentBackup(data);
+  });
+  //addSubDomainModuleSettingBackup
+  ipcMain.handle("add-sub-domain-module-backup", (event, data) => {
+    return controller.addSubDomainModuleSettingBackup(data);
+  });
+  //addSuperadminPaymentGatewayBackup
+  ipcMain.handle("add-super-admin-payment-getway-backup", (event, data) => {
+    return controller.addSuperadminPaymentGatewayBackup(data);
+  });
+  //addSupplierBackup
+  ipcMain.handle("add-supplier-backup", (event, data) => {
+    return controller.addSupplierBackup(data);
+  });
+  //addTaxBackup
+  ipcMain.handle("add-tax-backup", (event, data) => {
+    return controller.addTaxBackup(data);
+  });
+  //addUnitBackup
+  ipcMain.handle("add-unit-backup", (event, data) => {
+    return controller.addUnitBackup(data);
+  });
+  //addWaiterRequestBackup
+  ipcMain.handle("add-waiter-request-backup", (event, data) => {
+    return controller.addWaiterRequestBackup(data);
+  });
 }
 
 module.exports = BackupRoutes;

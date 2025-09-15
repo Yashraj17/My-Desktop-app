@@ -372,6 +372,36 @@ contextBridge.exposeInMainWorld("api", {
          //addRoleHasPermissionBackup
          addRoleHasPermissionBackup: (Data) =>
     ipcRenderer.invoke("add-role-has-permission-backup", Data),
+         //addSessionBackup
+         addSessionBackup: (Data) =>
+    ipcRenderer.invoke("add-session-backup", Data),
+         //addSplitOrderBackup
+         addSplitOrderBackup: (Data) =>
+    ipcRenderer.invoke("add-split-order-backup", Data),
+         //addSplitOrderItemBackup
+         addSplitOrderItemBackup: (Data) =>
+    ipcRenderer.invoke("add-split-order-item-backup", Data),
+         //addStripePaymentBackup
+         addStripePaymentBackup: (Data) =>
+    ipcRenderer.invoke("add-stripe-payment-backup", Data),
+         //addSubDomainModuleSettingBackup
+         addSubDomainModuleSettingBackup: (Data) =>
+    ipcRenderer.invoke("add-sub-domain-module-backup", Data),
+         //addSuperadminPaymentGatewayBackup
+         addSuperadminPaymentGatewayBackup: (Data) =>
+    ipcRenderer.invoke("add-super-admin-payment-getway-backup", Data),
+         //addSupplierBackup
+         addSupplierBackup: (Data) =>
+    ipcRenderer.invoke("add-supplier-backup", Data),
+         //addTaxBackup
+         addTaxBackup: (Data) =>
+    ipcRenderer.invoke("add-tax-backup", Data),
+         //addUnitBackup
+         addUnitBackup: (Data) =>
+    ipcRenderer.invoke("add-unit-backup", Data),
+         //addWaiterRequestBackup
+         addWaiterRequestBackup: (Data) =>
+    ipcRenderer.invoke("add-waiter-request-backup", Data),
 });
 
 

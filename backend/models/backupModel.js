@@ -2803,6 +2803,354 @@ function addRoleHasPermissionBackup(roleHasPermission) {
   });
 }
 
+function addSessionBackup(session) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO sessions 
+        (id, user_id, ip_address, user_agent, payload, last_activity, newfield1, newfield2, newfield3, isSync) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        session.id,
+        session.user_id,
+        session.ip_address,
+        session.user_agent,
+        session.payload,
+        session.last_activity,
+        session.newfield1 || null,
+        session.newfield2 || null,
+        session.newfield3 || null,
+        1
+      );
+      resolve({ success: true });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+function addSplitOrderBackup(order) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO split_orders 
+        (id, order_id, amount, status, payment_method, created_at, updated_at, newfield1, newfield2, newfield3, isSync) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        order.id,
+        order.order_id,
+        order.amount,
+        order.status,
+        order.payment_method,
+        order.created_at || new Date().toISOString(),
+        order.updated_at || new Date().toISOString(),
+        order.newfield1 || null,
+        order.newfield2 || null,
+        order.newfield3 || null,
+        1
+      );
+      resolve({ success: true });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+function addSplitOrderItemBackup(item) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO split_order_items 
+        (id, split_order_id, order_item_id, created_at, updated_at, newfield1, newfield2, newfield3, isSync) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        item.id,
+        item.split_order_id,
+        item.order_item_id,
+        item.created_at || new Date().toISOString(),
+        item.updated_at || new Date().toISOString(),
+        item.newfield1 || null,
+        item.newfield2 || null,
+        item.newfield3 || null,
+        1
+      );
+      resolve({ success: true });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+function addStripePaymentBackup(payment) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO stripe_payments 
+        (id, order_id, payment_date, amount, payment_status, payment_error_response, stripe_payment_intent, stripe_session_id, created_at, updated_at, newfield1, newfield2, newfield3, isSync) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        payment.id,
+        payment.order_id,
+        payment.payment_date,
+        payment.amount,
+        payment.payment_status,
+        payment.payment_error_response,
+        payment.stripe_payment_intent,
+        payment.stripe_session_id,
+        payment.created_at || new Date().toISOString(),
+        payment.updated_at || new Date().toISOString(),
+        payment.newfield1 || null,
+        payment.newfield2 || null,
+        payment.newfield3 || null,
+        1
+      );
+      resolve({ success: true });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+function addSubDomainModuleSettingBackup(setting) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO sub_domain_module_settings 
+        (id, license_type, purchase_code, purchased_on, supported_until, banned_subdomain, notify_update, created_at, updated_at, newfield1, newfield2, newfield3, isSync) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        setting.id,
+        setting.license_type,
+        setting.purchase_code,
+        setting.purchased_on,
+        setting.supported_until,
+        setting.banned_subdomain,
+        setting.notify_update ?? 1,
+        setting.created_at || new Date().toISOString(),
+        setting.updated_at || new Date().toISOString(),
+        setting.newfield1 || null,
+        setting.newfield2 || null,
+        setting.newfield3 || null,
+        1
+      );
+      resolve({ success: true });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+function addSuperadminPaymentGatewayBackup(gateway) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO superadmin_payment_gateways (
+          id, razorpay_type, test_razorpay_key, test_razorpay_secret, razorpay_test_webhook_key,
+          live_razorpay_key, live_razorpay_secret, razorpay_live_webhook_key, razorpay_status,
+          stripe_type, test_stripe_key, test_stripe_secret, stripe_test_webhook_key,
+          live_stripe_key, live_stripe_secret, stripe_live_webhook_key, stripe_status,
+          created_at, updated_at,
+          flutterwave_status, flutterwave_type, test_flutterwave_key, test_flutterwave_secret,
+          test_flutterwave_hash, flutterwave_test_webhook_key, live_flutterwave_key, live_flutterwave_secret,
+          live_flutterwave_hash, flutterwave_live_webhook_key,
+          live_paypal_client_id, live_paypal_secret, test_paypal_client_id, test_paypal_secret,
+          paypal_status, paypal_mode,
+          payfast_merchant_id, payfast_merchant_key, payfast_passphrase,
+          test_payfast_merchant_id, test_payfast_merchant_key, test_payfast_passphrase,
+          payfast_mode, payfast_status,
+          live_paystack_key, live_paystack_secret, live_paystack_merchant_email,
+          test_paystack_key, test_paystack_secret, test_paystack_merchant_email,
+          paystack_payment_url, paystack_status, paystack_mode,
+          newfield1, newfield2, newfield3, isSync
+        ) VALUES (
+          ?,?,?,?,?,?,?,?,?,?,
+          ?,?,?,?,?,?,?,?,?,?,
+          ?,?,?,?,?,?,?,?,?,?,
+          ?,?,?,?,?,?,?,?,?,?,
+          ?,?,?,?,?,?,?,?,?,?,
+          ?,?,?,?,?,?
+        )
+      `).run(
+        gateway.id,
+        gateway.razorpay_type,
+        gateway.test_razorpay_key,
+        gateway.test_razorpay_secret,
+        gateway.razorpay_test_webhook_key,
+        gateway.live_razorpay_key,
+        gateway.live_razorpay_secret,
+        gateway.razorpay_live_webhook_key,
+        gateway.razorpay_status ?? 0,
+        gateway.stripe_type,
+        gateway.test_stripe_key,
+        gateway.test_stripe_secret,
+        gateway.stripe_test_webhook_key,
+        gateway.live_stripe_key,
+        gateway.live_stripe_secret,
+        gateway.stripe_live_webhook_key,
+        gateway.stripe_status ?? 0,
+        gateway.created_at || new Date().toISOString(),
+        gateway.updated_at || new Date().toISOString(),
+        gateway.flutterwave_status ?? 0,
+        gateway.flutterwave_type,
+        gateway.test_flutterwave_key,
+        gateway.test_flutterwave_secret,
+        gateway.test_flutterwave_hash,
+        gateway.flutterwave_test_webhook_key,
+        gateway.live_flutterwave_key,
+        gateway.live_flutterwave_secret,
+        gateway.live_flutterwave_hash,
+        gateway.flutterwave_live_webhook_key,
+        gateway.live_paypal_client_id,
+        gateway.live_paypal_secret,
+        gateway.test_paypal_client_id,
+        gateway.test_paypal_secret,
+        gateway.paypal_status ?? 0,
+        gateway.paypal_mode,
+        gateway.payfast_merchant_id,
+        gateway.payfast_merchant_key,
+        gateway.payfast_passphrase,
+        gateway.test_payfast_merchant_id,
+        gateway.test_payfast_merchant_key,
+        gateway.test_payfast_passphrase,
+        gateway.payfast_mode,
+        gateway.payfast_status ?? 0,
+        gateway.live_paystack_key,
+        gateway.live_paystack_secret,
+        gateway.live_paystack_merchant_email,
+        gateway.test_paystack_key,
+        gateway.test_paystack_secret,
+        gateway.test_paystack_merchant_email,
+        gateway.paystack_payment_url,
+        gateway.paystack_status ?? 0,
+        gateway.paystack_mode,
+        gateway.newfield1 || null,
+        gateway.newfield2 || null,
+        gateway.newfield3 || null,
+        1
+      );
+      resolve({ success: true });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+function addSupplierBackup(supplier) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO suppliers (
+          id, restaurant_id, name, phone, email, address,
+          created_at, updated_at, newfield1, newfield2, newfield3, isSync
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        supplier.id,
+        supplier.restaurant_id,
+        supplier.name,
+        supplier.phone,
+        supplier.email,
+        supplier.address,
+        supplier.created_at || new Date().toISOString(),
+        supplier.updated_at || new Date().toISOString(),
+        supplier.newfield1 || null,
+        supplier.newfield2 || null,
+        supplier.newfield3 || null,
+        1 // mark as synced
+      );
+
+      resolve({ success: true });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+function addTaxBackup(tax) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO taxes (
+          id, restaurant_id, tax_name, tax_percent, tax_inclusive,
+          created_at, updated_at, newfield1, newfield2, newfield3, isSync
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        tax.id,
+        tax.restaurant_id,
+        tax.tax_name,
+        tax.tax_percent,
+        tax.tax_inclusive,
+        tax.created_at || new Date().toISOString(),
+        tax.updated_at || new Date().toISOString(),
+        tax.newfield1 || null,
+        tax.newfield2 || null,
+        tax.newfield3 || null,
+        1 // mark as synced
+      );
+
+      resolve({ success: true });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+function addUnitBackup(unit) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO units (
+          id, branch_id, name, symbol,
+          created_at, updated_at, newfield1, newfield2, newfield3, isSync
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        unit.id,
+        unit.branch_id,
+        unit.name,
+        unit.symbol,
+        unit.created_at || new Date().toISOString(),
+        unit.updated_at || new Date().toISOString(),
+        unit.newfield1 || null,
+        unit.newfield2 || null,
+        unit.newfield3 || null,
+        1 // mark as synced
+      );
+
+      resolve({ success: true });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+function addWaiterRequestBackup(request) {
+  return new Promise((resolve, reject) => {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO waiter_requests (
+          id, branch_id, table_id, status, created_at, updated_at,
+          newfield1, newfield2, newfield3, isSync
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        request.id,
+        request.branch_id,
+        request.table_id,
+        request.status || "pending",
+        request.created_at || new Date().toISOString(),
+        request.updated_at || new Date().toISOString(),
+        request.newfield1 || null,
+        request.newfield2 || null,
+        request.newfield3 || null,
+        1 // mark as synced
+      );
+
+      resolve({ success: true });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+
 module.exports = { 
     addAreaBackup,
     addBranchDeliverySettingBackup,
@@ -2890,5 +3238,15 @@ module.exports = {
     addRestaurantPaymentBackup,
     addRestaurantTaxBackup,
     addRoleBackup,
-    addRoleHasPermissionBackup
+    addRoleHasPermissionBackup,
+    addSessionBackup,
+    addSplitOrderBackup,
+    addSplitOrderItemBackup,
+    addStripePaymentBackup,
+    addSubDomainModuleSettingBackup,
+    addSuperadminPaymentGatewayBackup,
+    addSupplierBackup,
+    addTaxBackup,
+    addUnitBackup,
+    addWaiterRequestBackup
  };

@@ -336,6 +336,46 @@ function addRoleBackup(data) {
 function addRoleHasPermissionBackup(data) {
   return model.addRoleHasPermissionBackup(data);
 }
+//addSessionBackup
+function addSessionBackup(data) {
+  return model.addSessionBackup(data);
+}
+//addSplitOrderBackup
+function addSplitOrderBackup(data) {
+  return model.addSplitOrderBackup(data);
+}
+//addSplitOrderItemBackup
+function addSplitOrderItemBackup(data) {
+  return model.addSplitOrderItemBackup(data);
+}
+//addStripePaymentBackup
+function addStripePaymentBackup(data) {
+  return model.addStripePaymentBackup(data);
+}
+//addSubDomainModuleSettingBackup
+function addSubDomainModuleSettingBackup(data) {
+  return model.addSubDomainModuleSettingBackup(data);
+}
+//addSuperadminPaymentGatewayBackup
+function addSuperadminPaymentGatewayBackup(data) {
+  return model.addSuperadminPaymentGatewayBackup(data);
+}
+//addSupplierBackup
+function addSupplierBackup(data) {
+  return model.addSupplierBackup(data);
+}
+//addTaxBackup
+function addTaxBackup(data) {
+  return model.addTaxBackup(data);
+}
+//addUnitBackup
+function addUnitBackup(data) {
+  return model.addUnitBackup(data);
+}
+//addWaiterRequestBackup
+function addWaiterRequestBackup(data) {
+  return model.addWaiterRequestBackup(data);
+}
 module.exports = { 
     addAreaBackup,
     addBranchDeliverySettingBackup,
@@ -423,5 +463,15 @@ module.exports = {
     addRestaurantPaymentBackup,
     addRestaurantTaxBackup,
     addRoleBackup,
-    addRoleHasPermissionBackup
+    addRoleHasPermissionBackup,
+    addSessionBackup,
+    addSplitOrderBackup,
+    addSplitOrderItemBackup,
+    addStripePaymentBackup,
+    addSubDomainModuleSettingBackup,
+    addSuperadminPaymentGatewayBackup,
+    addSupplierBackup,
+    addTaxBackup,
+    addUnitBackup,
+    addWaiterRequestBackup
  };
