@@ -19,8 +19,24 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Badge } from '../components/ui/badge';
+import Swal from "sweetalert2";
+import ModifierGroupForm from "../form/menu/ModifierGroupForm";
 
-// Define table columns
+
+export function ModifierGroup() {
+    const [sorting, setSorting] = useState([]);
+    const [globalFilter, setGlobalFilter] = useState(""); // 🔹 search state
+    const [modifierGroups, setModifierGroups] = useState([]);
+const [formMode, setFormMode] = useState("add");
+  const [editData, setEditData] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+    const loadData = async () => {
+        const data = await window.api.getModifierGroups();
+        console.log("hello this is modifier group data", data)
+        setModifierGroups(data);
+    };
+
+    // Define table columns
 const columns = [
     {
         accessorKey: "name",
@@ -71,20 +87,16 @@ const columns = [
         id: "actions",
         header: "Actions",
         cell: ({ row }) => {
-            const handleUpdate = () => {
-                console.log("Update item:", row.original);
-            };
-
-            const handleDelete = () => {
-                console.log("Delete item:", row.original);
-            };
+            
 
             return (
                 <div className="flex space-x-2">
                     <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleUpdate(row.original)}
+                        //onClick={() => handleUpdate(row.original)}
+                        onClick={() => { setFormMode("edit"); setEditData(row.original); setShowForm(true); }}
+
                         className="h-8 px-2 bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200"
                     >
                         <Edit className="h-4 w-4 mr-1" />
@@ -93,7 +105,9 @@ const columns = [
                     <Button
                         variant="outline"
                         size="sm"
+                        //onClick={() => handleDelete(row.original.id)}
                         onClick={() => handleDelete(row.original.id)}
+
                         className="h-8 px-2 bg-red-50 text-red-700 hover:bg-red-100 border-red-200"
                     >
                         <Trash2 className="h-4 w-4 mr-1" />
@@ -105,16 +119,40 @@ const columns = [
     },
 ];
 
-export function ModifierGroup() {
-    const [sorting, setSorting] = useState([]);
-    const [globalFilter, setGlobalFilter] = useState(""); // 🔹 search state
-    const [modifierGroups, setModifierGroups] = useState([]);
+ const handleSave = async (payload) => {
+    try {
+      if (formMode === "edit" && editData) {
+        await window.api.updateModifierGroup(editData.id, payload);
+        Swal.fire({ icon: "success", title: "Group updated", toast: true, position: "top-end", showConfirmButton: false, timer: 1500 });
+      } else {
+        await window.api.addModifierGroup(payload);
+        Swal.fire({ icon: "success", title: "Group added", toast: true, position: "top-end", showConfirmButton: false, timer: 1500 });
+      }
+      setShowForm(false);
+      setEditData(null);
+      loadData();
+    } catch (error) {
+      Swal.fire({ icon: "error", title: "Error", text: error.message || "Error saving group" });
+    }
+  };
 
-    const loadData = async () => {
-        const data = await window.api.getModifierGroups();
-        console.log("hello this is modifier group data", data)
-        setModifierGroups(data);
-    };
+  const handleDelete = async (id) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to delete this modifier group?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
+    });
+
+    if (result.isConfirmed) {
+      await window.api.deleteModifierGroup(id);
+      loadData();
+      Swal.fire({ icon: "success", title: "Deleted!", text: "Modifier group deleted successfully.", toast: true, position: "top-end", timer: 2000 });
+    }
+  };
 
     const table = useReactTable({
         data: modifierGroups,
@@ -158,7 +196,9 @@ export function ModifierGroup() {
                         </div>
                         <div className="inline-flex gap-x-4 mb-4 sm:mb-0">
 
-                            <Button className="bg-[#000080] cursor-pointer hover:bg-[#000060] dark:text-white">
+                            <Button className="bg-[#000080] cursor-pointer hover:bg-[#000060] dark:text-white"
+                                  onClick={() => { setFormMode("add"); setEditData(null); setShowForm(true); }}
+                               >
                                 Add Modifier Group
                             </Button>
                         </div>
@@ -238,6 +278,14 @@ export function ModifierGroup() {
                         </TableBody>
                     </Table>
                 </div>
+                 {showForm && (
+        <ModifierGroupForm
+          formMode={formMode}
+          initialData={editData}
+          onSave={handleSave}
+          onCancel={() => setShowForm(false)}
+        />
+      )}
             </div>
         </>
     );

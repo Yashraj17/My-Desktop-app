@@ -1,9 +1,17 @@
 import React from "react";
 
-function ModifierForm({ modifier, setModifier, menuItems, modifierGroups, formMode, onSave }) {
+function ModifierForm({ modifier, setModifier, menuItems, modifierGroups,onCancel, formMode, onSave }) {
   return (
-    <div className="p-6 bg-white rounded-md w-full max-w-lg">
-      <h3 className="text-lg font-semibold mb-4">
+<div className="fixed inset-0 flex justify-end z-50">
+  {/* Overlay */}
+  <div 
+    className="absolute inset-0 bg-black/40"
+    onClick={onCancel} // click outside to close
+  ></div>
+
+  {/* Drawer */}
+  <div className="relative bg-white w-full sm:w-[700px] max-w-md h-full p-6 overflow-y-auto"> 
+         <h3 className="text-lg font-semibold mb-4">
         {formMode === "add" ? "Add Modifier" : "Update Modifier"}
       </h3>
 
@@ -97,6 +105,7 @@ function ModifierForm({ modifier, setModifier, menuItems, modifierGroups, formMo
           {formMode === "add" ? "Add" : "Update"}
         </button>
       </div>
+    </div>
     </div>
   );
 }

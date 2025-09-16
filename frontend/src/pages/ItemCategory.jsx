@@ -7,6 +7,8 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 import { ArrowUpDown, Edit, Trash2 } from "lucide-react";
+import CategoryForm from "../form/menu/CategoryForm";
+import Swal from "sweetalert2";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,7 +21,16 @@ import {
     TableRow,
 } from "@/components/ui/table";
 
-// Define table columns
+
+
+export function ItemCategory() {
+    const [sorting, setSorting] = useState([]);
+    const [globalFilter, setGlobalFilter] = useState(""); // 🔹 search state
+    const [categories, setCategories] = useState([]);
+    const [formMode, setFormMode] = useState("add");
+    const [editData, setEditData] = useState(null);
+    const [showForm, setShowForm] = useState(false);
+    /// Define table columns
 const columns = [
     {
         accessorKey: "category_name",
@@ -63,20 +74,18 @@ const columns = [
         id: "actions",
         header: "Actions",
         cell: ({ row }) => {
-            const handleUpdate = () => {
-                console.log("Update item:", row.original);
-            };
-
-            const handleDelete = () => {
-                console.log("Delete item:", row.original);
-            };
-
+           
             return (
                 <div className="flex space-x-2">
                     <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleUpdate(row.original)}
+                        //onClick={() => handleUpdate(row.original)}
+                         onClick={() => {
+                        setFormMode("edit");
+                        setEditData(row.original);
+                        setShowForm(true);
+                      }}
                         className="h-8 px-2 bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200"
                     >
                         <Edit className="h-4 w-4 mr-1" />
@@ -97,12 +106,6 @@ const columns = [
         width: "200px",
     },
 ];
-
-export function ItemCategory() {
-    const [sorting, setSorting] = useState([]);
-    const [globalFilter, setGlobalFilter] = useState(""); // 🔹 search state
-    const [categories, setCategories] = useState([]);
-
     const loadData = async () => {
         try {
             const data = await window.api.getCategories();
@@ -130,6 +133,78 @@ export function ItemCategory() {
         loadData();
     }, []);
 
+
+    const handleSave = async ({ name, language }) => {
+        try {
+          if (formMode === "edit" && editData) {
+            await window.api.updateCategory(editData.id, name, language);
+            Swal.fire({ 
+            icon: 'success',
+            title: 'Category updated',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1500 });
+          } else {
+            await window.api.addCategory(name, language);
+            Swal.fire({ 
+            icon: 'success',
+            title: 'Category added',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1500});
+          }
+          setShowForm(false);
+          setEditData(null);
+          loadData();
+        } catch (error) {
+          Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message || 'Error saving category',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+              });
+        }
+      };
+    
+      const handleDelete = async (id) => {
+     const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you want to delete this category?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true,
+      });
+    
+      if (result.isConfirmed) {
+        try {
+          await window.api.deleteCategory(id);
+          await loadData();
+          Swal.fire({
+            icon: 'success',
+            title: 'Deleted!',
+            text: 'Item category deleted successfully.',
+            toast: true,
+            position: 'top-end',
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        } catch (error) {
+          console.error('Failed to delete category:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Failed',
+            text: 'Failed to delete category',
+          });
+        }
+      }
+      };
     return (
         <>
             <div className="p-5 bg-white block sm:flex items-center justify-between dark:bg-gray-800 dark:border-gray-700">
@@ -157,7 +232,12 @@ export function ItemCategory() {
                                 Organize Menu Items
                             </Button>
 
-                            <Button className="bg-[#000080] cursor-pointer hover:bg-[#000060] dark:text-white">
+                            <Button className="bg-[#000080] cursor-pointer hover:bg-[#000060] dark:text-white"
+                             onClick={() => {
+                               setFormMode("add");
+                               setEditData(null);
+                               setShowForm(true);
+                             }}>
                                 Add Item Category
                             </Button>
                         </div>
@@ -238,6 +318,15 @@ export function ItemCategory() {
                     </Table>
                 </div>
             </div>
+            {/* Show Modal */}
+      {showForm && (
+        <CategoryForm
+          formMode={formMode}
+          initialData={editData}
+          onSave={handleSave}
+          onCancel={() => setShowForm(false)}
+        />
+      )}
         </>
     );
 }

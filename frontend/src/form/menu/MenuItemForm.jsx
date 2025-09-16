@@ -46,8 +46,15 @@ function MenuItemForm({ formMode, initialData, menus, categories, onSave, onCanc
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-end z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
+<div className="fixed inset-0 flex justify-end z-50">
+  {/* Overlay */}
+  <div 
+    className="absolute inset-0 bg-black/40"
+    onClick={onCancel} // click outside to close
+  ></div>
+
+  {/* Drawer */}
+  <div className="relative bg-white w-full sm:w-[700px] max-w-md h-full p-6 overflow-y-auto">
         <h3 className="text-lg font-semibold text-gray-800 mb-2">
           {formMode === "add" ? "Add Menu Item" : "Update Menu Item"}
         </h3>

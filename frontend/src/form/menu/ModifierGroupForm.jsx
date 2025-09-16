@@ -50,9 +50,16 @@ function ModifierGroupForm({ formMode, initialData, onSave, onCancel }) {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-end bg-black/40 z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
+<div className="fixed inset-0 flex justify-end z-50">
+  {/* Overlay */}
+  <div 
+    className="absolute inset-0 bg-black/40"
+    onClick={onCancel} // click outside to close
+  ></div>
+
+  {/* Drawer */}
+  <div className="relative bg-white w-full sm:w-[700px] max-w-md h-full p-6 overflow-y-auto"> 
+         <h3 className="text-lg font-medium text-gray-900 mb-4">
           {formMode === "add" ? "Add Modifier Group" : "Update Modifier Group"}
         </h3>
 

@@ -7,6 +7,7 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 import { ArrowUpDown, Edit, Trash2 } from "lucide-react";
+import Swal from "sweetalert2";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,8 +19,20 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import MenuItemForm from "../form/menu/MenuItemForm";
+import CategoryForm from "../form/menu/CategoryForm";
 
-// Define table columns
+export function MenuItems() {
+    const [sorting, setSorting] = useState([]);
+    const [globalFilter, setGlobalFilter] = useState(""); // 🔹 search state
+     const [items, setItems] = useState([]);
+     const [menus, setMenus] = useState([]);
+     const [categories, setCategories] = useState([]);
+     const [formMode, setFormMode] = useState("add");
+     const [editData, setEditData] = useState(null);
+     const [showForm, setShowForm] = useState(false);
+     const [showCategoryForm, setShowCategoryForm] = useState(false);
+     //Define table columns
 const columns = [
   {
     accessorKey: "item_name",
@@ -177,20 +190,25 @@ const columns = [
     id: "actions",
     header: "Actions",
     cell: ({ row }) => {
-      const handleUpdate = () => {
-        console.log("Update item:", row.original);
-      };
+      // const handleUpdate = () => {
+      //   console.log("Update item:", row.original);
+      // };
 
-      const handleDelete = () => {
-        console.log("Delete item:", row.original);
-      };
+      // const handleDelete = () => {
+      //   console.log("Delete item:", row.original);
+      // };
 
       return (
         <div className="flex space-x-2">
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={handleUpdate}
+            //onClick={handleUpdate}
+            onClick={() => {
+                        setFormMode("edit");
+                        setEditData(row.original);
+                        setShowForm(true);
+                      }}
             className="h-8 px-2 bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200"
           >
             <Edit className="h-4 w-4 mr-1" />
@@ -199,7 +217,8 @@ const columns = [
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={handleDelete}
+            //onClick={handleDelete}
+            onClick={() => handleDelete(row.original.id)}
             className="h-8 px-2 bg-red-50 text-red-700 hover:bg-red-100 border-red-200"
           >
             <Trash2 className="h-4 w-4 mr-1" />
@@ -211,13 +230,6 @@ const columns = [
     width: "180px",
   }
 ];
-
-export function MenuItems() {
-    const [sorting, setSorting] = useState([]);
-    const [globalFilter, setGlobalFilter] = useState(""); // 🔹 search state
-     const [items, setItems] = useState([]);
-     const [menus, setMenus] = useState([]);
-     const [categories, setCategories] = useState([]);
 
   const loadData = async () => {
     const data = await window.api.getMenuItems();
@@ -238,6 +250,89 @@ export function MenuItems() {
     setCategories(cats);
   };
 
+
+  const handleSave = async (payload) => {
+      try {
+        if (formMode === "edit" && editData) {
+          await window.api.updateMenuItem(editData.id, payload);
+          Swal.fire({
+            icon: "success",
+            title: "Menu item updated",
+            toast: true,
+            position: "top-end",
+            timer: 1500,
+            showConfirmButton: false,
+          });
+        } else {
+          await window.api.addMenuItem(payload);
+          Swal.fire({
+            icon: "success",
+            title: "Menu item added",
+            toast: true,
+            position: "top-end",
+            timer: 1500,
+            showConfirmButton: false,
+          });
+        }
+        setShowForm(false);
+        setEditData(null);
+        loadData();
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: error.message || "Error saving menu item",
+        });
+      }
+    };
+  
+    const handleDelete = async (id) => {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "Do you want to delete this menu item?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "Cancel",
+        reverseButtons: true,
+      });
+  
+      if (result.isConfirmed) {
+        await window.api.deleteMenuItem(id);
+        loadData();
+        Swal.fire({
+          icon: "success",
+          title: "Deleted!",
+          toast: true,
+          position: "top-end",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      }
+    };
+  
+    // when a new category is added from CategoryForm
+    const handleCategorySave = async (categoryName) => {
+      try {
+        await window.api.addCategory(categoryName);
+        Swal.fire({
+          icon: "success",
+          title: "Category added",
+          toast: true,
+          position: "top-end",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+        setShowCategoryForm(false);
+        loadData();
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: error.message || "Error saving category",
+        });
+      }
+    };
     const table = useReactTable({
         data: items,
         columns,
@@ -283,7 +378,12 @@ export function MenuItems() {
                                 Organize Menu Items
                             </Button>
 
-                            <Button className="bg-[#000080] cursor-pointer hover:bg-[#000060] dark:text-white">
+                            <Button className="bg-[#000080] cursor-pointer hover:bg-[#000060] dark:text-white"
+                            onClick={() => {
+            setFormMode("add");
+            setEditData(null);
+            setShowForm(true);
+          }}>
                                 Add Menu Item
                             </Button>
                         </div>
@@ -363,6 +463,30 @@ export function MenuItems() {
                         </TableBody>
                     </Table>
                 </div>
+
+                 {/* Item Form */}
+      {showForm && (
+        <MenuItemForm
+          formMode={formMode}
+          initialData={editData}
+          menus={menus}
+          categories={categories}
+          onSave={handleSave}
+          onCancel={() => setShowForm(false)}
+          onAddCategory={(cat) => {
+            setCategories([...categories, cat]);
+          }}
+        />
+      )}
+
+      {/* Category Form */}
+      {showCategoryForm && (
+        <CategoryForm
+          formMode="add"
+          onSave={handleCategorySave}
+          onCancel={() => setShowCategoryForm(false)}
+        />
+      )}
             </div>
         </>
     );
