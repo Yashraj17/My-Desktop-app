@@ -403,6 +403,7 @@ isOnline: (subdomain) => ipcRenderer.invoke("is-online", subdomain),
          //addWaiterRequestBackup
          addWaiterRequestBackup: (Data) =>
     ipcRenderer.invoke("add-waiter-request-backup", Data),
+
 });
 
 

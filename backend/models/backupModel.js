@@ -3150,7 +3150,6 @@ function addWaiterRequestBackup(request) {
   });
 }
 
-
 module.exports = { 
     addAreaBackup,
     addBranchDeliverySettingBackup,
@@ -3249,4 +3248,5 @@ module.exports = {
     addTaxBackup,
     addUnitBackup,
     addWaiterRequestBackup
+
  };

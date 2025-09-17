@@ -375,6 +375,7 @@ function BackupRoutes() {
   ipcMain.handle("add-waiter-request-backup", (event, data) => {
     return controller.addWaiterRequestBackup(data);
   });
+
 }
 
 module.exports = BackupRoutes;

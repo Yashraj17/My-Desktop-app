@@ -82,6 +82,7 @@ import { syncTaxes } from "../dataSync/syncTaxes";
 import { syncUnits } from "../dataSync/syncUnits";
 import { syncWaiterRequests } from "../dataSync/syncWaiterRequests";
 
+
 function createApi(subdomain, token) {
   return axios.create({
     baseURL: subdomain,
@@ -850,6 +851,7 @@ if (user.branch_id) {
   await syncWaiterRequests(subdomain,user.branch_id, token, lasto, toDatetime, setProgress, setStatus);
   updateProgress();
 }
+
     setStatus?.("Sync complete ✅");
     return true;
   } catch (err) {
