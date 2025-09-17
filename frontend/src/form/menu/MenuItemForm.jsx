@@ -54,7 +54,7 @@ function MenuItemForm({ formMode, initialData, menus, categories, onSave, onCanc
   ></div>
 
   {/* Drawer */}
-  <div className="relative bg-white w-full sm:w-[700px] max-w-md h-full p-6 overflow-y-auto">
+<div className="relative bg-white w-full sm:w-[30%] h-full p-6 overflow-y-auto">
         <h3 className="text-lg font-semibold text-gray-800 mb-2">
           {formMode === "add" ? "Add Menu Item" : "Update Menu Item"}
         </h3>
@@ -68,7 +68,7 @@ function MenuItemForm({ formMode, initialData, menus, categories, onSave, onCanc
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
-            className="w-full px-3 py-2 border rounded-full"
+            className="w-full px-3 py-2 border "
           >
             <option>English</option>
             <option>Arabic</option>
@@ -85,7 +85,7 @@ function MenuItemForm({ formMode, initialData, menus, categories, onSave, onCanc
             value={itemName}
             onChange={(e) => setItemName(e.target.value)}
             placeholder="e.g., Margherita Pizza"
-            className="w-full px-3 py-2 border rounded-full"
+            className="w-full px-3 py-2 border "
           />
         </div>
 
@@ -96,7 +96,7 @@ function MenuItemForm({ formMode, initialData, menus, categories, onSave, onCanc
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="e.g., A classic Italian pizza with fresh tomatoes and basil."
-            className="w-full px-3 py-2 border rounded-full"
+            className="w-full px-3 py-2 border "
           />
         </div>
 
@@ -107,7 +107,7 @@ function MenuItemForm({ formMode, initialData, menus, categories, onSave, onCanc
             <select
               value={menuId}
               onChange={(e) => setMenuId(e.target.value)}
-              className="w-full px-3 py-2 border rounded-full"
+              className="w-full px-3 py-2 border "
             >
               <option value="">--</option>
               {menus.map((m) => (
@@ -123,7 +123,7 @@ function MenuItemForm({ formMode, initialData, menus, categories, onSave, onCanc
             <div className="flex items-center gap-2">
               <select
                 value={categoryId}
-                className="flex-1 px-3 py-2 border rounded-full"
+                className="flex-1 px-3 py-2 border "
                 onChange={(e) => setCategoryId(e.target.value)}
               >
                 <option value="">--</option>
@@ -136,7 +136,7 @@ function MenuItemForm({ formMode, initialData, menus, categories, onSave, onCanc
               <button
                 type="button"
                 onClick={() => setShowCategoryForm(true)}
-                className="px-3 py-2 bg-gray-200 rounded-full hover:bg-gray-300"
+                className="px-3 py-2 bg-gray-200  hover:bg-gray-300"
               >
                 ⚙
               </button>
@@ -152,7 +152,7 @@ function MenuItemForm({ formMode, initialData, menus, categories, onSave, onCanc
               key={type}
               type="button"
               onClick={() => setItemType(type)}
-              className={`px-3 py-2 rounded-full ${
+              className={`px-3 py-2  ${
                 itemType === type
                   ? "bg-[#00006f] text-white"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
@@ -174,7 +174,7 @@ function MenuItemForm({ formMode, initialData, menus, categories, onSave, onCanc
             type="number"
             value={prepTime}
             onChange={(e) => setPrepTime(e.target.value)}
-            className="w-full px-3 py-2 border rounded-full"
+            className="w-full px-3 py-2 border "
           />
         </div>
 
@@ -184,7 +184,7 @@ function MenuItemForm({ formMode, initialData, menus, categories, onSave, onCanc
           <select
             value={isAvailable}
             onChange={(e) => setIsAvailable(e.target.value)}
-            className="w-full px-3 py-2 border rounded-full"
+            className="w-full px-3 py-2 border "
           >
             <option value="1">Yes</option>
             <option value="0">No</option>
@@ -226,7 +226,7 @@ function MenuItemForm({ formMode, initialData, menus, categories, onSave, onCanc
             step="0.01"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
-            className="w-full px-3 py-2 border rounded-full"
+            className="w-full px-3 py-2 border "
           />
         </div>
 
@@ -234,13 +234,13 @@ function MenuItemForm({ formMode, initialData, menus, categories, onSave, onCanc
         <div className="flex justify-end gap-2">
           <button
             onClick={onCancel}
-            className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300"
+            className="px-4 py-2 bg-gray-200  hover:bg-gray-300"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 bg-[#00006f] text-white rounded-full hover:bg-[#00005a]"
+            className="px-4 py-2 bg-[#00006f] text-white  hover:bg-[#00005a]"
           >
             {formMode === "add" ? "Save" : "Update"}
           </button>

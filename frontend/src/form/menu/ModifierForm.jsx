@@ -10,7 +10,7 @@ function ModifierForm({ modifier, setModifier, menuItems, modifierGroups,onCance
   ></div>
 
   {/* Drawer */}
-  <div className="relative bg-white w-full sm:w-[700px] max-w-md h-full p-6 overflow-y-auto"> 
+<div className="relative bg-white w-full sm:w-[30%] h-full p-6 overflow-y-auto"> 
          <h3 className="text-lg font-semibold mb-4">
         {formMode === "add" ? "Add Modifier" : "Update Modifier"}
       </h3>
@@ -23,7 +23,7 @@ function ModifierForm({ modifier, setModifier, menuItems, modifierGroups,onCance
           onChange={(e) =>
             setModifier({ ...modifier, menu_item_id: e.target.value })
           }
-          className="w-full border border-gray-300 rounded-full px-3 py-2 text-sm"
+          className="w-full border border-gray-300  px-3 py-2 text-sm"
           required
         >
           <option value="">Select Menu Item</option>
@@ -43,7 +43,7 @@ function ModifierForm({ modifier, setModifier, menuItems, modifierGroups,onCance
           onChange={(e) =>
             setModifier({ ...modifier, modifier_group_id: e.target.value })
           }
-          className="w-full border border-gray-300 rounded-full px-3 py-2 text-sm"
+          className="w-full border border-gray-300  px-3 py-2 text-sm"
           required
         >
           <option value="">Select Modifier Group</option>
@@ -94,13 +94,13 @@ function ModifierForm({ modifier, setModifier, menuItems, modifierGroups,onCance
       {/* Actions */}
       <div className="flex justify-end space-x-2">
         <form method="dialog">
-          <button className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-full border">
+          <button className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200  border">
             Cancel
           </button>
         </form>
         <button
           onClick={onSave}
-          className="px-4 py-2 text-sm bg-blue-800 hover:bg-blue-900 text-white rounded-full"
+          className="px-4 py-2 text-sm bg-blue-800 hover:bg-blue-900 text-white "
         >
           {formMode === "add" ? "Add" : "Update"}
         </button>

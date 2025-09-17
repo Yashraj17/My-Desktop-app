@@ -2317,6 +2317,34 @@ ipcMain.handle("get-uploads-path", (event, filename) => {
     return null; // File not found
   }
 });
+
+const dns = require("dns");
+
+ipcMain.handle("is-online", async (event, subdomain) => {
+  return new Promise((resolve) => {
+    dns.lookup("google.com", (err) => {
+      if (err) return resolve(false);
+
+      // If subdomain provided, check if server responds
+      if (subdomain) {
+        const https = require("https");
+        const req = https.request(subdomain, { method: "HEAD", timeout: 3000 }, () => {
+          resolve(true);
+        });
+        req.on("error", () => resolve(false));
+        req.on("timeout", () => {
+          req.destroy();
+          resolve(false);
+        });
+        req.end();
+      } else {
+        resolve(true);
+      }
+    });
+  });
+});
+
+
 // App lifecycle
 app.whenReady().then(() => {
   initDatabase();

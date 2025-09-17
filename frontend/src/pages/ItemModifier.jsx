@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import {
     flexRender,
     getCoreRowModel,
@@ -10,6 +10,8 @@ import { ArrowUpDown, Edit, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import Swal from "sweetalert2";
+import ModifierForm from "../form/menu/ModifierForm";
 
 import {
     Table,
@@ -21,7 +23,22 @@ import {
 } from "@/components/ui/table";
 import { Badge } from '../components/ui/badge';
 
-// Define table columns
+
+export function ItemModifiers() {
+    const [sorting, setSorting] = useState([]);
+    const [globalFilter, setGlobalFilter] = useState(""); // 🔹 search state
+    const [modifierGroups, setModifierGroups] = useState([]);
+const [formMode, setFormMode] = useState("add");
+  const [editId, setEditId] = useState(null);
+  const dialogRef = useRef(null);
+  const [menuItems, setMenuItems] = useState([]);
+  const [modifier, setModifier] = useState({
+    menu_item_id: "",
+    modifier_group_id: "",
+    is_required: false,
+    allow_multiple_selection: false,
+  });
+    // Define table columns
 const columns = [
     {
         accessorKey: "item_name",
@@ -113,20 +130,15 @@ const columns = [
         id: "actions",
         header: "Actions",
         cell: ({ row }) => {
-            const handleUpdate = () => {
-                console.log("Update item:", row.original);
-            };
-
-            const handleDelete = () => {
-                console.log("Delete item:", row.original);
-            };
+            
 
             return (
                 <div className="flex space-x-2">
                     <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleUpdate(row.original)}
+                       // onClick={() => handleUpdate(row.original)}
+                       onClick={() => handleEdit(row.original)}
                         className="h-8 px-2 bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200"
                     >
                         <Edit className="h-4 w-4 mr-1" />
@@ -135,7 +147,8 @@ const columns = [
                     <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleDelete(row.original.id)}
+                        //onClick={() => handleDelete(row.original.id)}
+                        onClick={() => deleteModifier(row.original.id)}
                         className="h-8 px-2 bg-red-50 text-red-700 hover:bg-red-100 border-red-200"
                     >
                         <Trash2 className="h-4 w-4 mr-1" />
@@ -148,23 +161,18 @@ const columns = [
     },
 ];
 
-export function ItemModifiers() {
-    const [sorting, setSorting] = useState([]);
-    const [globalFilter, setGlobalFilter] = useState(""); // 🔹 search state
-    const [modifierGroups, setModifierGroups] = useState([]);
-
     const loadModifiers = async () => {
         try {
             const data = await window.api.getModifiers();
             console.log("hello this is item modifier", data)
-            setModifierGroups(data);
+            setModifier(data);
         } catch (error) {
             console.error("Error loading modifiers:", error);
         }
     };
 
     const table = useReactTable({
-        data: modifierGroups,
+        data: modifier,
         columns,
         onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
@@ -179,8 +187,83 @@ export function ItemModifiers() {
 
     useEffect(() => {
         loadModifiers();
+        loadMenuItems();
+        loadModifierGroups();
     }, []);
 
+
+      const loadMenuItems = async () => {
+        const data = await window.api.getMenuItems();
+        setMenuItems(data);
+      };
+    
+      const loadModifierGroups = async () => {
+        const data = await window.api.getModifierGroups();
+        setModifierGroups(data);
+      };
+    
+      const handleSave = async () => {
+        try {
+          if (formMode === "edit" && editId !== null) {
+            await window.api.updateModifier(editId, modifier);
+            Swal.fire({ icon: "success", title: "Modifier updated", toast: true, position: "top-end", showConfirmButton: false, timer: 1500 });
+          } else {
+            await window.api.addModifier(modifier);
+            Swal.fire({ icon: "success", title: "Modifier added", toast: true, position: "top-end", showConfirmButton: false, timer: 1500 });
+          }
+          setTimeout(() => {
+            setModifier({ menu_item_id: "", modifier_group_id: "", is_required: false, allow_multiple_selection: false });
+            setEditId(null);
+            dialogRef.current.close();
+            loadModifiers();
+          }, 100);
+        } catch (error) {
+          console.error("Error saving modifier:", error);
+          Swal.fire({ icon: "error", title: "Error", text: error.message || "Error saving modifier", toast: true, position: "top-end", showConfirmButton: false, timer: 3000 });
+        }
+      };
+    
+      const handleEdit = (mod) => {
+        setFormMode("edit");
+        setEditId(mod.id);
+        setModifier({
+          menu_item_id: menuItems.find(item => item.item_name === mod.item_name)?.id || "",
+          modifier_group_id: modifierGroups.find(group => group.name === mod.modifier_group_name)?.id || "",
+          is_required: mod.is_required,
+          allow_multiple_selection: mod.allow_multiple_selection,
+        });
+        setTimeout(() => dialogRef.current?.showModal(), 0);
+      };
+    
+      const handleAddNew = () => {
+        setFormMode("add");
+        setModifier({ menu_item_id: "", modifier_group_id: "", is_required: false, allow_multiple_selection: false });
+        setEditId(null);
+        setTimeout(() => dialogRef.current?.showModal(), 0);
+      };
+    
+      const deleteModifier = async (id) => {
+        const result = await Swal.fire({
+          title: "Are you sure?",
+          text: "Do you want to delete this modifier?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Yes, delete it!",
+          cancelButtonText: "Cancel",
+          reverseButtons: true,
+        });
+    
+        if (result.isConfirmed) {
+          try {
+            await window.api.deleteModifier(id);
+            await loadModifiers();
+            Swal.fire({ icon: "success", title: "Deleted!", text: "Modifier deleted successfully.", toast: true, position: "top-end", timer: 2000, showConfirmButton: false });
+          } catch (error) {
+            console.error("Failed to delete modifier:", error);
+            Swal.fire({ icon: "error", title: "Failed", text: "Failed to delete modifier" });
+          }
+        }
+      };
     return (
         <>
             <div className="p-5 bg-white block sm:flex items-center justify-between dark:bg-gray-800 dark:border-gray-700">
@@ -199,13 +282,15 @@ export function ItemModifiers() {
                                     type="text"
                                     value={globalFilter ?? ""}
                                     onChange={(e) => setGlobalFilter(e.target.value)}
-                                    placeholder="Search your category here"
+                                    placeholder="Search your modifier here"
                                 />
                             </div>
                         </div>
                         <div className="inline-flex gap-x-4 mb-4 sm:mb-0">
 
-                            <Button className="bg-[#000080] cursor-pointer hover:bg-[#000060] dark:text-white">
+                            <Button className="bg-[#000080] cursor-pointer hover:bg-[#000060] dark:text-white"
+                                      onClick={handleAddNew}
+>
                                 Add Item Modifier
                             </Button>
                         </div>
@@ -285,6 +370,18 @@ export function ItemModifiers() {
                         </TableBody>
                     </Table>
                 </div>
+
+                 {/* Modal */}
+      <dialog ref={dialogRef} className="p-0 rounded-md shadow-lg">
+        <ModifierForm
+          modifier={modifier}
+          setModifier={setModifier}
+          menuItems={menuItems}
+          modifierGroups={modifierGroups}
+          formMode={formMode}
+          onSave={handleSave}
+        />
+      </dialog>
             </div>
         </>
     );

@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 function MenuForm({ formMode, initialData, onSave, onCancel }) {
   const [menuName, setMenuName] = useState("");
   const [showOnCustomerSite, setShowOnCustomerSite] = useState(false);
+  const [language, setLanguage] = useState("English");
 
   useEffect(() => {
     if (formMode === "edit" && initialData) {
@@ -51,16 +52,32 @@ function MenuForm({ formMode, initialData, onSave, onCancel }) {
   ></div>
 
   {/* Drawer */}
-  <div className="relative bg-white w-full sm:w-[700px] max-w-md h-full p-6 overflow-y-auto">
+<div className="relative bg-white w-full sm:w-[30%] h-full p-6 overflow-y-auto">
         <h3 className="text-lg font-semibold mb-4">
           {formMode === "add" ? "Add Menu" : "Update Menu"}
         </h3>
+         {/* Language Dropdown */}
+        <div className="mb-4">
+          <label className="block mb-1 text-sm font-medium text-gray-700">
+            Select Language
+          </label>
+          <select
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+            className="block w-full p-2 border border-gray-300 "
+          >
+            <option value="English">English</option>
+            <option value="Arabic">Arabic</option>
+            <option value="German">German</option>
+            <option value="Spanish">Spanish</option>
+          </select>
+        </div>
         <input
           type="text"
           placeholder="Menu name"
           value={menuName}
           onChange={(e) => setMenuName(e.target.value)}
-          className="w-full px-3 py-2 border rounded-full mb-3"
+          className="w-full px-3 py-2 border  mb-3"
         />
         <label className="flex items-center gap-2 mb-4">
           <input
@@ -73,13 +90,13 @@ function MenuForm({ formMode, initialData, onSave, onCancel }) {
         <div className="flex justify-end gap-2">
           <button
             onClick={onCancel}
-            className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300"
+            className="px-4 py-2 bg-gray-200  hover:bg-gray-300"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 bg-[#00006f] text-white rounded-full"
+            className="px-4 py-2 bg-[#00006f] text-white "
           >
             Save
           </button>

@@ -28,7 +28,7 @@ function CategoryForm({ formMode, initialData, onSave, onCancel }) {
   ></div>
 
   {/* Drawer */}
-  <div className="relative bg-white w-full sm:w-[700px] max-w-md h-full p-6 overflow-y-auto">
+<div className="relative bg-white w-full sm:w-[30%] h-full p-6 overflow-y-auto">
         <h3 className="text-lg font-medium text-gray-900 mb-4">
           {formMode === "add" ? "Add New Category" : "Update Category"}
         </h3>
@@ -41,7 +41,7 @@ function CategoryForm({ formMode, initialData, onSave, onCancel }) {
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
-            className="block w-full p-2 border border-gray-300 rounded-full"
+            className="block w-full p-2 border border-gray-300 "
           >
             <option value="English">English</option>
             <option value="Arabic">Arabic</option>
@@ -60,7 +60,7 @@ function CategoryForm({ formMode, initialData, onSave, onCancel }) {
             placeholder="e.g., Desserts"
             value={categoryName}
             onChange={(e) => setCategoryName(e.target.value)}
-            className="block w-full p-2 border border-gray-300 rounded-full"
+            className="block w-full p-2 border border-gray-300 "
             required
           />
         </div>
@@ -69,13 +69,13 @@ function CategoryForm({ formMode, initialData, onSave, onCancel }) {
         <div className="flex justify-end space-x-2">
           <button
             onClick={onCancel}
-            className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300"
+            className="px-4 py-2 bg-gray-200  hover:bg-gray-300"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 text-white bg-[#00006f] rounded-full hover:bg-[#00005a]"
+            className="px-4 py-2 text-white bg-[#00006f]  hover:bg-[#00005a]"
           >
             {formMode === "add" ? "Add" : "Update"}
           </button>

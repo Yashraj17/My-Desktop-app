@@ -57,8 +57,10 @@ function ModifierGroupForm({ formMode, initialData, onSave, onCancel }) {
     onClick={onCancel} // click outside to close
   ></div>
 
-  {/* Drawer */}
+  {/* Drawer
   <div className="relative bg-white w-full sm:w-[700px] max-w-md h-full p-6 overflow-y-auto"> 
+   */}
+   <div className="relative bg-white w-full sm:w-[30%] h-full p-6 overflow-y-auto">
          <h3 className="text-lg font-medium text-gray-900 mb-4">
           {formMode === "add" ? "Add Modifier Group" : "Update Modifier Group"}
         </h3>
@@ -69,7 +71,7 @@ function ModifierGroupForm({ formMode, initialData, onSave, onCancel }) {
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
-            className="block w-full p-2 border rounded-full"
+            className="block w-full p-2 border "
           >
             <option value="English">English</option>
             <option value="Arabic">Arabic</option>
@@ -86,7 +88,7 @@ function ModifierGroupForm({ formMode, initialData, onSave, onCancel }) {
             placeholder="e.g., Cheese Options"
             value={groupName}
             onChange={(e) => setGroupName(e.target.value)}
-            className="block w-full p-2 border rounded-full"
+            className="block w-full p-2 border "
           />
         </div>
 
@@ -96,7 +98,7 @@ function ModifierGroupForm({ formMode, initialData, onSave, onCancel }) {
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="block w-full p-2 border rounded-full"
+            className="block w-full p-2 border "
             placeholder="e.g., Extra toppings for your pizza"
           />
         </div>
@@ -112,13 +114,13 @@ function ModifierGroupForm({ formMode, initialData, onSave, onCancel }) {
                   placeholder="e.g., Extra Cheese"
                   value={mod.name}
                   onChange={(e) => handleModifierChange(index, "name", e.target.value)}
-                  className="flex-1 border rounded-full px-2 py-1 text-sm"
+                  className="flex-1 border  px-2 py-1 text-sm"
                 />
                 <input
                   type="number"
                   value={mod.price}
                   onChange={(e) => handleModifierChange(index, "price", parseFloat(e.target.value))}
-                  className="w-24 border rounded-full px-2 py-1 text-sm"
+                  className="w-24 border  px-2 py-1 text-sm"
                   placeholder="Price"
                 />
                 <button onClick={() => removeModifier(index)} className="text-red-600 hover:text-red-800">
@@ -148,12 +150,12 @@ function ModifierGroupForm({ formMode, initialData, onSave, onCancel }) {
 
         {/* Actions */}
         <div className="flex justify-end space-x-2">
-          <button onClick={onCancel} className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300">
+          <button onClick={onCancel} className="px-4 py-2 bg-gray-200  hover:bg-gray-300">
             Cancel
           </button>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 text-white bg-blue-800 rounded-full hover:bg-blue-900"
+            className="px-4 py-2 text-white bg-blue-800  hover:bg-blue-900"
           >
             {formMode === "add" ? "Add" : "Update"}
           </button>

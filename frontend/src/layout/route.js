@@ -51,15 +51,15 @@ const routes = [
             },
             {
                 icon: Utensils,
-                label: "Item Categories",
-                url: "/item-categories",
-                component: ItemCategory,
-            },
-            {
-                icon: Utensils,
                 label: "Menu Items",
                 url: "/menu-items",
                 component: MenuItems,
+            },
+             {
+                icon: Utensils,
+                label: "Item Categories",
+                url: "/item-categories",
+                component: ItemCategory,
             },
             {
                 icon: Utensils,
