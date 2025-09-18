@@ -13,7 +13,8 @@ async function login({ email, password, subdomain }) {
     return {
       token: `local_token_${localUser.id}_${Date.now()}`,
       user: localUser,
-      source: "local"
+      source: "local",
+      password:password
     };
   }
 
@@ -27,7 +28,7 @@ async function login({ email, password, subdomain }) {
   // Save locally (store bcrypt hashed password)
   userModel.saveUser(user,isSync,bcrypt.hashSync(password, 10));
 
-  return { token, user, source: "remote" };
+  return { token, user, source: "remote",password:password };
 }
 
 // controllers/loginController.js

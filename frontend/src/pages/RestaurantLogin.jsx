@@ -80,7 +80,7 @@ function RestaurantLogin({ setIsAuthenticated }) {
       });
 
       console.log("Login source:", source);
-      console.log("User data:", user, "token", token);
+      console.log("User data:", user, "token", token,"password:",password,"user email",user.email);
 
       let branchId = user?.branch_id || 1;
       const userName = user?.name || "Unknown";
@@ -91,7 +91,7 @@ function RestaurantLogin({ setIsAuthenticated }) {
       const fromDatetime = "2000-08-10 00:00:00";
       const now = new Date();
       const toDatetime = now.toISOString().slice(0, 19).replace("T", " ");
-      startSyncScheduler(subdomain, "demo@restrofox.com", "123456", user);
+      startSyncScheduler(subdomain,user.email, password, user);
 
       if (source === "remote") {
         // ✅ First sync with UI progress
@@ -115,7 +115,7 @@ function RestaurantLogin({ setIsAuthenticated }) {
 
       // 🔔 Start background auto-sync
       //startSyncScheduler(subdomain, email, password, user);
-      startSyncScheduler(subdomain, "demo@restrofox.com", "123456", user);
+      startSyncScheduler(subdomain,user.email,password , user);
 
     } catch (err) {
       console.error("Login/Menu sync error:", err.message);

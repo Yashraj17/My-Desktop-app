@@ -5,7 +5,7 @@ contextBridge.exposeInMainWorld("api", {
   getStore: (key) => ipcRenderer.invoke("store:get", key),
   logout: () => ipcRenderer.invoke("store:logout"),
   login: (credentials) => ipcRenderer.invoke("login", credentials), // new
-isOnline: (subdomain) => ipcRenderer.invoke("is-online", subdomain),
+  isOnline: (subdomain) => ipcRenderer.invoke("is-online", subdomain),
 
   setBranchId: (id) => ipcRenderer.send("set-branch-id", id),
   getCategories: () => ipcRenderer.invoke("get-categories"),
