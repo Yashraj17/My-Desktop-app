@@ -1,5 +1,6 @@
 const db = require("../services/db");
 const Store = new (require("electron-store"))();
+const crypto = require("crypto");
 
 // ✅ Get Table for current branch
 function getTable(areaId = null) {
@@ -29,26 +30,30 @@ function getTable(areaId = null) {
   });
 }
 
-// ✅ Add Areas
+// ✅ Add Table
 function addTable(table) {
-    return new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     try {
       const currentBranchId = Store.get("branchId") || 1;
       const createdAt = new Date().toISOString();
+      const hash = crypto.randomBytes(16).toString("hex"); // generate unique hash
 
       db.prepare(`
-        INSERT INTO areas (branch_id, table_code ,status,available_status,area_id,seating_capacity ,created_at, updated_at, isSink) 
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO tables (
+          branch_id, table_code, status, available_status, area_id, seating_capacity,
+          created_at, updated_at, isSync, hash
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `).run(
         currentBranchId,
         table.table_code,
         table.status,
-        table.available_status,
+        table.available_status || "available",  // default if missing
         table.area_id,
         table.seating_capacity,
         createdAt,
         createdAt,
-        table.isSink ? 1 : 0
+        table.isSync ? 1 : 0,
+        hash
       );
 
       resolve({ success: true });
@@ -57,22 +62,25 @@ function addTable(table) {
     }
   });
 }
-
-// ✅ Update Area
+// ✅ Update Table
 function updateTable(id, table) {
   return new Promise((resolve, reject) => {
     try {
       const updatedAt = new Date().toISOString();
       const stmt = db.prepare(`
         UPDATE tables
-        SET table_code = ?, updated_at = ?, isSink = ?
+        SET table_code = ?, status = ?, available_status = ?, area_id = ?, seating_capacity = ?, updated_at = ?, isSync = ?
         WHERE id = ?
       `);
 
       const result = stmt.run(
         table.table_code,
+        table.status,
+        table.available_status,
+        table.area_id,
+        table.seating_capacity,
         updatedAt,
-        table.isSink ? 1 : 0,
+        table.isSync ? 1 : 0,
         id
       );
 
@@ -83,7 +91,7 @@ function updateTable(id, table) {
   });
 }
 
-// ✅ Delete Area
+// ✅ Delete Table
 function deleteTable(id) {
   return new Promise((resolve, reject) => {
     try {
