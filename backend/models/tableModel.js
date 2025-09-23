@@ -41,8 +41,8 @@ function addTable(table) {
       db.prepare(`
         INSERT INTO tables (
           branch_id, table_code, status, available_status, area_id, seating_capacity,
-          created_at, updated_at, isSync, hash
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          created_at, updated_at, isSync, hash,x,y
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)
       `).run(
         currentBranchId,
         table.table_code,
@@ -53,7 +53,9 @@ function addTable(table) {
         createdAt,
         createdAt,
         table.isSync ? 1 : 0,
-        hash
+        hash,
+        table.x||0,
+        table.y||0
       );
 
       resolve({ success: true });
@@ -69,7 +71,7 @@ function updateTable(id, table) {
       const updatedAt = new Date().toISOString();
       const stmt = db.prepare(`
         UPDATE tables
-        SET table_code = ?, status = ?, available_status = ?, area_id = ?, seating_capacity = ?, updated_at = ?, isSync = ?
+        SET table_code = ?, status = ?, available_status = ?, area_id = ?, seating_capacity = ?, updated_at = ?, isSync = ?,x=?,y=?
         WHERE id = ?
       `);
 
@@ -81,6 +83,8 @@ function updateTable(id, table) {
         table.seating_capacity,
         updatedAt,
         table.isSync ? 1 : 0,
+        table.x||0,
+        table.y||0,
         id
       );
 
@@ -90,6 +94,22 @@ function updateTable(id, table) {
     }
   });
 }
+
+function updateTablePosition(id, data) {
+  return new Promise((resolve, reject) => {
+    try {
+      const { x, y } = data;
+      const stmt = db.prepare(`UPDATE tables SET x = ?, y = ?, updated_at = ? WHERE id = ?`);
+      const updatedAt = new Date().toISOString();
+      const result = stmt.run(x || 0, y || 0, updatedAt, id);
+      resolve({ updated: result.changes > 0 });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+
 
 // ✅ Delete Table
 function deleteTable(id) {
@@ -108,5 +128,6 @@ module.exports = {
   getTable,
   addTable,
   updateTable,
-  deleteTable
+  deleteTable,
+  updateTablePosition
 };

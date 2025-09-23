@@ -253,6 +253,7 @@ contextBridge.exposeInMainWorld("api", {
     addTable: (table) => ipcRenderer.invoke("add-table", table),
     updateTable: (id, table) => ipcRenderer.invoke("update-table", id, table),
     deleteTable: (id) => ipcRenderer.invoke("delete-table", id),
+    updateTablePosition: (id, table) => ipcRenderer.invoke("update-table-position", id, table),
 
       //getSyncTime
       getSyncTime: (Data) =>
