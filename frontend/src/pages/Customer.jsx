@@ -79,25 +79,26 @@ const columns = [
         ),
         width: "200px",
     },
-    {
-        accessorKey: "phone",
-        header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                className="p-0 font-medium cursor-pointer text-gray-700 hover:bg-transparent"
-            >
-                Total Orders
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-        ),
-        cell: ({ row }) => (
-           <Badge className={'bg-gray-200 text-gray-500 hover:bg-gray-200 mr-2'}>
-                    0 ORDER
-                </Badge>
-        ),
-        width: "200px",
-    },
+   {
+    accessorKey: "total_orders",   // ✅ correct field
+    header: ({ column }) => (
+        <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="p-0 font-medium cursor-pointer text-gray-700 hover:bg-transparent"
+        >
+            Total Orders
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+    ),
+    cell: ({ row }) => (
+        <Badge className="bg-gray-200 text-gray-500 hover:bg-gray-200 mr-2">
+            {row.getValue("total_orders" )}  ORDER
+        </Badge>
+    ),
+    width: "200px",
+},
+
     {
         id: "actions",
         header: "Actions",

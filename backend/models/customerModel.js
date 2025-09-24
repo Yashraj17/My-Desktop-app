@@ -1,7 +1,7 @@
 const db = require("../services/db");
 
 // ✅ Get All Customers
-function getCustomers(search) {
+function getCustomersOLD(search) {
   return new Promise((resolve, reject) => {
     try {
       const query = `
@@ -16,6 +16,39 @@ function getCustomers(search) {
     }
   });
 }
+
+function getCustomers(search = '') {
+  return new Promise((resolve, reject) => {
+    try {
+      let query = `
+        SELECT c.*, 
+               COUNT(o.id) AS total_orders
+        FROM customers c
+        LEFT JOIN orders o ON o.customer_id = c.id
+        WHERE 1=1
+      `;
+      const params = [];
+
+      if (search && search.trim() !== '') {
+        query += ` AND (c.name LIKE ? OR c.email LIKE ? OR c.phone LIKE ?) `;
+        const likeSearch = `%${search}%`;
+        params.push(likeSearch, likeSearch, likeSearch);
+      }
+
+      query += `
+        GROUP BY c.id
+        ORDER BY c.created_at DESC
+      `;
+
+      const stmt = db.prepare(query);
+      const rows = stmt.all(...params);
+      resolve(rows);
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
 
 // ✅ Get Customer by ID
 function getCustomerById(id) {

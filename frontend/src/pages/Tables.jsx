@@ -33,6 +33,7 @@ export default function Tables() {
         area_id: parseFloat(table.area_id),
         seating_capacity: parseFloat(table.seating_capacity),
       }));
+      console.log("tables list...",processedData)
       setTables(processedData);
     } catch (error) {
       console.error("Error loading tables:", error);
@@ -146,7 +147,7 @@ const handlePositionChange = async (id, x, y) => {
     </div>
   );
 
-  const TableGridCard = ({ table }) => {
+  const TableGridCardCustomizeOLD = ({ table }) => {
   const nodeRef = useRef(null);
 
   return (
@@ -191,6 +192,95 @@ const handlePositionChange = async (id, x, y) => {
   );
 };
 
+ // Shape selection based on seating_capacity
+const getShapeClass = (capacity) => {
+  if (capacity <= 2) return "rounded-full w-[140px] h-[140px]"; // Circle
+  if (capacity > 2 && capacity <= 4) return "w-[140px] h-[140px]"; // Square
+  if (capacity > 4 && capacity <= 8) return "w-[200px] h-[140px]"; // Rectangle
+  return "w-[240px] h-[140px]"; // Big Rectangle
+};
+
+
+
+
+const TableGridCardCustomize = ({ table }) => {
+  const nodeRef = useRef(null);
+
+  return (
+   <Draggable
+  nodeRef={nodeRef}
+  defaultPosition={{ x: table.x|| 0, y: table.y || 0 }}
+  onStop={(e, data) => handlePositionChange(table.id, data.x, data.y)}
+>
+<div
+  ref={nodeRef}
+   className={`border border-gray-300 shadow-md cursor-move 
+          flex flex-col items-center justify-center p-2 space-y-1 mb-4 mr-4
+          ${getShapeClass(table.seating_capacity)} ${getTableBg(table.available_status)}`}
+>
+
+    {/* Table Code */}
+    <div
+      className={`px-3 py-1 rounded-md font-semibold text-base ${getTableBg(
+        table.available_status
+      )}`}
+    >
+      {table.table_code}
+    </div>
+
+    {/* Seats */}
+    <div className="text-xs text-gray-600">{table.seating_capacity} Seat(s)</div>
+
+    {/* KOT */}
+    <div className="font-semibold text-sm text-gray-900">{table?.kot_count} KOT</div>
+
+    {/* Status */}
+    <div
+      className={`inline-block border rounded px-2 py-0.5 text-[10px] font-semibold ${getStatusBadge(
+        table.available_status
+      )}`}
+    >
+      {table.available_status}
+    </div>
+  </div>
+</Draggable>
+
+  );
+};
+
+
+
+
+// ✅ TableGridCard Component
+const TableGridCard = ({ table }) => (
+  <div className="bg-white border border-gray-200 rounded-lg p-6 text-center">
+    {/* Table Code with background color */}
+    <div
+      className={`inline-block px-3 py-1.5 rounded-md font-semibold text-lg mb-3 ${getTableBg(
+        table.available_status
+      )}`}
+    >
+      {table.table_code}
+    </div>
+
+    <div className="text-sm text-gray-600 mb-1">
+      {table.seating_capacity} Seat(s)
+    </div>
+
+    <div className="font-semibold text-lg text-gray-900 mb-2">
+      {table?.kot_count} KOT
+    </div>
+
+    {/* Status badge */}
+    <div
+      className={`inline-block border rounded px-2 py-0.5 text-xs font-semibold ${getStatusBadge(
+        table.available_status
+      )}`}
+    >
+      {table.available_status}
+    </div>
+  </div>
+);
 
 
   const TableListRow = ({ table }) => (
@@ -214,6 +304,7 @@ const handlePositionChange = async (id, x, y) => {
           <div className="flex items-center space-x-4">
             <div className="flex bg-white border border-gray-200 rounded-lg p-1">
               <Button variant={viewMode === "list" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("list")} className={viewMode === "list" ? "bg-[#000080] cursor-pointer hover:bg-[#000080] dark:text-white" : "text-gray-600"}><List className="h-4 w-4 mr-2" />List</Button>
+              <Button variant={viewMode === "customize_grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("customize_grid")} className={viewMode === "customize_grid" ? "bg-[#000080] cursor-pointer hover:bg-[#000080] dark:text-white" : "text-gray-600"}><Grid3X3 className="h-4 w-4 mr-2" />Customize Grid</Button>
               <Button variant={viewMode === "grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("grid")} className={viewMode === "grid" ? "bg-[#000080] cursor-pointer hover:bg-[#000080] dark:text-white" : "text-gray-600"}><Grid3X3 className="h-4 w-4 mr-2" />Grid</Button>
               <Button variant={viewMode === "layout" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("layout")} className={viewMode === "layout" ? "bg-[#000080] cursor-pointer hover:bg-[#000080] dark:text-white" : "text-gray-600"}><LayoutGrid className="h-4 w-4 mr-2" />Layout</Button>
             </div>
@@ -239,45 +330,50 @@ const handlePositionChange = async (id, x, y) => {
           ))}
         </div>
 
-        {groupedTables.map(
-          (group) =>
-            group.tables.length > 0 && (
-              <div key={group.id} className="mb-8">
-                <div className="flex items-center space-x-3 mb-4">
-                  <h2 className="text-lg font-medium text-gray-800">{group.area_name}</h2>
-                  <span className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm">{group.tables.length} Table{group.tables.length !== 1 ? "s" : ""}</span>
-                </div>
+       {groupedTables.map(
+  (group) =>
+    group.tables.length > 0 && (
+      <div key={group.id} className="mb-8">
+        <div className="flex items-center space-x-3 mb-4">
+          <h2 className="text-lg font-medium text-gray-800">
+            {group.area_name}
+          </h2>
+          <span className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm">
+            {group.tables.length} Table
+            {group.tables.length !== 1 ? "s" : ""}
+          </span>
+        </div>
 
-                {/* Grid / Layout / List */}
-                {viewMode === "grid" ? (
-//                   <div className="relative w-full h-[600px] border border-gray-300 bg-gray-50">
-// {group.tables.map((table) => {
-//   return (
-//     <TableGridCard
-//       key={table.id}
-//       table={{ ...table}}
-//     />
-//   );
-// })}
-
-
-//                   </div>
-<div className="relative w-full min-h-[300px] border border-gray-300 bg-gray-50 p-4 mb-8 overflow-hidden">
-  {group.tables.map((table) => (
-    <TableGridCard key={table.id} table={{ ...table }} />
-  ))}
-</div>
-
-                ) : (
-                  <div className={viewMode === "layout" ? "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"}>
-                    {group.tables.map((table) =>
-                      viewMode === "layout" ? <TableListRow key={table.id} table={table} /> : <TableCard key={table.id} table={table} />
-                    )}
-                  </div>
-                )}
-              </div>
-            )
+        {/* Grid / custom grid / layout / list */}
+        {viewMode === "customize_grid" ? (
+          <div className="relative w-full min-h-[300px] border border-gray-300 bg-gray-50 p-4 mb-8 overflow-hidden">
+            {group.tables.map((table) => (
+              <TableGridCardCustomize key={table.id} table={{ ...table }} />
+            ))}
+          </div>
+        ) : viewMode === "layout" ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {group.tables.map((table) => (
+              <TableListRow key={table.id} table={table} />
+            ))}
+          </div>
+        ) : viewMode === "grid" ? (   // 👈 new view added
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-6">
+            {group.tables.map((table) => (
+              <TableGridCard key={table.id} table={table} />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {group.tables.map((table) => (
+              <TableCard key={table.id} table={table} />
+            ))}
+          </div>
         )}
+      </div>
+    )
+)}
+
       </div>
 
       {/* Status Legend */}

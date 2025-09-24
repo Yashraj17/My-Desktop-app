@@ -3,7 +3,7 @@ const Store = new (require("electron-store"))();
 const crypto = require("crypto");
 
 // ✅ Get Table for current branch
-function getTable(areaId = null) {
+function getTableOLD(areaId = null) {
   return new Promise((resolve, reject) => {
     try {
       const currentBranchId = Store.get("branchId") || 1;
@@ -29,6 +29,79 @@ function getTable(areaId = null) {
     }
   });
 }
+
+function getTable(areaId = null) {
+  return new Promise((resolve, reject) => {
+    try {
+      const currentBranchId = Store.get("branchId") || 1;
+
+      // Base query for tables with area name
+      let query = `
+        SELECT t.*, a.area_name
+        FROM tables t
+        LEFT JOIN areas a ON a.id = t.area_id
+        WHERE t.branch_id = ?
+      `;
+      const params = [currentBranchId];
+
+      if (areaId) {
+        query += " AND t.area_id = ?";
+        params.push(Number(areaId));
+      }
+
+      query += " ORDER BY t.created_at DESC";
+
+      const stmt = db.prepare(query);
+      const tables = stmt.all(...params);
+
+      // Now enrich each table with activeOrder + waiterRequests
+      const enrichedTables = tables.map((table) => {
+        // Get active order (latest billed or kot)
+        const activeOrderStmt = db.prepare(`
+          SELECT *
+          FROM orders
+          WHERE table_id = ?
+            AND status IN ('billed', 'kot')
+          ORDER BY id DESC
+          LIMIT 1
+        `);
+        const activeOrder = activeOrderStmt.get(table.id) || null;
+
+        // Get active waiter request (pending)
+        const activeWaiterStmt = db.prepare(`
+          SELECT *
+          FROM waiter_requests
+          WHERE table_id = ?
+            AND status = 'pending'
+          ORDER BY id DESC
+          LIMIT 1
+        `);
+        const activeWaiterRequest = activeWaiterStmt.get(table.id) || null;
+
+        // Optionally, get all waiter requests
+        const allWaiterStmt = db.prepare(`
+          SELECT *
+          FROM waiter_requests
+          WHERE table_id = ?
+          ORDER BY created_at DESC
+        `);
+        const waiterRequests = allWaiterStmt.all(table.id);
+
+        return {
+          ...table,
+          activeOrder,
+          activeWaiterRequest,
+          waiterRequests,
+        };
+      });
+
+      resolve(enrichedTables);
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
 
 // ✅ Add Table
 function addTable(table) {
