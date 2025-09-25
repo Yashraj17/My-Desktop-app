@@ -132,7 +132,7 @@ const handlePositionChange = async (id, x, y) => {
         <div className="text-right">
           <div className="text-gray-600 text-sm mb-1">{table.seating_capacity} Seat(s)</div>
           <div className={`inline-block border rounded px-2 py-0.5 text-xs font-semibold ${getStatusBadge(table.available_status)}`}>
-            {table.available_status}
+  {table.available_status.charAt(0).toUpperCase() + table.available_status.slice(1).toLowerCase()}
           </div>
           <div className="font-semibold text-lg text-gray-900 mt-1">{table?.kot_count} KOT</div>
         </div>
@@ -147,50 +147,6 @@ const handlePositionChange = async (id, x, y) => {
     </div>
   );
 
-  const TableGridCardCustomizeOLD = ({ table }) => {
-  const nodeRef = useRef(null);
-
-  return (
-   <Draggable
-  nodeRef={nodeRef}
-  defaultPosition={{ x: table.x|| 0, y: table.y || 0 }}
-  onStop={(e, data) => handlePositionChange(table.id, data.x, data.y)}
->
-<div
-  ref={nodeRef}
-  className="bg-white border border-gray-200 rounded-lg shadow-md cursor-move 
-             w-[120px] h-[120px] flex flex-col items-center justify-center 
-             p-2 space-y-1 mb-4 mr-4"
->
-
-    {/* Table Code */}
-    <div
-      className={`px-3 py-1 rounded-md font-semibold text-base ${getTableBg(
-        table.available_status
-      )}`}
-    >
-      {table.table_code}
-    </div>
-
-    {/* Seats */}
-    <div className="text-xs text-gray-600">{table.seating_capacity} Seat(s)</div>
-
-    {/* KOT */}
-    <div className="font-semibold text-sm text-gray-900">{table?.kot_count} KOT</div>
-
-    {/* Status */}
-    <div
-      className={`inline-block border rounded px-2 py-0.5 text-[10px] font-semibold ${getStatusBadge(
-        table.available_status
-      )}`}
-    >
-      {table.available_status}
-    </div>
-  </div>
-</Draggable>
-
-  );
-};
 
  // Shape selection based on seating_capacity
 const getShapeClass = (capacity) => {
@@ -240,7 +196,7 @@ const TableGridCardCustomize = ({ table }) => {
         table.available_status
       )}`}
     >
-      {table.available_status}
+  {table.available_status.charAt(0).toUpperCase() + table.available_status.slice(1).toLowerCase()}
     </div>
   </div>
 </Draggable>
@@ -277,11 +233,10 @@ const TableGridCard = ({ table }) => (
         table.available_status
       )}`}
     >
-      {table.available_status}
+  {table.available_status.charAt(0).toUpperCase() + table.available_status.slice(1).toLowerCase()}
     </div>
   </div>
 );
-
 
   const TableListRow = ({ table }) => (
     <div className={`border border-gray-200 rounded-lg p-6 text-center shadow-sm w-32 transform transition-transform duration-200 hover:scale-105 ${getTableBg(table.available_status)}`}>
@@ -304,9 +259,10 @@ const TableGridCard = ({ table }) => (
           <div className="flex items-center space-x-4">
             <div className="flex bg-white border border-gray-200 rounded-lg p-1">
               <Button variant={viewMode === "list" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("list")} className={viewMode === "list" ? "bg-[#000080] cursor-pointer hover:bg-[#000080] dark:text-white" : "text-gray-600"}><List className="h-4 w-4 mr-2" />List</Button>
-              <Button variant={viewMode === "customize_grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("customize_grid")} className={viewMode === "customize_grid" ? "bg-[#000080] cursor-pointer hover:bg-[#000080] dark:text-white" : "text-gray-600"}><Grid3X3 className="h-4 w-4 mr-2" />Customize Grid</Button>
               <Button variant={viewMode === "grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("grid")} className={viewMode === "grid" ? "bg-[#000080] cursor-pointer hover:bg-[#000080] dark:text-white" : "text-gray-600"}><Grid3X3 className="h-4 w-4 mr-2" />Grid</Button>
               <Button variant={viewMode === "layout" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("layout")} className={viewMode === "layout" ? "bg-[#000080] cursor-pointer hover:bg-[#000080] dark:text-white" : "text-gray-600"}><LayoutGrid className="h-4 w-4 mr-2" />Layout</Button>
+              <Button variant={viewMode === "customize_grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("customize_grid")} className={viewMode === "customize_grid" ? "bg-[#000080] cursor-pointer hover:bg-[#000080] dark:text-white" : "text-gray-600"}><Grid3X3 className="h-4 w-4 mr-2" />Customize Layout</Button>
+
             </div>
             <div className="relative inline-block">
               <select value={availabilityFilter} onChange={(e) => setAvailabilityFilter(e.target.value)} className="appearance-none border border-gray-300 rounded-md pl-4 pr-10 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer bg-white">
