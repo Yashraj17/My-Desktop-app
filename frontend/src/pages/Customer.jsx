@@ -10,6 +10,7 @@ import { ArrowUpDown, Edit, Trash2 } from "lucide-react";
 import Swal from "sweetalert2";
 import CustomerForm from "../form/Customer/CustomerForm";
 import * as XLSX from "xlsx";
+import { Download } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,6 +33,9 @@ export function Customer() {
      const [formMode, setFormMode] = useState("add");
   const [editData, setEditData] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
+const [importFile, setImportFile] = useState(null);
+
 // Define table columns
 const columns = [
     {
@@ -86,7 +90,7 @@ const columns = [
         ),
         cell: ({ row }) => (
             <div className="text-gray-600">
-                {row.getValue("phone")} 
+    {String(row.getValue("phone")).replace(/\.0$/, "")}
             </div>
         ),
         width: "200px",
@@ -255,7 +259,7 @@ const columns = [
   const data = customer.map((c) => ({
     Name: c.name,
     Email: c.email,
-    Phone: c.phone,
+    Phone: String(c.phone || "").replace(/\.0$/, ""), // ✅ clean phone
     "Total Orders": c.total_orders,
     "Total Amount Received": c.total_amount,
   }));
@@ -310,6 +314,64 @@ const columns = [
   link.click();
   document.body.removeChild(link);
 };
+
+//Download Sample File
+const handleDownloadSample = () => {
+  const sampleData = [
+    { Name: "John Doe", Email: "john@example.com", Phone: "9876543210", TotalOrders: 2 },
+    { Name: "Jane Smith", Email: "jane@example.com", Phone: "9123456789", TotalOrders: 0 },
+  ];
+
+  const worksheet = XLSX.utils.json_to_sheet(sampleData);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Sample");
+
+  XLSX.writeFile(workbook, "customer_sample.xlsx");
+};
+
+const handleFileChange = (e) => {
+  const file = e.target.files[0];
+  setImportFile(file);
+};
+
+const handleImport = async () => {
+  if (!importFile) {
+    Swal.fire("Error", "Please select a file first", "error");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: "array" });
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+    try {
+      for (const row of jsonData) {
+        const customerData = {
+          name: row.Name,
+          email: row.Email,
+          phone: row.Phone,
+          total_orders: row.TotalOrders || 0,
+        };
+
+        await window.api.addCustomer(customerData); // ✅ Insert into DB
+      }
+
+      Swal.fire("Success", "Customers imported successfully", "success");
+      setShowImportModal(false);
+      setImportFile(null);
+      loadData(); // refresh table
+    } catch (error) {
+      Swal.fire("Error", "Failed to import customers", error);
+    }
+  };
+  reader.readAsArrayBuffer(importFile);
+};
+
+
     return (
         <>
             <div className="p-5 bg-white block sm:flex items-center justify-between dark:bg-gray-800 dark:border-gray-700">
@@ -333,7 +395,7 @@ const columns = [
                             </div>
                         </div>
                         <div className="inline-flex gap-x-4 mb-4 sm:mb-0">
-                            <Button className="px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600">
+                            <Button className="px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600" onClick={() => setShowImportModal(true)}>
                                 Import
                             </Button>
                             <Button className="px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600"  onClick={handleExport}
@@ -432,6 +494,41 @@ const columns = [
           onCancel={() => setShowForm(false)}
         />
       )}
+
+
+   {showImportModal && (
+  <div className="fixed inset-0 flex justify-center items-start ">
+    <div className="bg-white rounded-lg p-6 shadow-lg w-96 mt-20">
+      <h2 className="text-lg font-semibold mb-4 text-center">Import Customers</h2>
+      
+      <Button className="mb-4 flex items-center gap-2" onClick={handleDownloadSample}>
+        <Download className="h-4 w-4" />
+        Download Sample File
+      </Button>
+
+      <input
+        type="file"
+        accept=".xlsx, .xls"
+        onChange={handleFileChange}
+        className="mb-4"
+      />
+
+      <div className="flex justify-end gap-2">
+        <Button
+          variant="outline"
+          onClick={() => setShowImportModal(false)}
+        >
+          Cancel
+        </Button>
+        <Button className="bg-[#000080] text-white" onClick={handleImport}>
+          Import
+        </Button>
+      </div>
+    </div>
+  </div>
+)}
+
+
             </div>
         </>
     );

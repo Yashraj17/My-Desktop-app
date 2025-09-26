@@ -2,23 +2,33 @@ const db = require("../services/db");
 const Store = new (require("electron-store"))();
 
 // ✅ Get Delivery Executives for current branch
-function getDeliveryExecutives(search) {
+
+function getDeliveryExecutives() {
   return new Promise((resolve, reject) => {
     try {
       const currentBranchId = Store.get("branchId") || 1;
       const query = `
-        SELECT * FROM delivery_executives
-        WHERE branch_id = ?
-        ORDER BY created_at DESC
+        SELECT 
+          de.*,
+          COUNT(o.id) AS total_orders
+        FROM delivery_executives de
+        LEFT JOIN orders o 
+          ON CAST(o.delivery_executive_id AS INTEGER) = de.id
+          AND o.branch_id = ?
+        WHERE de.branch_id = ?
+        GROUP BY de.id
+        ORDER BY total_orders DESC
       `;
       const stmt = db.prepare(query);
-      const rows = stmt.all(currentBranchId);
+      const rows = stmt.all(currentBranchId, currentBranchId);
       resolve(rows);
     } catch (err) {
       reject(err);
     }
   });
 }
+
+
 
 // ✅ Get Delivery Executive by ID
 function getDeliveryExecutiveById(id) {
