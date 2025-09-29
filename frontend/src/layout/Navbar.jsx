@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { RefreshCw, Maximize2, Moon, Sun } from "lucide-react"
 import { useTheme } from "../context/ThemeContext"
+import { LogOut } from "lucide-react"   // Add logout icon
+import { useNavigate} from "react-router-dom"
 
 import {
   POSIcon,
@@ -41,8 +43,13 @@ const OpenButtonIcon = () => (
   </svg>
 )
 
-export default function Navbar({ isSidebarOpen, onToggleSidebar }) {
+export default function Navbar({ isSidebarOpen, onToggleSidebar,onLogout }) {
   const { isDarkMode, toggleTheme } = useTheme()
+
+  const handleSignOut = () => {
+        onLogout(); // call the App.js logout
+
+  }
 
   const navItems = [
     { icon: OrderIcon, label: "Orders", badge: "15", badgeColor: "bg-[#000080]" },
@@ -54,6 +61,7 @@ export default function Navbar({ isSidebarOpen, onToggleSidebar }) {
     { icon: POSIcon, label: "POS", badge: null },
   ]
 
+  
   return (
     <nav className="border-b px-6 py-3 transition-colors duration-300 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
       <div className="flex items-center">
@@ -120,6 +128,15 @@ export default function Navbar({ isSidebarOpen, onToggleSidebar }) {
             <Avatar className="h-6 w-6">
               <AvatarFallback className="bg-white text-[#000080] text-xs font-semibold">A</AvatarFallback>
             </Avatar>
+             {/* Sign Out button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="p-1 h-6 w-6 text-white hover:bg-[#000060]"
+              onClick={handleSignOut}
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       </div>

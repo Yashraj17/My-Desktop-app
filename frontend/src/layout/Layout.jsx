@@ -4,7 +4,7 @@ import Sidebar from "./Sidebar"
 import routes from "./route"
 import { Route, Routes, useLocation } from "react-router-dom"
 
-export default function Layout() {
+export default function Layout({onLogout}) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [activeMenu, setActiveMenu] = useState("/")
   const location = useLocation()
@@ -47,7 +47,7 @@ export default function Layout() {
 
   return (
     <div className="h-screen overflow-hidden transition-colors duration-300 bg-gray-50 dark:bg-gray-900">
-      <Navbar isSidebarOpen={isSidebarOpen} onToggleSidebar={toggleSidebar} />
+      <Navbar isSidebarOpen={isSidebarOpen} onToggleSidebar={toggleSidebar} onLogout={onLogout} />
       <div className="flex h-[calc(100vh-64px)]">
         <div
           className={`transition-all duration-300 ease-in-out ${isSidebarOpen ? "w-62" : "w-[60px]"} overflow-hidden`}
