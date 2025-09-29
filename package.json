@@ -27,7 +27,9 @@
     "lucide-react": "^0.536.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "sqlite3": "^5.1.7"
+    "react-draggable": "^4.5.0",
+    "sqlite3": "^5.1.7",
+    "xlsx": "^0.18.5"
   },
   "build": {
     "appId": "com.mycompany.myapp",

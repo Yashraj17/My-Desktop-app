@@ -19,3 +19,8 @@ function getStaffs(search) {
     }
   });
 }
+
+module.exports = {
+  getStaffs,
+  
+};

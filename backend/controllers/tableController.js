@@ -15,10 +15,14 @@ function updateTable(id, data) {
 function deleteTable(id) {
   return model.deleteTable(id);
 }
-
+//updateTablePosition
+function updateTablePosition(id, data) {
+  return model.updateTablePosition(id, data);
+}
 module.exports = {
   getTable,
   addTable,
   updateTable,
   deleteTable,
+  updateTablePosition,
 };

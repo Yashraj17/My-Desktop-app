@@ -30,7 +30,7 @@ const columns = [
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 className="p-0 font-medium cursor-pointer text-gray-700 hover:bg-transparent"
             >
-                Customer Name
+                  Member Name	
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
@@ -125,7 +125,7 @@ export function Staff() {
 
     const loadData = async () => {
         try {
-            const data = await window.api.getDeliveryExecutives();
+            const data = await window.api.getStaffs();
             setStaff(data);
             console.log("hello Staff data",data)
         } catch (error) {

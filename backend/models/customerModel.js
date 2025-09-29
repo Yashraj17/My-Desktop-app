@@ -1,21 +1,72 @@
 const db = require("../services/db");
 
 // ✅ Get All Customers
-function getCustomers(search) {
+
+function getCustomers1(search = '') {
   return new Promise((resolve, reject) => {
     try {
-      const query = `
-        SELECT * FROM customers
-        ORDER BY created_at DESC
+      let query = `
+        SELECT c.*, 
+               COUNT(o.id) AS total_orders
+        FROM customers c
+        LEFT JOIN orders o ON o.customer_id = c.id
+        WHERE 1=1
       `;
+      const params = [];
+
+      if (search && search.trim() !== '') {
+        query += ` AND (c.name LIKE ? OR c.email LIKE ? OR c.phone LIKE ?) `;
+        const likeSearch = `%${search}%`;
+        params.push(likeSearch, likeSearch, likeSearch);
+      }
+
+      query += `
+        GROUP BY c.id
+        ORDER BY c.created_at DESC
+      `;
+
       const stmt = db.prepare(query);
-      const rows = stmt.all(); // Added missing execution
+      const rows = stmt.all(...params);
       resolve(rows);
     } catch (err) {
       reject(err);
     }
   });
 }
+function getCustomers(search = '') {
+  return new Promise((resolve, reject) => {
+    try {
+      let query = `
+        SELECT 
+          c.*, 
+          COUNT(o.id) AS total_orders,
+          IFNULL(SUM(o.amount_paid), 0) AS total_amount
+        FROM customers c
+        LEFT JOIN orders o ON o.customer_id = c.id
+        WHERE 1=1
+      `;
+      const params = [];
+
+      if (search && search.trim() !== '') {
+        query += ` AND (c.name LIKE ? OR c.email LIKE ? OR c.phone LIKE ?) `;
+        const likeSearch = `%${search}%`;
+        params.push(likeSearch, likeSearch, likeSearch);
+      }
+
+      query += `
+        GROUP BY c.id
+        ORDER BY c.created_at DESC
+      `;
+
+      const stmt = db.prepare(query);
+      const rows = stmt.all(...params);
+      resolve(rows);
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
 
 // ✅ Get Customer by ID
 function getCustomerById(id) {
@@ -43,14 +94,15 @@ function addCustomer(customer) {
 
       const stmt = db.prepare(`
         INSERT INTO customers (
-          name, phone, email, email_otp, 
+          restaurant_id,name, phone, email, email_otp, 
           created_at, updated_at, delivery_address,
           newfield1, newfield2, newfield3, isSync
         ) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
 
       const result = stmt.run(
+        customer.restaurant_id,
         customer.name || null,
         customer.phone || null,
         customer.email || null,

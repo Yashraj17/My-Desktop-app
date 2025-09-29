@@ -7,7 +7,10 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 import { ArrowUpDown, Edit, Trash2 } from "lucide-react";
-
+import Swal from "sweetalert2";
+import ExecutiveForm from "../form/Executive/ExecutiveForm";
+import * as XLSX from "xlsx";
+import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -20,6 +23,15 @@ import {
 } from "@/components/ui/table";
 import { Badge } from '../components/ui/badge';
 
+
+export function DeliveryExecutive() {
+    const [sorting, setSorting] = useState([]);
+    const [globalFilter, setGlobalFilter] = useState(""); // 🔹 search state
+    const [deliveryExecutive, setDeliveryExecutive] = useState([]);
+const [formMode, setFormMode] = useState("add");
+const [editData, setEditData] = useState(null);
+const [showForm, setShowForm] = useState(false);
+
 // Define table columns
 const columns = [
     {
@@ -30,7 +42,7 @@ const columns = [
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 className="p-0 font-medium cursor-pointer text-gray-700 hover:bg-transparent"
             >
-                Customer Name
+                Delivery Executive Name
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
@@ -55,26 +67,26 @@ const columns = [
         ),
         cell: ({ row }) => (
             <div className="text-gray-600">
-                {row.getValue("phone")} 
+    {String(row.getValue("phone")).replace(/\.0$/, "")}
             </div>
         ),
         width: "200px",
     },
     {
-        accessorKey: "phone",
+        accessorKey: "total_orders",
         header: ({ column }) => (
             <Button
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 className="p-0 font-medium cursor-pointer text-gray-700 hover:bg-transparent"
             >
-                Status
+                Total Orders
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
         cell: ({ row }) => (
            <Badge className={'bg-gray-200 text-gray-500 hover:bg-gray-200 mr-2'}>
-                    0 ORDER
+                    {row.getValue("total_orders")}  ORDER
                 </Badge>
         ),
         width: "200px",
@@ -87,14 +99,22 @@ const columns = [
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 className="p-0 font-medium cursor-pointer text-gray-700 hover:bg-transparent"
             >
-                Total Orders
+                Status
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
         cell: ({ row }) => (
-           <Badge className={'bg-green-100 text-green-700 hover:bg-green-100 border-green-700 mr-2'}>
-                    Available
-                </Badge>
+            
+          <Badge
+  className={`mr-2 border ${
+    row.getValue("status")?.toLowerCase() === "available"
+      ? "bg-green-100 text-green-700 border-green-700 hover:bg-green-100"
+      : "bg-red-100 text-red-700 border-red-700 hover:bg-red-100"
+  }`}
+>
+  {row.getValue("status")}
+</Badge>
+
         ),
         width: "200px",
     },
@@ -102,21 +122,18 @@ const columns = [
         id: "actions",
         header: "Actions",
         cell: ({ row }) => {
-            const handleUpdate = () => {
-                console.log("Update item:", row.original);
-            };
-
-            const handleDelete = () => {
-                console.log("Delete item:", row.original);
-            };
+           
 
             return (
                 <div className="flex space-x-2">
                     <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleUpdate(row.original)}
-                        className="h-8 px-2 bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200"
+onClick={() => {
+    setFormMode("edit");
+    setEditData(row.original);
+    setShowForm(true);
+  }}                        className="h-8 px-2 bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200"
                     >
                         <Edit className="h-4 w-4 mr-1" />
                         Update
@@ -124,7 +141,7 @@ const columns = [
                     <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleDelete(row.original.id)}
+  onClick={() => handleDelete(row.original.id)}
                         className="h-8 px-2 bg-red-50 text-red-700 hover:bg-red-100 border-red-200"
                     >
                         <Trash2 className="h-4 w-4 mr-1" />
@@ -135,13 +152,8 @@ const columns = [
         width: "200px",
     },
 ];
-
-export function DeliveryExecutive() {
-    const [sorting, setSorting] = useState([]);
-    const [globalFilter, setGlobalFilter] = useState(""); // 🔹 search state
-    const [deliveryExecutive, setDeliveryExecutive] = useState([]);
-
-    const loadData = async () => {
+   
+const loadData = async () => {
         try {
             const data = await window.api.getDeliveryExecutives();
             setDeliveryExecutive(data);
@@ -169,6 +181,125 @@ export function DeliveryExecutive() {
         loadData();
     }, []);
 
+
+    const handleSave = async (executive) => {
+  try {
+    if (formMode === "edit" && editData) {
+      await window.api.updateDeliveryExecutive(editData.id, executive);
+      Swal.fire({ icon: "success", title: "Executive updated", toast: true, position: "top-end", showConfirmButton: false, timer: 1500 });
+    } else {
+      await window.api.addDeliveryExecutive(executive);
+      Swal.fire({ icon: "success", title: "Executive added", toast: true, position: "top-end", showConfirmButton: false, timer: 1500 });
+    }
+    setShowForm(false);
+    setEditData(null);
+    loadData();
+  } catch (err) {
+    Swal.fire({ icon: "error", title: "Error", text: err.message || "Error saving executive" });
+  }
+};
+
+const handleDelete = async (id) => {
+  const result = await Swal.fire({
+    title: "Are you sure?",
+    text: "This will delete the executive permanently.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Yes, delete it!",
+    cancelButtonText: "Cancel",
+  });
+
+  if (result.isConfirmed) {
+    try {
+      await window.api.deleteDeliveryExecutive(id);
+      loadData();
+      Swal.fire({ icon: "success", title: "Deleted", text: "Executive deleted successfully", toast: true, position: "top-end", timer: 1500, showConfirmButton: false });
+    } catch {
+      Swal.fire({ icon: "error", title: "Error", text: "Failed to delete executive" });
+    }
+  }
+};
+
+
+
+// Export Executives
+const handleExport = () => {
+  if (!deliveryExecutive.length) {
+    Swal.fire({
+      icon: "info",
+      title: "No data",
+      text: "There are no executives to export.",
+    });
+    return;
+  }
+
+  // Prepare data
+  const data = deliveryExecutive.map((exec, index) => ({
+    "Sr No": index + 1,
+    Name: exec.name,
+  Phone: String(exec.phone || "").replace(/\.0$/, ""), // ✅ clean phone
+    Status: exec.status,
+    "Created At": exec.created_at
+      ? new Date(exec.created_at).toLocaleString()
+      : "",
+  }));
+
+  // Convert JSON to worksheet
+  const worksheet = XLSX.utils.json_to_sheet(data);
+
+  // Auto width calculation
+  const maxLength = [];
+  const range = XLSX.utils.decode_range(worksheet["!ref"]);
+  for (let C = range.s.c; C <= range.e.c; ++C) {
+    let max = 10; // minimum width
+    for (let R = range.s.r; R <= range.e.r; ++R) {
+      const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+      const cell = worksheet[cellAddress];
+      if (cell && cell.v) {
+        const length = cell.v.toString().length;
+        if (length > max) max = length;
+      }
+    }
+    maxLength.push({ wch: max + 2 }); // extra padding
+  }
+  worksheet["!cols"] = maxLength;
+
+  // Bold header row
+  for (let C = range.s.c; C <= range.e.c; ++C) {
+    const cellAddress = XLSX.utils.encode_cell({ r: 0, c: C });
+    if (!worksheet[cellAddress]) continue;
+    worksheet[cellAddress].s = {
+      font: { bold: true },
+    };
+  }
+
+  // Create workbook and append sheet
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "DeliveryExecutives");
+
+  // Generate filename with current date-time
+  const fileName = `delivery-executives_${new Date()
+    .toISOString()
+    .slice(0, 19)
+    .replace(/[:T]/g, "-")}.xlsx`;
+
+  // Convert workbook to binary string and trigger download automatically
+  const wbout = XLSX.write(workbook, {
+    bookType: "xlsx",
+    type: "array",
+    cellStyles: true,
+  });
+  const blob = new Blob([wbout], { type: "application/octet-stream" });
+
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+
     return (
         <>
             <div className="p-5 bg-white block sm:flex items-center justify-between dark:bg-gray-800 dark:border-gray-700">
@@ -192,10 +323,15 @@ export function DeliveryExecutive() {
                             </div>
                         </div>
                         <div className="inline-flex gap-x-4 mb-4 sm:mb-0">
-                            <Button className="px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600">
+                            <Button className="px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600"  onClick={handleExport}
+>
                                 Export
                             </Button>
-                            <Button className="bg-[#000080] cursor-pointer hover:bg-[#000060] dark:text-white">
+                            <Button className="bg-[#000080] cursor-pointer hover:bg-[#000060] dark:text-white" onClick={() => {
+    setFormMode("add");
+    setEditData(null);
+    setShowForm(true);
+  }}>
                                 Add Executive
                             </Button>
                         </div>
@@ -275,7 +411,17 @@ export function DeliveryExecutive() {
                         </TableBody>
                     </Table>
                 </div>
+                   {showForm && (
+  <ExecutiveForm
+    formMode={formMode}
+    initialData={editData}
+    onSave={handleSave}
+    onCancel={() => setShowForm(false)}
+  />
+)}
             </div>
+
+         
         </>
     );
 }

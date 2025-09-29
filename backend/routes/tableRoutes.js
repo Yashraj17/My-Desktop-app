@@ -18,6 +18,10 @@ function tableRoutes() {
   ipcMain.handle("delete-table", (event, id) => {
     return controller.deleteTable(id);
   });
+  //updateTablePosition
+  ipcMain.handle("update-table-position", (event,id,payload) => {
+  return controller.updateTablePosition(id,payload);
+});
 }
 
 module.exports = tableRoutes;
