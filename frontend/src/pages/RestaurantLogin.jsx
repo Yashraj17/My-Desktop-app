@@ -84,9 +84,11 @@ function RestaurantLogin({ setIsAuthenticated }) {
 
       let branchId = user?.branch_id || 1;
       const userName = user?.name || "Unknown";
+      let restaurant=user?.restaurant_id || 1;
+      let id=user?.id || 1;
 
       // ✅ Save login locally
-      await window.api.saveLogin(branchId, token, userName);
+      await window.api.saveLogin(branchId, token, userName,restaurant,id);
 
       const fromDatetime = "2000-08-10 00:00:00";
       const now = new Date();

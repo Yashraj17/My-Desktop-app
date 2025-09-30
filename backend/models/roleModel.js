@@ -1,19 +1,19 @@
 const db = require("../services/db");
 const Store = new (require("electron-store"))();
 
-// ✅ Get All Staff for current branch (with optional search)
-function getStaffs(search = "") {
+// ✅ Get All Roles (with optional search, filtered by restaurant)
+function getRoles(search = "") {
   return new Promise((resolve, reject) => {
     try {
-      const currentBranchId = Store.get("branchId") || 1;
+      const restaurantId = Store.get("restaurantId") || null;
       let query = `
-        SELECT * FROM users
-        WHERE branch_id = ?
+        SELECT * FROM roles
+        WHERE restaurant_id = ?
       `;
-      const params = [currentBranchId];
+      const params = [restaurantId];
 
       if (search && search.trim() !== "") {
-        query += ` AND (name LIKE ? OR email LIKE ? OR phone_number LIKE ?) `;
+        query += ` AND (name LIKE ? OR display_name LIKE ? OR guard_name LIKE ?) `;
         const likeSearch = `%${search}%`;
         params.push(likeSearch, likeSearch, likeSearch);
       }
@@ -29,11 +29,11 @@ function getStaffs(search = "") {
   });
 }
 
-// ✅ Get Staff by ID
-function getStaffById(id) {
+// ✅ Get Role by ID
+function getRoleById(id) {
   return new Promise((resolve, reject) => {
     try {
-      const stmt = db.prepare(`SELECT * FROM users WHERE id = ?`);
+      const stmt = db.prepare(`SELECT * FROM roles WHERE id = ?`);
       const row = stmt.get(id);
       resolve(row);
     } catch (err) {
@@ -42,38 +42,35 @@ function getStaffById(id) {
   });
 }
 
-// ✅ Add Staff
-function addStaff(staff) {
+// ✅ Add Role
+function addRole(role) {
   return new Promise((resolve, reject) => {
     try {
       const createdAt = new Date().toISOString();
       const updatedAt = createdAt;
-      const currentBranchId = Store.get("branchId") || 1;
       const restaurantId = Store.get("restaurantId") || null;
 
       const stmt = db.prepare(`
-        INSERT INTO users (
-          restaurant_id, branch_id, name, email, phone_number, phone_code,
-          password, created_at, updated_at,
+        INSERT INTO roles (
+          name, display_name, guard_name,
+          created_at, updated_at,
+          restaurant_id,
           newfield1, newfield2, newfield3, isSync
         ) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
 
       const result = stmt.run(
-        restaurantId,
-        currentBranchId,
-        staff.name || null,
-        staff.email || null,
-        staff.phone_number || null,
-        staff.phone_code || null,
-        staff.password || "123456", // default password if not provided
+        role.name,
+        role.display_name || null,
+        role.guard_name || "web", // default guard_name
         createdAt,
         updatedAt,
-        staff.newfield1 || null,
-        staff.newfield2 || null,
-        staff.newfield3 || null,
-        staff.isSync ? 1 : 0
+        restaurantId,
+        role.newfield1 || null,
+        role.newfield2 || null,
+        role.newfield3 || null,
+        role.isSync ? 1 : 0
       );
 
       resolve({ success: true, id: result.lastInsertRowid });
@@ -83,20 +80,18 @@ function addStaff(staff) {
   });
 }
 
-// ✅ Update Staff
-function updateStaff(id, staff) {
+// ✅ Update Role
+function updateRole(id, role) {
   return new Promise((resolve, reject) => {
     try {
       const updatedAt = new Date().toISOString();
 
       const stmt = db.prepare(`
-        UPDATE users
+        UPDATE roles
         SET 
           name = ?, 
-          email = ?, 
-          phone_number = ?, 
-          phone_code = ?, 
-          password = ?, 
+          display_name = ?, 
+          guard_name = ?, 
           updated_at = ?,
           newfield1 = ?,
           newfield2 = ?,
@@ -106,16 +101,14 @@ function updateStaff(id, staff) {
       `);
 
       const result = stmt.run(
-        staff.name || null,
-        staff.email || null,
-        staff.phone_number || null,
-        staff.phone_code || null,
-        staff.password || "123456",
+        role.name,
+        role.display_name || null,
+        role.guard_name || "web",
         updatedAt,
-        staff.newfield1 || null,
-        staff.newfield2 || null,
-        staff.newfield3 || null,
-        staff.isSync ? 1 : 0,
+        role.newfield1 || null,
+        role.newfield2 || null,
+        role.newfield3 || null,
+        role.isSync ? 1 : 0,
         id
       );
 
@@ -126,11 +119,11 @@ function updateStaff(id, staff) {
   });
 }
 
-// ✅ Delete Staff
-function deleteStaff(id) {
+// ✅ Delete Role
+function deleteRole(id) {
   return new Promise((resolve, reject) => {
     try {
-      const stmt = db.prepare(`DELETE FROM users WHERE id = ?`);
+      const stmt = db.prepare(`DELETE FROM roles WHERE id = ?`);
       const result = stmt.run(id);
       resolve({ deleted: result.changes > 0 });
     } catch (err) {
@@ -140,9 +133,9 @@ function deleteStaff(id) {
 }
 
 module.exports = {
-  getStaffs,
-  getStaffById,
-  addStaff,
-  updateStaff,
-  deleteStaff,
+  getRoles,
+  getRoleById,
+  addRole,
+  updateRole,
+  deleteRole,
 };
