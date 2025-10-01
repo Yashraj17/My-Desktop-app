@@ -337,6 +337,12 @@ contextBridge.exposeInMainWorld("api", {
     addRole: (role) => ipcRenderer.invoke("add-role", role),
     updateRole: (id, role) => ipcRenderer.invoke("update-role", id, role),
     deleteRole: (id) => ipcRenderer.invoke("delete-role", id),
+
+     /// Reservations functions
+    getReservations: (search = "") => ipcRenderer.invoke("get-reservation", search),
+    addReservation: (reservation) => ipcRenderer.invoke("add-reservation", reservation),
+    updateReservation: (id, reservation) => ipcRenderer.invoke("update-reservation", id, reservation),
+    deleteReservation: (id) => ipcRenderer.invoke("delete-reservation", id),
         //addPredefinedAmountBackup
         addPredefinedAmountBackup: (Data) =>
     ipcRenderer.invoke("add-predefined-amount-backup", Data),

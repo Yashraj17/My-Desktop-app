@@ -28,6 +28,7 @@ import Tables from "../pages/Tables";
 import { Customer } from "../pages/Customer";
 import { DeliveryExecutive } from "../pages/DeliveryExecutive";
 import { Staff } from "../pages/Staff";
+import { Reservations } from "../pages/Reservations";
 
 const routes = [
     {
@@ -92,6 +93,13 @@ const routes = [
                 component: Tables
             },
         ]
+    },
+    {
+        icon: Users,
+        label: "Reservations",
+        url: "/reservations",
+        hasDropdown: false,
+        component: Reservations
     },
     {
         icon: Users,
