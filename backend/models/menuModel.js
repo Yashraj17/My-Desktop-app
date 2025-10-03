@@ -18,102 +18,7 @@ function parseText(value) {
   }
 }
 
-// ✅ Get menus with items
-function getMenusWithItemsOLD(searchTerm = "") {
-  return new Promise((resolve, reject) => {
-    try {
-      const currentBranchId = Store.get("branchId") || 1;
 
-      // Menus
-      const menus = db.prepare(`
-        SELECT id, menu_name
-        FROM menus
-        WHERE branch_id = ?
-        ORDER BY id ASC
-      `).all(currentBranchId);
-
-      // Items
-      let query = `
-        SELECT 
-          mi.id,
-          mi.menu_id,
-          mi.item_category_id,
-          mi.item_name,
-          mi.image,
-          mi.description,
-          mi.type,
-          mi.price,
-          mi.preparation_time,
-          mi.is_available,
-          mi.show_on_customer_site,
-          mi.in_stock,
-          mi.sort_order,
-          mi.created_at,
-          mi.updated_at,
-          ic.category_name,
-          m.menu_name
-        FROM menu_items mi
-        LEFT JOIN item_categories ic ON mi.item_category_id = ic.id
-        LEFT JOIN menus m ON mi.menu_id = m.id
-        WHERE mi.branch_id = ?
-      `;
-
-      const params = [currentBranchId];
-
-      if (searchTerm) {
-        query += `
-          AND (
-            json_extract(mi.item_name, '$.en') LIKE ?
-            OR mi.description LIKE ?
-            OR ic.category_name LIKE ?
-            OR m.menu_name LIKE ?
-          )
-        `;
-        const likeSearch = `%${searchTerm}%`;
-        params.push(likeSearch, likeSearch, likeSearch, likeSearch);
-      }
-
-      query += ` ORDER BY mi.id DESC`;
-
-      const items = db.prepare(query).all(...params);
-
-      // Group items under menus
-      const result = menus.map(menu => {
-        const menuItems = items
-          .filter(item => item.menu_id === menu.id)
-          .map(row => ({
-            id: row.id,
-            menu_id: row.menu_id,
-            item_category_id: row.item_category_id,
-            item_name: parseText(row.item_name),
-            image: row.image,
-            description: parseText(row.description),
-            type: row.type,
-            price: row.price,
-            category_name: parseText(row.category_name),
-            menu_name: parseText(row.menu_name),
-            preparation_time: row.preparation_time,
-            is_available: !!row.is_available,
-            show_on_customer_site: !!row.show_on_customer_site,
-            in_stock: !!row.in_stock,
-            sort_order: row.sort_order,
-            created_at: row.created_at,
-            updated_at: row.updated_at
-          }));
-
-        return {
-          id: menu.id,
-          name: parseText(menu.menu_name),
-          items: menuItems
-        };
-      });
-
-      resolve(result);
-    } catch (err) {
-      reject(err);
-    }
-  });
-}
 function getMenusWithItems(searchTerm = "") {
   return new Promise((resolve, reject) => {
     try {
@@ -203,6 +108,63 @@ function getMenusWithItems(searchTerm = "") {
           name: parseText(menu.menu_name),
           items: menuItems
         };
+      });
+
+      resolve(result);
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+function getMenusWithCategoryItems() {
+  return new Promise((resolve, reject) => {
+    try {
+      const currentBranchId = Store.get("branchId") || 1;
+
+      const query = `
+        SELECT 
+          m.id AS menu_id,
+          m.menu_name AS menu,
+          ic.id AS item_category_id,
+          ic.category_name AS itemName,
+          COUNT(mi.id) AS itemCount
+        FROM menus m
+        JOIN menu_items mi ON m.id = mi.menu_id
+        JOIN item_categories ic ON ic.id = mi.item_category_id
+        WHERE m.branch_id = ?
+          AND mi.branch_id = ?
+          AND ic.branch_id = ?
+        GROUP BY m.id, ic.id
+        ORDER BY m.menu_name, ic.category_name;
+      `;
+
+      const stmt = db.prepare(query);
+      const rows = stmt.all(currentBranchId, currentBranchId, currentBranchId);
+
+      // ✅ Transform raw rows into desired nested structure
+      const result = [];
+      const menuMap = {};
+
+      rows.forEach(row => {
+        if (!menuMap[row.menu_id]) {
+          menuMap[row.menu_id] = {
+            menu_id: row.menu_id,
+            menu: row.menu,
+            count: 0,
+            itemCategory: []
+          };
+          result.push(menuMap[row.menu_id]);
+        }
+
+        menuMap[row.menu_id].itemCategory.push({
+          item_category_id: row.item_category_id,
+          itemName: row.itemName,
+          itemCount: row.itemCount
+        });
+
+        // Add to total menu count
+        menuMap[row.menu_id].count += row.itemCount;
       });
 
       resolve(result);
@@ -321,4 +283,5 @@ module.exports = {
   updateMenu,
   deleteMenu,
   addMenuBackup,
+  getMenusWithCategoryItems
 };

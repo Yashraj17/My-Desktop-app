@@ -6,6 +6,10 @@ function registerMenuRoutes() {
     return controller.getMenusWithItems(search);
   });
 
+  ipcMain.handle("get-menus-with-category-items", (event, search = "") => {
+    return controller.getMenusWithCategoryItems(search);
+  });
+
   ipcMain.handle("add-menu", (event, data) => {
     return controller.addMenu(data);
   });
