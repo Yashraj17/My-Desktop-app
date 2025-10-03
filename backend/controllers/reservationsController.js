@@ -15,10 +15,13 @@ function updateReservations(id, data) {
 function deleteReservations(id) {
   return model.deleteReservation(id);
 }
-
+function getReservationsByDateTime(data) {
+  return model.getReservationsByDateTime(data);
+}
 module.exports = {
   getReservations,
   addReservations,
   updateReservations,
   deleteReservations,
+  getReservationsByDateTime,
 };

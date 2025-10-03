@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Calendar, Users, Mail, Phone, Clock, Tag } from "lucide-react";
 import ReservationForm from "../form/Reservation/ReservationForm";
+import AssignTableModal from "../form/Reservation/AssignTableModal";
+
 import Swal from "sweetalert2";
 import {
   format,
@@ -27,6 +29,8 @@ export function Reservations() {
   const [dateRangeType, setDateRangeType] = useState("currentYear");
   const [startDate, setStartDate] = useState(startOfToday());
   const [endDate, setEndDate] = useState(endOfToday());
+  const [selectedReservation, setSelectedReservation] = useState(null);
+
   // Load reservations
   const loadReservations = async () => {
     try {
@@ -244,7 +248,8 @@ export function Reservations() {
             >
               {/* Header row */}
               <div className="flex justify-between items-center mb-2">
-                <button className="flex items-center px-2 py-1 border rounded text-sm hover:bg-gray-100">
+                <button className="flex items-center px-2 py-1 border rounded text-sm hover:bg-gray-100"  onClick={() => setSelectedReservation(res)}
+>
                   🪑 Assign Table
                 </button>
                 <span
@@ -404,6 +409,15 @@ export function Reservations() {
           onCancel={() => setDrawerVisible(false)}
         />
       )}
+
+      {/* Modal */}
+     {selectedReservation && (
+  <AssignTableModal
+    reservation={selectedReservation}
+    onClose={() => setSelectedReservation(null)}
+    onAssigned={loadReservations}
+  />
+)}
     </div>
   );
 }

@@ -343,6 +343,9 @@ contextBridge.exposeInMainWorld("api", {
     addReservation: (reservation) => ipcRenderer.invoke("add-reservation", reservation),
     updateReservation: (id, reservation) => ipcRenderer.invoke("update-reservation", id, reservation),
     deleteReservation: (id) => ipcRenderer.invoke("delete-reservation", id),
+    getReservationsByDateTime: (reservation) => ipcRenderer.invoke("get-reservations-by-date-time", reservation),
+
+    
         //addPredefinedAmountBackup
         addPredefinedAmountBackup: (Data) =>
     ipcRenderer.invoke("add-predefined-amount-backup", Data),

@@ -18,6 +18,12 @@ function reservationsRoutes() {
   ipcMain.handle("delete-reservation", (event, id) => {
     return controller.deleteReservations(id);
   });
+
+  
+
+  ipcMain.handle("get-reservations-by-date-time", (event, data) => {
+    return controller.getReservationsByDateTime(data);
+  });
 }
 
 module.exports = reservationsRoutes;

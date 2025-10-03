@@ -160,10 +160,40 @@ function deleteReservation(id) {
   });
 }
 
+// ✅ Get Reservations by DateTime
+function getReservationsByDateTime(dateTime) {
+  return new Promise((resolve, reject) => {
+    try {
+      const currentBranchId = Store.get("branchId") || 1;
+
+      const query = `
+        SELECT r.*, 
+               c.name AS customer_name,
+               c.phone AS customer_phone,
+               c.email AS customer_email,
+               t.table_code AS table_code
+        FROM reservations r
+        LEFT JOIN customers c ON r.customer_id = c.id
+        LEFT JOIN tables t ON r.table_id = t.id
+        WHERE r.branch_id = ?
+          AND r.reservation_date_time = ?
+          AND r.reservation_status = 'Confirmed'
+      `;
+
+      const stmt = db.prepare(query);
+      const rows = stmt.all(currentBranchId, dateTime);
+      resolve(rows);
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
 module.exports = {
   getReservations,
   getReservationById,
   addReservation,
   updateReservation,
   deleteReservation,
+  getReservationsByDateTime,
 };
