@@ -4,6 +4,10 @@ function getMenusWithItems(search = "") {
   return model.getMenusWithItems(search);
 }
 
+function getMenusWithCategoryItems(search = "") {
+  return model.getMenusWithCategoryItems(search);
+}
+
 function addMenu(data) {
   return model.addMenu(data);
 }
@@ -25,4 +29,5 @@ module.exports = {
   updateMenu,
   deleteMenu,
   addMenuBackup,
+  getMenusWithCategoryItems
 };

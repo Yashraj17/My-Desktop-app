@@ -6,6 +6,10 @@ function registerMenuItemRoutes() {
     return controller.getMenuItems(search);
   });
 
+  ipcMain.handle("get-menu-items-menuId", (event,menuId) => {
+    return controller.getMenuItemByMenuId(menuId);
+  });
+
   ipcMain.handle("add-menu-item", (event, data) => {
     return controller.addMenuItem(data);
   });
