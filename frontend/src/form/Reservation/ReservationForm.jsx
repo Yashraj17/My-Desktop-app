@@ -10,6 +10,7 @@ function ReservationForm({ formMode, initialData, onSave, onCancel }) {
   const [specialRequest, setSpecialRequest] = useState("");
   const [reservationStatus, setStatus] = useState("confirmed");
   const [slotType, setSlotType] = useState("Lunch");
+ const [timeSlots, setTimeSlots] = useState([]);
 
   const [customerList, setCustomerList] = useState([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState(null);
@@ -27,12 +28,14 @@ function ReservationForm({ formMode, initialData, onSave, onCancel }) {
       setStatus(initialData.reservation_status || "confirmed");
       setSelectedCustomerId(initialData.customer_id || null);
     } else {
+        const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+
       setCustomerName("");
       setEmail("");
       setPhone("");
       setGuestCount(1);
       setTableCode("");
-      setReservationTime("");
+      setReservationTime(today + "T12:00"); // default to today + a safe time
       setSpecialRequest("");
       setStatus("confirmed");
       setSelectedCustomerId(null);
@@ -51,6 +54,47 @@ function ReservationForm({ formMode, initialData, onSave, onCancel }) {
     };
     fetchCustomers();
   }, [customerName]);
+ 
+
+// Load slots when date or slotType changes
+useEffect(() => {
+  if (!reservationTime) return;
+
+  const day = new Date(reservationTime).toLocaleString("en-US", { weekday: "long" });
+  console.log("......",day, slotType)
+  window.api.getReservationSettings(day, slotType).then((settings) => {
+    let slots = [];
+    settings.forEach((s) => {
+      slots = [...slots, ...generateTimeSlots(s)];
+    });
+    setTimeSlots(slots);
+    console.log("slots...",slots)
+  }).catch(err => {
+    console.error("Error fetching reservation settings:", err);
+    setTimeSlots([]);
+  });
+}, [reservationTime, slotType]); // <- include slotType in deps
+
+
+
+  function generateTimeSlots(setting) {
+  const slots = [];
+  const [startH, startM] = setting.time_slot_start.split(":").map(Number);
+  const [endH, endM] = setting.time_slot_end.split(":").map(Number);
+
+  let start = new Date(2000, 0, 1, startH, startM);
+  const end = new Date(2000, 0, 1, endH, endM);
+  const diff = setting.time_slot_difference || 60;
+
+  while (start < end) {
+    slots.push(
+      start.toTimeString().slice(0, 5) // "HH:MM"
+    );
+    start = new Date(start.getTime() + diff * 60000);
+  }
+
+  return slots;
+}
 
   const handleSelectCustomer = (customer) => {
     setCustomerName(customer.name);
@@ -117,13 +161,14 @@ function ReservationForm({ formMode, initialData, onSave, onCancel }) {
             onChange={(e) => setSlotType(e.target.value)}
             className="border rounded px-3 py-2 w-full"
           >
+            <option value="Breakfast">Breakfast</option>
             <option value="Lunch">Lunch</option>
             <option value="Dinner">Dinner</option>
           </select>
         </div>
 
         {/* Time Slots */}
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <label className="block text-sm font-medium mb-2">Select Time Slot</label>
           <div className="grid grid-cols-4 gap-2">
             {["12:00", "13:00", "14:00", "19:00", "20:00", "21:00"].map((slot) => (
@@ -141,7 +186,43 @@ function ReservationForm({ formMode, initialData, onSave, onCancel }) {
               </button>
             ))}
           </div>
-        </div>
+        </div> */}
+
+
+<div className="mb-4">
+  <label className="block text-sm font-medium mb-2">Select Time Slot</label>
+  <div className="grid grid-cols-4 gap-2">
+    {timeSlots.length > 0 ? (
+      timeSlots.map((slot) => {
+        const datePart = reservationTime
+          ? reservationTime.split("T")[0]
+          : new Date().toISOString().split("T")[0];
+
+        const isActive = reservationTime.endsWith(slot);
+
+        return (
+          <button
+            key={slot}
+            type="button"
+            className={`px-3 py-2 rounded border ${
+              isActive
+                ? "bg-[#00006f] text-white"
+                : "bg-gray-100 hover:bg-gray-200"
+            }`}
+            onClick={() => setReservationTime(datePart + "T" + slot)}
+          >
+            {slot}
+          </button>
+        );
+      })
+    ) : (
+      <p className="col-span-4 text-gray-500 text-sm">
+        No slots available for this day
+      </p>
+    )}
+  </div>
+</div>
+
 
         {/* Special Request */}
         <textarea

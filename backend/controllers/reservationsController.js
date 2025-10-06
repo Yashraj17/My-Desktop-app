@@ -18,10 +18,15 @@ function deleteReservations(id) {
 function getReservationsByDateTime(data) {
   return model.getReservationsByDateTime(data);
 }
+
+function getReservationSettings(dayOfWeek, slotType) {
+  return model.getReservationSettings(dayOfWeek, slotType);
+}
 module.exports = {
   getReservations,
   addReservations,
   updateReservations,
   deleteReservations,
   getReservationsByDateTime,
+  getReservationSettings,
 };

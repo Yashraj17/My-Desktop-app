@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -45,16 +45,66 @@ const OpenButtonIcon = () => (
 
 export default function Navbar({ isSidebarOpen, onToggleSidebar,onLogout }) {
   const { isDarkMode, toggleTheme } = useTheme()
+  const [todayReservations, setTodayReservations] = useState(0);
+  const [todayOrder, setTodayOrder] = useState(0);
+  const navigate = useNavigate();
 
   const handleSignOut = () => {
         onLogout(); // call the App.js logout
 
   }
 
+  // Fetch today's reservations
+  useEffect(() => {
+    const fetchTodayReservations = async () => {
+      try {
+        const reservations = await window.api.getReservations();
+        const todayDate = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+        const count = reservations.filter(r =>
+          r.reservation_date_time.startsWith(todayDate)
+        ).length;
+        setTodayReservations(count);
+      } catch (err) {
+        console.error("Error fetching reservations:", err);
+      }
+    };
+
+
+     const fetchTodayOrder = async () => {
+      try {
+        const reservations = await window.api.getOrders();
+        const todayDate = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+        const count = reservations.filter(r =>
+          r.date_time.startsWith(todayDate)
+        //r.date_time.startsWith("2025-09-27T11:47:13.000000Z")
+        ).length;
+        console.log("oredr...",reservations)
+        setTodayOrder(count);
+      } catch (err) {
+        console.error("Error fetching order:", err);
+      }
+    };
+
+    fetchTodayReservations();
+    fetchTodayOrder();
+  }, []);
+  
   const navItems = [
-    { icon: OrderIcon, label: "Orders", badge: "15", badgeColor: "bg-[#000080]" },
+     { 
+    icon: OrderIcon, 
+    label: "Orders", 
+    badge: todayOrder > 0 ? String(todayOrder) : "0", // dynamic badge
+    badgeColor: "bg-[#000080]" // fixed: proper key-value
+  },
     { icon: WaiterIcon, label: "Waiter", badge: "2", badgeColor: "bg-[#000080]" },
-    { icon: ReservationIcon, label: "Reservations", badge: "1", badgeColor: "bg-[#000080]" },
+     { 
+    icon: ReservationIcon, 
+    label: "Reservations", 
+    badge: todayReservations > 0 ? String(todayReservations) : "0", // dynamic badge
+    badgeColor: "bg-[#000080]", // fixed: proper key-value
+    onClick: () => navigate("/reservations") // <-- navigation added
+
+  },
     { icon: OpenResIcon, label: "Open", badge: null },
     { icon: CloseResIcon, label: "Close", badge: null },
     { icon: ViewIcon, label: "View", badge: null },
@@ -86,6 +136,9 @@ export default function Navbar({ isSidebarOpen, onToggleSidebar,onLogout }) {
                     !isLast ? "border-r" : "pr-0 mr-0",
                     "border-gray-200 dark:border-gray-700",
                   ].join(" ")}
+                    onClick={item.onClick} // <-- attach navigation here
+                    style={{ cursor: item.onClick ? "pointer" : "default" }}
+
                 >
                   <div className="relative flex flex-col items-center justify-center gap-1 min-w-[64px]">
                     {React.createElement(item.icon, {

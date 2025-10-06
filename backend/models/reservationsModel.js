@@ -189,6 +189,32 @@ function getReservationsByDateTime(dateTime) {
   });
 }
 
+
+function getReservationSettings(dayOfWeek, slotType) {
+  return new Promise((resolve, reject) => {
+    try {
+      const currentBranchId = Store.get("branchId") || 1;
+
+      let query = `
+        SELECT *
+        FROM reservation_settings
+        WHERE branch_id = ? 
+          AND day_of_week = ? 
+          AND slot_type = ?
+        ORDER BY time_slot_start ASC
+      `;
+
+      const stmt = db.prepare(query);
+      const rows = stmt.all(currentBranchId, dayOfWeek, slotType);
+
+      resolve(rows);
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+
 module.exports = {
   getReservations,
   getReservationById,
@@ -196,4 +222,5 @@ module.exports = {
   updateReservation,
   deleteReservation,
   getReservationsByDateTime,
+  getReservationSettings,
 };

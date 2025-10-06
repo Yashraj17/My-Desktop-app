@@ -1,4 +1,5 @@
 const db = require("../services/db");
+const Store = new (require("electron-store"))();
 
 // ✅ Get All Customers
 
@@ -33,7 +34,7 @@ function getCustomers1(search = '') {
     }
   });
 }
-function getCustomers(search = '') {
+function getCustomers11(search = '') {
   return new Promise((resolve, reject) => {
     try {
       let query = `
@@ -47,6 +48,49 @@ function getCustomers(search = '') {
       `;
       const params = [];
 
+      if (search && search.trim() !== '') {
+        query += ` AND (c.name LIKE ? OR c.email LIKE ? OR c.phone LIKE ?) `;
+        const likeSearch = `%${search}%`;
+        params.push(likeSearch, likeSearch, likeSearch);
+      }
+
+      query += `
+        GROUP BY c.id
+        ORDER BY c.created_at DESC
+      `;
+
+      const stmt = db.prepare(query);
+      const rows = stmt.all(...params);
+      resolve(rows);
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+function getCustomers(search = '') { 
+  return new Promise((resolve, reject) => {
+    try {
+      const restaurantId = Store.get("restaurantId") || null;
+
+      let query = `
+        SELECT 
+          c.*, 
+          COUNT(o.id) AS total_orders,
+          IFNULL(SUM(o.amount_paid), 0) AS total_amount
+        FROM customers c
+        LEFT JOIN orders o ON o.customer_id = c.id
+        WHERE 1=1
+      `;
+      const params = [];
+
+      // ✅ filter by restaurant_id
+      if (restaurantId) {
+        query += ` AND c.restaurant_id = ? `;
+        params.push(restaurantId);
+      }
+
+      // ✅ search filter
       if (search && search.trim() !== '') {
         query += ` AND (c.name LIKE ? OR c.email LIKE ? OR c.phone LIKE ?) `;
         const likeSearch = `%${search}%`;

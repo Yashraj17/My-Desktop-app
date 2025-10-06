@@ -24,6 +24,11 @@ function reservationsRoutes() {
   ipcMain.handle("get-reservations-by-date-time", (event, data) => {
     return controller.getReservationsByDateTime(data);
   });
+
+  
+  ipcMain.handle("get-reservation-settings", (event, dayOfWeek, slotType) => {
+    return controller.getReservationSettings(dayOfWeek, slotType);
+  });
 }
 
 module.exports = reservationsRoutes;

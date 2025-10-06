@@ -22,6 +22,7 @@ const deliveryExecutiveRoutes = require("./backend/routes/deliveryExecutiveRoute
 const staffRoutes = require("./backend/routes/staffRoutes");
 const roleRoutes = require("./backend/routes/roleRoutes");
 const reservationsRoutes = require("./backend/routes/reservationsRoutes");
+const orderRoutes = require("./backend/routes/orderRoutes");
 
 
 
@@ -2373,6 +2374,7 @@ app.whenReady().then(() => {
   staffRoutes();
   roleRoutes();
   reservationsRoutes();
+  orderRoutes();
   createWindow();
 
   app.on("activate", () => {
