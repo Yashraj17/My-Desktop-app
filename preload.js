@@ -348,6 +348,10 @@ contextBridge.exposeInMainWorld("api", {
 
     //order
     getOrders: (search = "") => ipcRenderer.invoke("get-order", search),
+
+    //Restaurants
+    getRestaurants: (search = "") => ipcRenderer.invoke("get-restaurant", search),
+
         //addPredefinedAmountBackup
         addPredefinedAmountBackup: (Data) =>
     ipcRenderer.invoke("add-predefined-amount-backup", Data),

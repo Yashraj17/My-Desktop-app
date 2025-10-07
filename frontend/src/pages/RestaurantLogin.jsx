@@ -17,44 +17,43 @@ function RestaurantLogin({ setIsAuthenticated }) {
 
   // 🚀 Background auto sync
   const startSyncScheduler = (subdomain, email, password, user) => {
-  syncIntervalRef.current = setInterval(async () => {
-    try {
-      const online = await window.api.isOnline(subdomain);
-      if (!online) {
-        console.log("⚠️ Skipping sync: No internet");
-        return;
+    syncIntervalRef.current = setInterval(async () => {
+      try {
+        const online = await window.api.isOnline(subdomain);
+        if (!online) {
+          console.log("⚠️ Skipping sync: No internet");
+          return;
+        }
+
+        console.log("🔑 Logging into server for fresh token...");
+
+        // 🔹 Direct server login (not local fallback)
+        const baseUrl = `${subdomain}/api/login`;
+        const response = await axios.post(baseUrl, { email, password });
+
+        const { token, user: freshUser } = response.data;
+
+        const fromDatetime = "2000-08-10 00:00:00";
+        const now = new Date();
+        const toDatetime = now.toISOString().slice(0, 19).replace("T", " ");
+
+        console.log("🔄 Auto Sync triggered with server token");
+        await syncMasterData(
+          subdomain,
+          token,
+          () => {}, // background sync → no UI update
+          () => {},
+          freshUser,
+          fromDatetime,
+          toDatetime
+        );
+
+        console.log("✅ Auto sync completed");
+      } catch (err) {
+        console.error("❌ Auto sync failed:", err.message);
       }
-
-      console.log("🔑 Logging into server for fresh token...");
-
-      // 🔹 Direct server login (not local fallback)
-      const baseUrl = `${subdomain}/api/login`;
-      const response = await axios.post(baseUrl, { email, password });
-
-      const { token, user: freshUser } = response.data;
-
-      const fromDatetime = "2000-08-10 00:00:00";
-      const now = new Date();
-      const toDatetime = now.toISOString().slice(0, 19).replace("T", " ");
-
-      console.log("🔄 Auto Sync triggered with server token");
-      await syncMasterData(
-        subdomain,
-        token,
-        () => {}, // background sync → no UI update
-        () => {},
-        freshUser,
-        fromDatetime,
-        toDatetime
-      );
-
-      console.log("✅ Auto sync completed");
-    } catch (err) {
-      console.error("❌ Auto sync failed:", err.message);
-    }
-  }, 600000); // every 10 min
-};
-
+    }, 600000); // every 10 min
+  };
 
   const stopSyncScheduler = () => {
     if (syncIntervalRef.current) {
@@ -80,20 +79,29 @@ function RestaurantLogin({ setIsAuthenticated }) {
       });
 
       console.log("Login source:", source);
-      console.log("User data:", user, "token", token,"password:",password,"user email",user.email);
+      console.log(
+        "User data:",
+        user,
+        "token",
+        token,
+        "password:",
+        password,
+        "user email",
+        user.email
+      );
 
       let branchId = user?.branch_id || 1;
       const userName = user?.name || "Unknown";
-      let restaurant=user?.restaurant_id || 1;
-      let id=user?.id || 1;
+      let restaurant = user?.restaurant_id || 1;
+      let id = user?.id || 1;
 
       // ✅ Save login locally
-      await window.api.saveLogin(branchId, token, userName,restaurant,id);
+      await window.api.saveLogin(branchId, token, userName, restaurant, id);
 
       const fromDatetime = "2000-08-10 00:00:00";
       const now = new Date();
       const toDatetime = now.toISOString().slice(0, 19).replace("T", " ");
-      startSyncScheduler(subdomain,user.email, password, user);
+      startSyncScheduler(subdomain, user.email, password, user);
 
       if (source === "remote") {
         // ✅ First sync with UI progress
@@ -117,8 +125,7 @@ function RestaurantLogin({ setIsAuthenticated }) {
 
       // 🔔 Start background auto-sync
       //startSyncScheduler(subdomain, email, password, user);
-      startSyncScheduler(subdomain,user.email,password , user);
-
+      startSyncScheduler(subdomain, user.email, password, user);
     } catch (err) {
       console.error("Login/Menu sync error:", err.message);
       setError("Login or data sync failed. Check console for details.");

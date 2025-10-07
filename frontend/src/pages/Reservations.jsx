@@ -16,6 +16,7 @@ import {
   startOfYear,
   endOfYear,
 } from "date-fns";
+import { LayoutGrid, List } from "lucide-react";
 
 export function Reservations() {
   const [reservations, setReservations] = useState([]);
@@ -218,24 +219,31 @@ export function Reservations() {
           className="flex-1 border rounded px-3 py-2"
         />
 
-        <div className="flex gap-2">
-          <button
-            onClick={() => setViewMode("cards")}
-            className={`px-3 py-1 rounded ${
-              viewMode === "cards" ? "bg-blue-600 text-white" : "bg-gray-200"
-            }`}
-          >
-            Card View
-          </button>
-          <button
-            onClick={() => setViewMode("list")}
-            className={`px-3 py-1 rounded ${
-              viewMode === "list" ? "bg-blue-600 text-white" : "bg-gray-200"
-            }`}
-          >
-            List View
-          </button>
-        </div>
+<div className="flex gap-2">
+  <button
+    onClick={() => setViewMode("cards")}
+    className={`p-2 rounded ${
+      viewMode === "cards"
+        ? "bg-blue-800 text-white"
+        : "bg-gray-200 text-gray-700"
+    }`}
+    title="Card View"
+  >
+    <LayoutGrid size={18} />
+  </button>
+
+  <button
+    onClick={() => setViewMode("list")}
+    className={`p-2 rounded ${
+      viewMode === "list"
+        ? "bg-blue-800 text-white"
+        : "bg-gray-200 text-gray-700"
+    }`}
+    title="List View"
+  >
+    <List size={18} />
+  </button>
+</div>
       </div>
 
       {/* Reservation Display */}
