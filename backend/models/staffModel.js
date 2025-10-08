@@ -6,10 +6,18 @@ function getStaffs(search = "") {
   return new Promise((resolve, reject) => {
     try {
       const currentBranchId = Store.get("branchId") || 1;
+      // let query = `
+      //   SELECT * FROM users
+      //   WHERE branch_id = ?
+      // `;
+
+      
+      // 🧩 Include both branch-specific and null-branch users
       let query = `
         SELECT * FROM users
-        WHERE branch_id = ?
+        WHERE (branch_id = ? OR branch_id IS NULL)
       `;
+
       const params = [currentBranchId];
 
       if (search && search.trim() !== "") {

@@ -109,6 +109,7 @@ const columns = [
     const loadData = async () => {
         try {
             const data = await window.api.getCategories();
+            console.log(data,"catrgory.....")
             setCategories(data);
         } catch (error) {
             console.error("Failed to load categories:", error);

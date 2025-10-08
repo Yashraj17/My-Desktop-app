@@ -72,6 +72,10 @@ contextBridge.exposeInMainWorld("api", {
   //Branch Backup
   addBranchBackup: (branchData) =>
     ipcRenderer.invoke("add-branch-backup", branchData),
+  //getBranches
+      getBranches: (restaurantId) => ipcRenderer.invoke("get-branches",restaurantId),
+  //getActiveBranch
+      getActiveBranch: (restaurantId) => ipcRenderer.invoke("get-active-branches",restaurantId),
    saveUser: (user, plainPassword) =>
     ipcRenderer.invoke("save-user", { user, plainPassword }),
 

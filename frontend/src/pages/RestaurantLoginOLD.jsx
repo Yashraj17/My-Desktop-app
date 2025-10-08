@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import icon from "/images/icon.ico";
-import { syncMasterData } from "../../src/pages/dataSync/syncMasterData"; // ✅ import sync
+import { syncMasterData } from "./dataSync/syncMasterData";
+import axios from "axios";
 
 function RestaurantLogin({ setIsAuthenticated }) {
   const [subdomain, setSubdomain] = useState("https://www.prtechit.com");
@@ -10,8 +11,57 @@ function RestaurantLogin({ setIsAuthenticated }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [progress, setProgress] = useState(0);
-  const [status, setStatus] = useState("Starting sync..."); // ✅ new
+  const [status, setStatus] = useState("Starting sync...");
   const navigate = useNavigate();
+  const syncIntervalRef = useRef(null);
+
+  // 🚀 Background auto sync
+  const startSyncScheduler = (subdomain, email, password, user) => {
+    syncIntervalRef.current = setInterval(async () => {
+      try {
+        const online = await window.api.isOnline(subdomain);
+        if (!online) {
+          console.log("⚠️ Skipping sync: No internet");
+          return;
+        }
+
+        console.log("🔑 Logging into server for fresh token...");
+
+        // 🔹 Direct server login (not local fallback)
+        const baseUrl = `${subdomain}/api/login`;
+        const response = await axios.post(baseUrl, { email, password });
+
+        const { token, user: freshUser } = response.data;
+
+        const fromDatetime = "2000-08-10 00:00:00";
+        const now = new Date();
+        const toDatetime = now.toISOString().slice(0, 19).replace("T", " ");
+
+        console.log("🔄 Auto Sync triggered with server token");
+        await syncMasterData(
+          subdomain,
+          token,
+          () => {}, // background sync → no UI update
+          () => {},
+          freshUser,
+          fromDatetime,
+          toDatetime
+        );
+
+        console.log("✅ Auto sync completed");
+      } catch (err) {
+        console.error("❌ Auto sync failed:", err.message);
+      }
+    }, 600000); // every 10 min
+  };
+
+  const stopSyncScheduler = () => {
+    if (syncIntervalRef.current) {
+      clearInterval(syncIntervalRef.current);
+      syncIntervalRef.current = null;
+      console.log("🛑 Auto sync stopped");
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,26 +78,43 @@ function RestaurantLogin({ setIsAuthenticated }) {
         subdomain,
       });
 
-      console.log("Login source:", source); // "local" or "remote"
-      console.log("User data:", user, "token", token);
+      console.log("Login source:", source);
+      console.log(
+        "User data:",
+        user,
+        "token",
+        token,
+        "password:",
+        password,
+        "user email",
+        user.email
+      );
 
-      // ✅ Extract values
       let branchId = user?.branch_id || 1;
       const userName = user?.name || "Unknown";
+      let restaurant = user?.restaurant_id || 1;
+      let id = user?.id || 1;
 
       // ✅ Save login locally
-      await window.api.saveLogin(branchId, token, userName);
+      await window.api.saveLogin(branchId, token, userName, restaurant, id);
+
+      const fromDatetime = "2000-08-10 00:00:00";
+      const now = new Date();
+      const toDatetime = now.toISOString().slice(0, 19).replace("T", " ");
+      startSyncScheduler(subdomain, user.email, password, user);
 
       if (source === "remote") {
-        // ✅ Sync master + menus with real progress + status
-        const fromDatetime = "2000-08-10 00:00:00";
-        const now = new Date();
-        const toDatetime = now.toISOString().slice(0, 19).replace("T", " ");
-        console.log("From:", fromDatetime);
-        console.log("To:", toDatetime); 
-       await syncMasterData(subdomain, token, setProgress, setStatus, user,fromDatetime,toDatetime);
+        // ✅ First sync with UI progress
+        await syncMasterData(
+          subdomain,
+          token,
+          setProgress,
+          setStatus,
+          user,
+          fromDatetime,
+          toDatetime
+        );
       } else {
-        // Local login → jump to 100% instantly
         setProgress(100);
         setStatus("Loaded from local storage");
       }
@@ -55,6 +122,10 @@ function RestaurantLogin({ setIsAuthenticated }) {
       // ✅ Redirect after sync/login
       setIsAuthenticated(true);
       navigate("/");
+
+      // 🔔 Start background auto-sync
+      //startSyncScheduler(subdomain, email, password, user);
+      startSyncScheduler(subdomain, user.email, password, user);
     } catch (err) {
       console.error("Login/Menu sync error:", err.message);
       setError("Login or data sync failed. Check console for details.");
@@ -66,6 +137,11 @@ function RestaurantLogin({ setIsAuthenticated }) {
       }, 1200);
     }
   };
+
+  // 🧹 Cleanup when component unmounts
+  useEffect(() => {
+    return () => stopSyncScheduler();
+  }, []);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">

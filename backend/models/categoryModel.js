@@ -1,8 +1,7 @@
 // src/main/models/categoryModel.js
 const db = require("../services/db");
-const Store = require("electron-store");
-const store = new Store();
-let currentBranchId = store.get("branchId", 1); // always read fresh
+const Store = new (require("electron-store"))();
+const currentBranchId = Store.get("branchId") || 1; // get active branch ID
 
 function setBranchId(branchId) {
   currentBranchId = branchId;
