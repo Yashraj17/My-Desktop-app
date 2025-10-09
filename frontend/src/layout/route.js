@@ -30,6 +30,7 @@ import { DeliveryExecutive } from "../pages/DeliveryExecutive";
 import { Staff } from "../pages/Staff";
 import POS from "../pages/POS";
 import { Orders } from "../pages/Orders";
+import KOT from "../pages/KOT";
 
 const routes = [
     {
@@ -108,6 +109,13 @@ const routes = [
         url: "/orders",
         hasDropdown: false,
         component: Orders
+    },
+    {
+        icon: Users,
+        label: "KOT",
+        url: "/Kot",
+        hasDropdown: false,
+        component: KOT
     },
     {
         icon: Users,

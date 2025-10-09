@@ -20,6 +20,7 @@ const tableRoutes = require("./backend/routes/tableRoutes");
 const customerRoutes = require("./backend/routes/customerRoutes");
 const deliveryExecutiveRoutes = require("./backend/routes/deliveryExecutiveRoutes");
 const staffRoutes = require("./backend/routes/staffRoutes");
+const orderRoutes = require("./backend/routes/orderRoutes");
 
 
 
@@ -2366,6 +2367,7 @@ app.whenReady().then(() => {
   customerRoutes();
   deliveryExecutiveRoutes();
   staffRoutes();
+  orderRoutes();
   createWindow();
 
   app.on("activate", () => {

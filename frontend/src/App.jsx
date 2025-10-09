@@ -6,7 +6,7 @@ import SiteLoader from "./components/SiteLoader";
 import { ThemeProvider } from "./context/ThemeContext";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [loading, setLoading] = useState(true);
 
   // On first render, check localStorage
