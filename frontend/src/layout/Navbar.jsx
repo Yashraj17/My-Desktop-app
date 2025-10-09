@@ -53,6 +53,7 @@ const OpenButtonIcon = () => (
   </svg>
 );
 
+
 export default function Navbar({ isSidebarOpen, onToggleSidebar, onLogout }) {
   const { isDarkMode, toggleTheme } = useTheme();
   const [todayReservations, setTodayReservations] = useState(0);
@@ -153,7 +154,7 @@ export default function Navbar({ isSidebarOpen, onToggleSidebar, onLogout }) {
           </Button>
         </div>
 
-        {branchInfo && (
+        {/* {branchInfo && (
           <div
             className="text-sm font-semibold mr-3 bg-white text-[#000080] px-3 py-1 rounded-full shadow-sm cursor-pointer"
             title={`
@@ -175,7 +176,7 @@ Updated: ${
           >
             {branchInfo.name || `Branch ID: ${branchInfo.id}`}
           </div>
-        )}
+        )} */}
 
         <div className="flex-1 flex justify-between ps-6">
           {/* Center section - Navigation items */}

@@ -1,0 +1,5 @@
+<svg class="w-5 h-5 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xml:space="preserve">
+            <g stroke-width="0"></g>
+            <g stroke-linecap="round" stroke-linejoin="round"></g>
+            <path d="M476.554 371.269H35.446C15.87 371.269 0 387.138 0 406.716c0 19.577 15.87 35.446 35.446 35.446h441.108c19.577 0 35.446-15.869 35.446-35.446 0-19.578-15.869-35.447-35.446-35.447M278.716 133.777c8.1-6.623 13.384-16.561 13.384-27.838 0-19.938-16.161-36.1-36.1-36.1-19.938 0-36.1 16.162-36.1 36.1 0 11.277 5.285 21.216 13.384 27.838-108.954 11.354-193.9 103.47-193.9 215.423h433.231c.001-111.953-84.946-204.069-193.899-215.423M164.908 313.754H94.523c0-70.668 53.2-128.822 121.716-136.823z" style="fill:currentColor"></path>
+        </svg>

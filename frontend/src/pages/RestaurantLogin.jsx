@@ -354,7 +354,7 @@ const stopSyncScheduler = () => {
     }
   };
 
-  const handleBranchSelect = async (subdomain, password) => {
+  const handleBranchSelect = async (selectedBranch,subdomain, password) => {
     if (!selectedBranch) return;
     Swal.fire({
       icon: "success",
@@ -496,6 +496,28 @@ const stopSyncScheduler = () => {
               placeholder="••••••••"
             />
           </div>
+ {showBranchModal && (
+  <div>
+    <h3 className="text-lg font-semibold mb-4 text-center">
+      Select Your Branch
+    </h3>
+    <select
+      className="w-full border p-2 rounded mb-4"
+      value={selectedBranch}
+      onChange={(e) => {
+        setSelectedBranch(e.target.value);
+        handleBranchSelect(e.target.value,subdomain, password);
+      }}
+    >
+      <option value="">-- Select Branch --</option>
+      {branches.map((b) => (
+        <option key={b.id} value={b.id}>
+          {b.name} {b.address ? `(${b.address})` : ""}
+        </option>
+      ))}
+    </select>
+  </div>
+)}
 
           <div className="flex items-center justify-between text-sm">
             <label className="flex items-center space-x-2">
@@ -532,7 +554,7 @@ const stopSyncScheduler = () => {
       </div>
 
       {/* Branch Modal */}
-      {showBranchModal && (
+      {/* {showBranchModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
           <div className="bg-white p-6 rounded-xl shadow-lg w-96">
             <h3 className="text-lg font-semibold mb-4 text-center">
@@ -566,7 +588,7 @@ const stopSyncScheduler = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }
