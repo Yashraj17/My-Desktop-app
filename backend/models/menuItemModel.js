@@ -89,6 +89,63 @@ function getMenuItems(searchTerm = "") {
   });
 }
 
+function getMenuItemByMenuId(menuId) {
+  return new Promise((resolve, reject) => {
+    try {
+      const currentBranchId = Store.get("branchId");
+
+      const query = `
+        SELECT 
+          id,
+          menu_id,
+          item_category_id,
+          item_name,
+          image,
+          description,
+          type,
+          price,
+          preparation_time,
+          is_available,
+          show_on_customer_site,
+          in_stock,
+          sort_order,
+          created_at,
+          updated_at
+        FROM menu_items
+        WHERE branch_id = ? AND menu_id = ?
+        ORDER BY id DESC
+      `;
+
+      // Important: menu_id is stored as TEXT, so make sure you're passing string type
+      const rows = db.prepare(query).all(currentBranchId, String(menuId));
+
+      const items = rows.map(row => ({
+        id: row.id,
+        menu_id: row.menu_id,
+        item_category_id: row.item_category_id,
+        item_name: row.item_name,
+        image: row.image,
+        description: row.description,
+        type: row.type,
+        price: row.price,
+        preparation_time: row.preparation_time,
+        is_available: row.is_available,
+        show_on_customer_site: row.show_on_customer_site,
+        in_stock: row.in_stock,
+        sort_order: row.sort_order,
+        created_at: row.created_at,
+        updated_at: row.updated_at,
+      }));
+
+      resolve(items);
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+
+
 function generateFileName(originalName = "image.jpg") {
   let ext = path.extname(originalName) || ".jpg";
   const hash = crypto.randomBytes(16).toString("hex");
@@ -227,4 +284,6 @@ module.exports = {
   addMenuItem,
   updateMenuItem,
   deleteMenuItem,
+  getMenuItemByMenuId
+  
 };

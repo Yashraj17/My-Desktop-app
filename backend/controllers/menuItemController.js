@@ -4,6 +4,10 @@ function getMenuItems(searchTerm) {
   return model.getMenuItems(searchTerm);
 }
 
+function getMenuItemByMenuId(menuId) {
+  return model.getMenuItemByMenuId(menuId);
+}
+
 function addMenuItem(data) {
   return model.addMenuItem(data);
 }
@@ -18,6 +22,7 @@ function deleteMenuItem(id) {
 
 module.exports = {
   getMenuItems,
+  getMenuItemByMenuId,
   addMenuItem,
   updateMenuItem,
   deleteMenuItem,

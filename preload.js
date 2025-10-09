@@ -29,12 +29,14 @@ contextBridge.exposeInMainWorld("api", {
     ipcRenderer.invoke("delete-modifier-group", id),
 
   getMenuItems: () => ipcRenderer.invoke("get-menu-items"),
+  getMenuItemByMenuId: (menuId) => ipcRenderer.invoke("get-menu-items-menuId",menuId),
   addMenuItem: (payload) => ipcRenderer.invoke("add-menu-item", payload),
   updateMenuItem: (id, payload) =>
     ipcRenderer.invoke("update-menu-item", { id, ...payload }),
   deleteMenuItem: (id) => ipcRenderer.invoke("delete-menu-item", id),
 
   getMenusWithItems: () => ipcRenderer.invoke("get-menus-with-items"),
+  getMenusWithCategoryItems: () => ipcRenderer.invoke("get-menus-with-category-items"),
   deleteMenuItem: (menuId, itemId) =>
     ipcRenderer.invoke("delete-menu-item", menuId, itemId),
   updateMenuItemField: (itemId, field, value) =>

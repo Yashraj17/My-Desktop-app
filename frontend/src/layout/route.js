@@ -37,6 +37,8 @@ import { Customer } from "../pages/Customer";
 import { DeliveryExecutive } from "../pages/DeliveryExecutive";
 import { Staff } from "../pages/Staff";
 import { Reservations } from "../pages/Reservations";
+import POS from "../pages/POS";
+import { Orders } from "../pages/Orders";
 
 const routes = [
     {
@@ -111,6 +113,21 @@ const routes = [
     },
     {
         icon: CustomerIcon,
+        icon: Users,
+        label: "POS",
+        url: "/pos",
+        hasDropdown: false,
+        component: POS
+    },
+    {
+        icon: Users,
+        label: "Orders",
+        url: "/orders",
+        hasDropdown: false,
+        component: Orders
+    },
+    {
+        icon: Users,
         label: "Customers",
         url: "/cutomers",
         hasDropdown: false,
