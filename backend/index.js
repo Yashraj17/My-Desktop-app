@@ -11,6 +11,7 @@ const tableRoutes = require("./routes/tableRoutes");
 const customerRoutes = require("./routes/customerRoutes");
 const deliveryExecutiveRoutes = require("./routes/deliveryExecutiveRoutes");
 const staffRoutes = require("./routes/staffRoutes");
+const orderInfoRoutes = require("./routes/orderRoutes");
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -36,4 +37,5 @@ app.whenReady().then(() => {
   customerRoutes();
   deliveryExecutiveRoutes();
   staffRoutes();
+  orderInfoRoutes()
 });
