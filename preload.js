@@ -1,7 +1,7 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("api", {
-  saveLogin: (branchId, token,name) => ipcRenderer.invoke("store:setLogin", { branchId, token,name }),
+  saveLogin: (branchId, token,name,restaurant_id,userId) => ipcRenderer.invoke("store:setLogin", { branchId, token,name,restaurant_id,userId }),
   getStore: (key) => ipcRenderer.invoke("store:get", key),
   logout: () => ipcRenderer.invoke("store:logout"),
   login: (credentials) => ipcRenderer.invoke("login", credentials), // new
@@ -74,6 +74,10 @@ contextBridge.exposeInMainWorld("api", {
   //Branch Backup
   addBranchBackup: (branchData) =>
     ipcRenderer.invoke("add-branch-backup", branchData),
+  //getBranches
+      getBranches: (restaurantId) => ipcRenderer.invoke("get-branches",restaurantId),
+  //getActiveBranch
+      getActiveBranch: (restaurantId) => ipcRenderer.invoke("get-active-branches",restaurantId),
    saveUser: (user, plainPassword) =>
     ipcRenderer.invoke("save-user", { user, plainPassword }),
 
@@ -330,6 +334,29 @@ contextBridge.exposeInMainWorld("api", {
 
            /// Staff functions
     getStaffs: (search = "") => ipcRenderer.invoke("get-staff", search),
+    addStaff: (staff) => ipcRenderer.invoke("add-staff", staff),
+    updateStaff: (id, staff) => ipcRenderer.invoke("update-staff", id, staff),
+    deleteStaff: (id) => ipcRenderer.invoke("delete-staff", id),
+     
+    /// Role functions
+    getRoles: (search = "") => ipcRenderer.invoke("get-role", search),
+    addRole: (role) => ipcRenderer.invoke("add-role", role),
+    updateRole: (id, role) => ipcRenderer.invoke("update-role", id, role),
+    deleteRole: (id) => ipcRenderer.invoke("delete-role", id),
+
+     /// Reservations functions
+    getReservations: (search = "") => ipcRenderer.invoke("get-reservation", search),
+    addReservation: (reservation) => ipcRenderer.invoke("add-reservation", reservation),
+    updateReservation: (id, reservation) => ipcRenderer.invoke("update-reservation", id, reservation),
+    deleteReservation: (id) => ipcRenderer.invoke("delete-reservation", id),
+    getReservationsByDateTime: (reservation) => ipcRenderer.invoke("get-reservations-by-date-time", reservation),
+    getReservationSettings: (dayOfWeek, slotType) => ipcRenderer.invoke("get-reservation-settings", dayOfWeek, slotType),
+
+    //order
+    getOrders: (search = "") => ipcRenderer.invoke("get-order", search),
+
+    //Restaurants
+    getRestaurants: (search = "") => ipcRenderer.invoke("get-restaurant", search),
 
         //addPredefinedAmountBackup
         addPredefinedAmountBackup: (Data) =>

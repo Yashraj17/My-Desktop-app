@@ -1,7 +1,15 @@
-import { MenuIcon } from "../components/svgIcons";
+import  MenuIcon  from "../components/menu-icon.svg";
 import Dashboard from "../pages/Dashboard";
 import { ItemCategory } from "../pages/ItemCategory";
 import Menus from "../pages/Menus";
+//import orderIcon from "../components/orders-icon.svg";
+import TableIcon from "../components/table-icon.svg";
+import ReservationIcon from "../components/reservations-icon.svg";
+import CustomerIcon from "../components/customers-icon.svg";
+import StaffIcon from "../components/staff-icon.svg";
+import DeliveryExecutiveIcon from "../components/delivery-executive-icon.svg";
+import DashboardIcon from "../components/dashboard-icon.svg";
+
 import {
     Home,
     Utensils,
@@ -28,19 +36,20 @@ import Tables from "../pages/Tables";
 import { Customer } from "../pages/Customer";
 import { DeliveryExecutive } from "../pages/DeliveryExecutive";
 import { Staff } from "../pages/Staff";
+import { Reservations } from "../pages/Reservations";
 import POS from "../pages/POS";
 import { Orders } from "../pages/Orders";
 
 const routes = [
     {
-        icon: Home,
+        icon: DashboardIcon,
         label: "Dashboard",
         url: "/",
         component: Dashboard,
         hasDropdown: false
     },
     {
-        icon: Truck,
+        icon: MenuIcon,
         label: "Menu",
         url: "/menu",
         hasDropdown: true,
@@ -78,7 +87,7 @@ const routes = [
         ]
     },
     {
-        icon: Bell,
+        icon: TableIcon,
         label: "Table",
         url: "/table",
         hasDropdown: true,
@@ -96,6 +105,14 @@ const routes = [
         ]
     },
     {
+        icon: ReservationIcon,
+        label: "Reservations",
+        url: "/reservations",
+        hasDropdown: false,
+        component: Reservations
+    },
+    {
+        icon: CustomerIcon,
         icon: Users,
         label: "POS",
         url: "/pos",
@@ -117,14 +134,14 @@ const routes = [
         component: Customer
     },
     {
-        icon: Triangle,
+        icon: StaffIcon,
         label: "Staff",
         url: "/staff",
         hasDropdown: false,
         component: Staff
     },
     {
-        icon: Truck,
+        icon: DeliveryExecutiveIcon,
         label: "Delivery Executive",
         url: "/delivery-executive",
         hasDropdown: false,
