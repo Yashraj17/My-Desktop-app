@@ -21,6 +21,9 @@ const customerRoutes = require("./backend/routes/customerRoutes");
 const deliveryExecutiveRoutes = require("./backend/routes/deliveryExecutiveRoutes");
 const staffRoutes = require("./backend/routes/staffRoutes");
 const orderInfoRoutes = require("./backend/routes/orderRoutes");
+const roleRoutes = require("./backend/routes/roleRoutes");
+const reservationsRoutes = require("./backend/routes/reservationsRoutes");
+const orderRoutes = require("./backend/routes/orderRoutes");
 
 
 
@@ -2281,7 +2284,7 @@ store.set("branchId", id);});
 
 
 // Listen for login data
-ipcMain.handle("store:setLogin", (event, { branchId, token,name }) => {
+ipcMain.handle("store:setLogin", (event, { branchId, token,name,restaurant_id,userId }) => {
   if (branchId === null || branchId === undefined) {
     store.delete("branchId");   // safe clear
   } else {
@@ -2290,6 +2293,9 @@ ipcMain.handle("store:setLogin", (event, { branchId, token,name }) => {
 
   store.set("token", token || ""); // ensure token is string
   store.set("name", name || "");
+  store.set("restaurantId", restaurant_id || "");
+  store.set("userId", userId || "");
+
   return true;
 });
 
@@ -2368,6 +2374,9 @@ app.whenReady().then(() => {
   deliveryExecutiveRoutes();
   staffRoutes();
   orderInfoRoutes();
+  roleRoutes();
+  reservationsRoutes();
+  orderRoutes();
   createWindow();
 
   app.on("activate", () => {

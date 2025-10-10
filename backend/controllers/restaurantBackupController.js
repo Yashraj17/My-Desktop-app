@@ -3,4 +3,9 @@ function addRestaurantBackup(data) {
   return model.addRestaurantBackup(data);
 }
 
-module.exports = { addRestaurantBackup };
+
+function getRestaurants(data) {
+  return model.getRestaurants(data);
+}
+
+module.exports = { addRestaurantBackup,getRestaurants };

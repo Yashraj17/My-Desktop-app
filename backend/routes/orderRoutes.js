@@ -7,4 +7,11 @@ function orderInfoRoutes() {
   });
 }
 
-module.exports = orderInfoRoutes;
+function orderRoutes() {
+  ipcMain.handle("get-order", (event, search = "") => {
+    return controller.getOrders(search);
+  });
+
+}
+
+  module.exports = {orderRoutes,orderInfoRoutes};
