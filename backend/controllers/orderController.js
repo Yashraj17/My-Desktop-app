@@ -1,15 +1,14 @@
-const model = require("../models/ordersModel");
+const model = require("../models/orderModel");
 
 function getOrdersInfo() {
   return model.getOrdersInfo();
-const model = require("../models/orderModel");
-
+}
 function getOrders(search) {
   return model.getOrders(search);
 }
 
 
 module.exports = {
-  getOrdersInfo
-  getOrders,
+  getOrdersInfo,
+  getOrders
 };
