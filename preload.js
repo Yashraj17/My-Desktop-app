@@ -408,7 +408,7 @@ contextBridge.exposeInMainWorld("api", {
     ipcRenderer.invoke("add-waiter-request-backup", Data),
 
     /// Orders functions
-    getOrders: (search = "") => ipcRenderer.invoke("get-orders", search),
+    getOrdersInfo: (search = "") => ipcRenderer.invoke("get-orders-info", search),
 
 });
 

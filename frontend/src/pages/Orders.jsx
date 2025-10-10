@@ -256,7 +256,7 @@ export function Orders() {
 
     const loadData = async () => {
         try {
-          const data = await window.api.getOrders();
+          const data = await window.api.getOrdersInfo();
           const newData = data?.map((data)=>{
             return {
                 id:data?.id,

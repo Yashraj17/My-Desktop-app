@@ -2,7 +2,7 @@ const db = require("../services/db");
 const Store = new (require("electron-store"))();
 
 
-function getOrders() {
+function getOrdersInfo() {
   return new Promise((resolve, reject) => {
      try {
       const currentBranchId = Store.get("branchId") || 3;
@@ -22,5 +22,5 @@ function getOrders() {
 
 
 module.exports = {
-  getOrders,
+  getOrdersInfo,
 };

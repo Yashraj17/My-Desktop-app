@@ -1,10 +1,10 @@
 const model = require("../models/ordersModel");
 
-function getOrders() {
-  return model.getOrders();
+function getOrdersInfo() {
+  return model.getOrdersInfo();
 }
 
 
 module.exports = {
-  getOrders
+  getOrdersInfo
 };
