@@ -1,4 +1,4 @@
-import React,{useState} from "react"
+import React,{useState,useEffect} from "react"
 import { ShoppingCart, Users, DollarSign, BarChart3 } from "lucide-react"
 import {
   LineChart,
@@ -173,75 +173,203 @@ function SimpleLineChart({ data, width = 700, height = 250, stroke = "#0B0E52" }
 }
 
 
+
 export default function Dashboard() {
+
+  const [todayOrders, setTodayOrders] = useState(0);
+  const [todayEarnings, setTodayEarnings] = useState(0);
+  const [yesterdayOrders, setYesterdayOrders] = useState(0);orders
+  const [yesterdayEarnings, setYesterdayEarnings] = useState(0);
+  const [orders, setorders] = useState(0);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const reservations = await window.api.getOrders();
+        const today = new Date();
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+
+        const isSameDay = (d1, d2) =>
+          d1.getFullYear() === d2.getFullYear() &&
+          d1.getMonth() === d2.getMonth() &&
+          d1.getDate() === d2.getDate();
+
+        // Filter orders by local date
+        const todayData = reservations.filter(r =>
+          isSameDay(new Date(r.date_time), today)
+        );
+        const yesterdayData = reservations.filter(r =>
+          isSameDay(new Date(r.date_time), yesterday)
+        );
+
+        // Calculate totals
+        const todayCount = todayData.length;
+        const todayTotal = todayData.reduce(
+          (sum, r) => sum + Number(r.amount_paid || r.total || 0),
+          0
+        );
+
+        const yesterdayCount = yesterdayData.length;
+        const yesterdayTotal = yesterdayData.reduce(
+          (sum, r) => sum + Number(r.amount_paid || r.total || 0),
+          0
+        );
+
+        setTodayOrders(todayCount);
+        setTodayEarnings(todayTotal);
+        setYesterdayOrders(yesterdayCount);
+        setYesterdayEarnings(yesterdayTotal);
+        setorders(reservations)
+        console.log("order data.....",reservations,"today....",todayCount)
+      } catch (err) {
+        console.error("Error fetching orders:", err);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
+  // Calculate % change
+  const ordersPercent = yesterdayOrders
+    ? (((todayOrders - yesterdayOrders) / yesterdayOrders) * 100).toFixed(2)
+    : todayOrders > 0
+    ? 100
+    : 0;
+
+  const earningsPercent = yesterdayEarnings
+    ? (((todayEarnings - yesterdayEarnings) / yesterdayEarnings) * 100).toFixed(2)
+    : todayEarnings > 0
+    ? 100
+    : 0;
+
   return (
     <div className="p-6 space-y-6 bg-white dark:bg-gray-900 min-h-screen">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
-          <p className="text-gray-600 dark:text-gray-300">
-Statistics          </p>
+          <p className="text-gray-600 dark:text-gray-300">Statistics</p>
         </div>
-        <div className="text-sm text-gray-500 dark:text-gray-400">
-          Friday, 10 Oct, 12:06 PM
-        </div>
+     <div className="inline-flex items-center gap-1 dark:text-white text-gray-700">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    fill="currentColor"
+    className="bi bi-calendar-event"
+    viewBox="0 0 16 16"
+  >
+    <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z" />
+    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
+  </svg>
+
+  <span>
+    {(() => {
+      const d = new Date();
+      const weekday = d.toLocaleString("en-US", { weekday: "long" });
+      const day = d.toLocaleString("en-US", { day: "2-digit" });
+      const month = d.toLocaleString("en-US", { month: "short" });
+      const time = d.toLocaleString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+      return `${weekday}, ${day} ${month}, ${time}`;
+    })()}
+  </span>
+</div>
+
       </div>
 
-      {/* Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard title="Today's Orders" value="0" percentage="0%" icon={<ShoppingCart size={16} />} />
-        <StatCard title="Today's Customers" value="0" percentage="0%" icon={<Users size={16} />} />
-        <StatCard title="Today's Earnings" value="AED 0.00" percentage="0%" icon={<DollarSign size={16} />} />
-        <StatCard title="Avg Daily Earnings (Oct)" value="AED 14.61" percentage="+162.51%" icon={<BarChart3 size={16} />} />
-      </div>
+      {/* Two columns */}
+      <div className="flex gap-6">
 
-      {/* Inline Line Chart */}
-     {/* Sales This Month with info and chart */}
-      <div className="rounded-lg border bg-white dark:bg-gray-800 p-6 shadow-sm max-w-4xl">
-        <div className="flex justify-between items-center mb-4">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">AED 146.10</h2>
-            <p className="text-gray-600 dark:text-gray-300">Sales This Month</p>
+        {/*  Left Column - 75% */}
+        <div className="w-3/4 space-y-6">
+          {/* Stat Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+            <StatCard
+              title="Today's Orders"
+              value={todayOrders}
+              percentage={`${ordersPercent >= 0 ? `+${ordersPercent}` : ordersPercent}%`}
+              icon={<ShoppingCart size={16} />}
+            />
+            <StatCard title="Today's Customers" value="0" percentage="0%" icon={<Users size={16} />} />
+            <StatCard title="Today's Earnings" value="AED 0.00" percentage="0%" icon={<DollarSign size={16} />} />
+            <StatCard title="Avg Daily Earnings (Oct)" value="AED 14.61" percentage="+162.51%" icon={<BarChart3 size={16} />} />
           </div>
-          <div className="text-green-600 dark:text-green-400 flex items-center space-x-1">
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
-            </svg>
-            <span className="text-sm font-semibold">40.99%</span>
-            <span className="text-xs text-gray-500 dark:text-gray-400">Since Previous Month</span>
+
+          {/* Sales Chart */}
+          <div className="rounded-lg border bg-white dark:bg-gray-800 p-6 shadow-sm max-w-full">
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">AED 146.10</h2>
+                <p className="text-gray-600 dark:text-gray-300">Sales This Month</p>
+              </div>
+              <div className="text-green-600 dark:text-green-400 flex items-center space-x-1">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+                </svg>
+                <span className="text-sm font-semibold">40.99%</span>
+                <span className="text-xs text-gray-500 dark:text-gray-400">Since Previous Month</span>
+              </div>
+            </div>
+            <SimpleLineChart data={data} />
           </div>
+
+          {/* Payment Method & Top Selling */}
+            <div className="rounded-lg border bg-white dark:bg-gray-800 p-4 shadow-sm">
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Payment Method (Today)</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">No Payment Found</p>
+            </div>
+            <div className="rounded-lg border bg-white dark:bg-gray-800 p-4 shadow-sm">
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Top Selling Dish (Today)</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">No Data Found</p>
+            </div>
+            <div className="rounded-lg border bg-white dark:bg-gray-800 p-4 shadow-sm">
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Top Selling Tables (Today)</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">No Payment Found</p>
+            </div>
         </div>
 
-        <SimpleLineChart data={data} />
-      </div>
-      {/* Orders & Info */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="rounded-lg border bg-white dark:bg-gray-800 p-4 shadow-sm">
-          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Today Orders</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Waiting for the today's first order 🕐</p>
-        </div>
-        <div className="rounded-lg border bg-white dark:bg-gray-800 p-4 shadow-sm">
-          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Payment Method (Today)</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">No Payment Found</p>
-        </div>
-        <div className="rounded-lg border bg-white dark:bg-gray-800 p-4 shadow-sm">
-          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Top Selling Dish (Today)</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">No Data Found</p>
-        </div>
-      </div>
+         {/*  Right Column - 25% */}
+        <div className="w-1/4 space-y-6">
+         <div className="rounded-lg border bg-white dark:bg-gray-800 p-4 shadow-sm">
+  <h3 className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Today Orders</h3>
+  {todayOrders > 0 ? (
+    <div className="space-y-2 max-h-96 overflow-y-auto">
+      {orders
+        .filter(r => {
+          const d = new Date(r.date_time);
+          const today = new Date();
+          return (
+            d.getFullYear() === today.getFullYear() &&
+            d.getMonth() === today.getMonth() &&
+            d.getDate() === today.getDate()
+          );
+        })
+        .map(order => (
+          <div key={order.id} className="p-2 border rounded flex justify-between items-center">
+            <div>
+              <p className="text-sm font-semibold">Order #{order.order_number}</p>
+              <p className="text-xs text-gray-500">{order.order_status}</p>
+            </div>
+            <div className="text-sm font-bold">AED {order.total}</div>
+          </div>
+        ))}
+    </div>
+  ) : (
+    <p className="text-sm text-gray-500 dark:text-gray-400">
+      Waiting for the today's first order 🕐
+    </p>
+  )}
+</div>
 
-      <div className="rounded-lg border bg-white dark:bg-gray-800 p-4 shadow-sm">
-        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Top Selling Tables (Today)</h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400">No Payment Found</p>
+          {/* You can add more widgets in left column if needed */}
+        </div>
       </div>
     </div>
   )
 }
+

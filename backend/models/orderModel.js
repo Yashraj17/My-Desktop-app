@@ -5,7 +5,7 @@ function getOrders(search = "") {
   return new Promise((resolve, reject) => {
     try {
       const currentBranchId = Store.get("branchId") || 1;
-
+      console.log("currentBranchId",currentBranchId)
       let query = `
         SELECT *
         FROM orders

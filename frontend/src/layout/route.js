@@ -2,13 +2,14 @@ import  MenuIcon  from "../components/menu-icon.svg";
 import Dashboard from "../pages/Dashboard";
 import { ItemCategory } from "../pages/ItemCategory";
 import Menus from "../pages/Menus";
-//import orderIcon from "../components/orders-icon.svg";
+import orderIcon from "../components/orders-icon.svg";
 import TableIcon from "../components/table-icon.svg";
 import ReservationIcon from "../components/reservations-icon.svg";
 import CustomerIcon from "../components/customers-icon.svg";
 import StaffIcon from "../components/staff-icon.svg";
 import DeliveryExecutiveIcon from "../components/delivery-executive-icon.svg";
 import DashboardIcon from "../components/dashboard-icon.svg";
+import POSIcon from "../components/pos-icon.svg";
 
 import {
     Home,
@@ -113,15 +114,14 @@ const routes = [
         component: Reservations
     },
     {
-        icon: CustomerIcon,
-        icon: Users,
+        icon: POSIcon,
         label: "POS",
         url: "/pos",
         hasDropdown: false,
         component: POS
     },
     {
-        icon: Users,
+        icon: orderIcon,
         label: "Orders",
         url: "/orders",
         hasDropdown: false,
