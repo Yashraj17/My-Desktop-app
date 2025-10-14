@@ -26,7 +26,7 @@ async function login({ email, password, subdomain }) {
   const token = response.data.token;
   const isSync =1;
   // Save locally (store bcrypt hashed password)
-  userModel.saveUser(user,isSync,bcrypt.hashSync(password, 10));
+  userModel.saveUserOLD(user,isSync,bcrypt.hashSync(password, 10));
 
   return { token, user, source: "remote",password:password };
 }
