@@ -256,18 +256,9 @@ export function Orders() {
 
     const loadData = async () => {
         try {
-          const data = await window.api.getOrdersInfo();
-          const newData = data?.map((data)=>{
-            return {
-                id:data?.id,
-                orderNo:data?.order_number,
-                tableNo:data?.table_id,
-                order_status:data?.order_status,
-                total:data?.total
-            }
-          })
-          console.log("hello this is order",newData)
-          setOrder(newData);
+          const data = await window.api.getOrders();
+          console.log("hello this is order",data)
+          setOrder(data);
         } catch (err) {
           console.error("Failed to load areas:", err);
         }
@@ -276,6 +267,51 @@ export function Orders() {
       useEffect(() => {
         loadData();
       }, []);
+
+
+      const calculateElapsedTime = (dateString) => {
+  if (!dateString) return "--";
+
+  const orderTime = new Date(dateString);
+  const now = new Date();
+
+  let diff = Math.floor((now - orderTime) / 1000); // seconds
+
+  if (diff < 0) return "0s";
+
+  const hours = Math.floor(diff / 3600);
+  diff %= 3600;
+  const minutes = Math.floor(diff / 60);
+  const seconds = diff % 60;
+
+  return `${hours.toString().padStart(2, "0")}:${minutes
+    .toString()
+    .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+};
+
+
+// useEffect(() => {
+//   const interval = setInterval(() => {
+//     setOrder((prev) => [...prev]); // triggers re-render to update elapsed time
+//   }, 1000); // update every second (can change to 60000 for every 1 min)
+
+//   return () => clearInterval(interval);
+// }, []);
+
+
+const formatDateTime = (dateString) => {
+  if (!dateString) return "--";
+  
+  const date = new Date(dateString);
+  return date.toLocaleString("en-US", {
+    month: "short",    // Oct
+    day: "2-digit",    // 16
+    year: "numeric",   // 2025
+    hour: "2-digit",   // 01
+    minute: "2-digit", // 56
+    hour12: true       // PM
+  });
+};
 
     return (
         <div className="min-h-screen bg-white p-2">
@@ -418,12 +454,24 @@ export function Orders() {
             {/* Orders Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {order.length > 0 ? (
-                    order.map((order) => (
-                        <OrderCard 
-                            key={order.id}
-                            order={order}
-                        />
-                    ))
+                   order.map((o) => (
+  <OrderCard
+    key={o.id}
+    orderNo={o.order_number}
+    table={o.table_id ? `Table ${o.table_id}` : "--"}
+    dateTime={formatDateTime(o.date_time)}
+    elapsedTime={calculateElapsedTime(o.date_time)}  
+    status={o.status}  
+    order_status={`Order ${o.order_status}`}  
+    amount={`AED ${o.total}`} 
+    amount_paid={o.amount_paid}
+    kotCount={o.total_kots}
+    staff={o.waiter_name}
+  />
+))
+ 
+
+                    
                 ) : (
                     <div className="col-span-full text-center py-12">
                         <div className="bg-white rounded-lg border border-gray-200 p-8 shadow-sm">

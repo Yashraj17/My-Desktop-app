@@ -13,9 +13,15 @@ function getTodayPaymentMethodEarnings(search) {
 function getTodayMenuItemEarnings(search) {
   return model.getTodayMenuItemEarnings(search);
 }
+
+//getTodayTableEarnings
+function getTodayTableEarnings(search) {
+  return model.getTodayTableEarnings(search);
+}
 module.exports = {
   getOrdersInfo,
   getOrders,
   getTodayPaymentMethodEarnings,
-  getTodayMenuItemEarnings
+  getTodayMenuItemEarnings,
+  getTodayTableEarnings
 };

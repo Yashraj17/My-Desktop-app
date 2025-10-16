@@ -189,6 +189,52 @@ function getTodayMenuItemEarnings() {
 }
 
 
+function getTodayTableEarnings() {
+  return new Promise((resolve, reject) => {
+    try {
+      const currentBranchId = Store.get("branchId") || 1;
+
+      // Get today's start and end timestamps (ISO format)
+      const today = new Date();
+      const startOfDay = new Date(today.setHours(0, 0, 0, 0)).toISOString();
+      const endOfDay = new Date(today.setHours(23, 59, 59, 999)).toISOString();
+
+      const query = `
+        SELECT 
+          t.id as table_id,
+          t.table_code,
+          SUM(o.total) AS total_earning
+        FROM tables t
+        JOIN orders o ON o.table_id = t.id
+        WHERE 
+          o.status = 'paid'
+          AND o.branch_id = ?
+          AND o.date_time >= ?
+          AND o.date_time <= ?
+        GROUP BY t.id
+        HAVING total_earning > 0
+        ORDER BY total_earning DESC
+        LIMIT 5
+      `;
+
+      const stmt = db.prepare(query);
+      const rows = stmt.all(currentBranchId, startOfDay, endOfDay);
+
+      // Format results
+      const formatted = rows.map(row => ({
+        table_id: row.table_id,
+        table_code: row.table_code || `Table ${row.table_id}`,
+        total_earning: parseFloat(row.total_earning || 0).toFixed(2),
+      }));
+
+      resolve(formatted);
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+
 function getOrdersInfo() {
   return new Promise((resolve, reject) => {
      try {
@@ -211,5 +257,6 @@ module.exports = {
   getOrders,
   getOrdersInfo,
   getTodayPaymentMethodEarnings,
-  getTodayMenuItemEarnings
+  getTodayMenuItemEarnings,
+  getTodayTableEarnings
 };

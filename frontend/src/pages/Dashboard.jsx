@@ -137,6 +137,7 @@ export default function Dashboard() {
   menuItems;
   const [TodayPaymentEarning, setTodayPaymentEarning] = useState([]);
   const [menuItems, setmenuItems] = useState([]);
+const [todayTableEarnings, setTodayTableEarnings] = useState([]);
 
   const STATUS_FILTER = "paid"; // change as needed (e.g. 'COMPLETED')
 
@@ -144,11 +145,11 @@ export default function Dashboard() {
     const fetchOrders = async () => {
       try {
         const reservations = await window.api.getOrders();
-        const TodayPaymentEarning =
-          await window.api.getTodayPaymentMethodEarnings();
+        const TodayPaymentEarning =await window.api.getTodayPaymentMethodEarnings();
         const menuItems = await window.api.getTodayMenuItemEarnings();
-
-        console.log("getTodayMenuItemEarnings....", menuItems);
+        const getTodayTableEarnings =await window.api.getTodayTableEarnings();
+        setTodayTableEarnings(getTodayTableEarnings);
+        console.log("getTodayTableEarnings....", getTodayTableEarnings);
         setTodayPaymentEarning(TodayPaymentEarning);
         setmenuItems(menuItems);
         // ✅ Filter only desired status
@@ -580,17 +581,57 @@ export default function Dashboard() {
               </p>
             )}
           </div>
-          <div className="rounded-lg border bg-white dark:bg-gray-800 p-4 shadow-sm">
-            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-              Top Selling Tables (Today)
-            </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              No Payment Found
-            </p>
+        <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
+  <div className="w-full">
+    <h3 className="text-base font-normal text-gray-500 dark:text-gray-400 mb-4">
+      Top Tables (Today)
+    </h3>
+
+    <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+      {todayTableEarnings && todayTableEarnings.length > 0 ? (
+        todayTableEarnings.map((item, index) => (
+          <li key={index} className="py-1 sm:py-2">
+            <div className="flex items-center space-x-4 rtl:space-x-reverse">
+              <div className="flex-1 min-w-0">
+                <div className="w-full max-w-sm space-y-2">
+                  <div>
+                    <div className="flex items-center gap-3">
+                      {/* Index Number */}
+                      <span className="text-gray-400 text-sm">#{index + 1}</span>
+
+                      {/* Table Code */} 
+                      <div className="p-2 rounded-md tracking-wide bg-blue-100 text-blue-700">
+                        <h3 className="font-semibold">{item.table_code}</h3>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Amount */}
+              <div className="inline-flex items-center text-base font-medium text-gray-900 dark:text-white">
+                AED {parseFloat(item.total_earning).toFixed(2)}
+              </div>
+            </div>
+          </li>
+        ))
+      ) : (
+        <li className="py-2">
+          <div className="flex items-center space-x-4 rtl:space-x-reverse">
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900 truncate dark:text-white">
+                No Payment Found
+              </p>
+            </div>
           </div>
+        </li>
+      )}
+    </ul>
+  </div>
+</div>
+
         </div>
 
-        {/* Right Column — Today Orders */}
         {/* Right Column — Today Orders */}
         <div className="w-1/4">
           <div className="rounded-lg border bg-white dark:bg-gray-800 p-4 shadow-sm">

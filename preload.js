@@ -359,6 +359,8 @@ contextBridge.exposeInMainWorld("api", {
 
     getTodayMenuItemEarnings: (search = "") => ipcRenderer.invoke("get-today-menu-item-earnings", search),
 
+    getTodayTableEarnings: (search = "") => ipcRenderer.invoke("get-today-table-earnings", search),
+
     //Restaurants
     getRestaurants: (search = "") => ipcRenderer.invoke("get-restaurant", search),
 

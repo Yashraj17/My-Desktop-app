@@ -24,6 +24,11 @@ function orderRoutes() {
   ipcMain.handle("get-today-menu-item-earnings", (event, search = "") => {
     return controller.getTodayMenuItemEarnings(search);
   });
+
+  //getTodayTableEarnings
+  ipcMain.handle("get-today-table-earnings", (event, search = "") => {
+    return controller.getTodayTableEarnings(search);
+  });
 }
 
 module.exports = orderRoutes;
