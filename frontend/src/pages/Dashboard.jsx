@@ -581,6 +581,7 @@ const [todayTableEarnings, setTodayTableEarnings] = useState([]);
               </p>
             )}
           </div>
+       
         <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
   <div className="w-full">
     <h3 className="text-base font-normal text-gray-500 dark:text-gray-400 mb-4">
@@ -628,7 +629,7 @@ const [todayTableEarnings, setTodayTableEarnings] = useState([]);
       )}
     </ul>
   </div>
-</div>
+       </div>
 
         </div>
 
