@@ -355,6 +355,12 @@ contextBridge.exposeInMainWorld("api", {
     //order
     getOrders: (search = "") => ipcRenderer.invoke("get-order", search),
 
+    getTodayPaymentMethodEarnings: (search = "") => ipcRenderer.invoke("get-today-payment-method-earnings", search),
+
+    getTodayMenuItemEarnings: (search = "") => ipcRenderer.invoke("get-today-menu-item-earnings", search),
+
+    getTodayTableEarnings: (search = "") => ipcRenderer.invoke("get-today-table-earnings", search),
+
     //Restaurants
     getRestaurants: (search = "") => ipcRenderer.invoke("get-restaurant", search),
 

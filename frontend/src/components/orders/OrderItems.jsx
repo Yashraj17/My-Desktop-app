@@ -1,12 +1,27 @@
 import { ChefHat, Timer } from "lucide-react";
-
+const getStatusColor = (status) => {
+  switch (status?.toLowerCase()) {
+    case "kot":
+      return "bg-yellow-100 text-yellow-700 border-yellow-300";
+    case "paid":
+      return "bg-green-100 text-green-700 border-green-300";
+    case "billed":
+      return "bg-blue-100 text-blue-700 border-blue-300";
+    case "preparing":
+      return "bg-purple-100 text-purple-700 border-purple-300";
+    default:
+      return "bg-gray-100 text-gray-700 border-gray-300";
+  }
+};
 const OrderCard = ({
   orderNo = "65656",
   table ,
   dateTime = "Sep 30, 2025 15:28 PM",
   elapsedTime = "170:33",
   status = "Order Preparing",
+  order_status,
   amount ="AED33.00",
+  amount_paid,
   kotCount ="1",
   staff = "admin",
 }) => {
@@ -21,24 +36,28 @@ const OrderCard = ({
             </div>
           )}
           <div className="flex items-center gap-2 text-sm">
-            <span className="text-purple-500 text-xs">--</span>
             <span className="text-gray-800 dark:text-gray-200 font-semibold">
-              Order {orderNo}
+              Order #{orderNo}
             </span>
           </div>
           <div className="flex items-center gap-2 text-sm text-purple-600">
             <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-            <span>{status}</span>
+            <span>{order_status}</span>
           </div>
         </div>
 
-        <div className="bg-yellow-100 text-yellow-800 dark:bg-yellow-700 dark:text-yellow-300 border border-yellow-400 text-xs font-bold px-2 py-1 rounded uppercase">
-          KOT
-        </div>
+        <div>
+  <span
+    className={`text-xs font-semibold px-2 py-1 border rounded-md ${getStatusColor(status)}`}
+  >
+    {status?.toUpperCase()}
+  </span>
+</div>
+
       </div>
 
       {/* Middle Section */}
-      <div className="flex text-right">
+<div className="flex justify-between items-center text-sm">
         <div className="text-sm text-gray-500">{dateTime}</div>
         <div className="flex justify-end items-center gap-4 text-teal-600 font-semibold text-sm">
           <Timer className="w-2 h-2" />
@@ -58,9 +77,12 @@ const OrderCard = ({
           {amount}
         </div>
         <div className="flex items-center gap-3">
-          <button className="px-3 py-1.5 text-xs font-semibold bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-500 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
-            New KOT
-          </button>
+           {status?.toLowerCase() === "kot" &&
+                              amount_paid === 0 && (
+                                <button className="border border-gray-300 px-3 py-1 rounded-md text-xs font-medium hover:bg-gray-100">
+                                  New KOT
+                                </button>
+                              )}
           <div className="flex items-center gap-1 text-gray-700 dark:text-gray-200 text-sm font-medium">
             <ChefHat className="w-4 h-4" />
             <span>{staff}</span>

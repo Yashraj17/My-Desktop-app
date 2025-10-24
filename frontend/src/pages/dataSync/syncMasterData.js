@@ -257,6 +257,27 @@ export async function syncMasterData(subdomain, token, setProgress, setStatus, u
     await window.api.saveSyncTime("branches", toDatetime);
       updateProgress();
     }
+    if(user.branch_id)
+    {
+    // Fetch and backup users
+const userRes = await api.get(`/api/users?branch_id=${user.branch_id}`);
+if (userRes?.data?.status && Array.isArray(userRes.data.data)) {
+  for (const u of userRes.data.data) {
+  await window.api.saveUser(u, 1, ""); // u is raw user
+  }
+
+  await window.api.saveSyncTime("users", toDatetime);
+  updateProgress();
+} else {
+  console.warn("⚠️ No users found or invalid response", userRes?.data?.message);
+  updateProgress();
+}
+
+  // Save sync time and update progress
+  await window.api.saveSyncTime("users", toDatetime);
+  updateProgress();
+
+    }
 
     // 7. MENUS
     if(user.branch_id)

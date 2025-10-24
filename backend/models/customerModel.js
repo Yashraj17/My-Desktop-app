@@ -72,7 +72,7 @@ function getCustomers(search = '') {
   return new Promise((resolve, reject) => {
     try {
       const restaurantId = Store.get("restaurantId") || null;
-
+       console.log(restaurantId,"restaurantId")
       let query = `
         SELECT 
           c.*, 
@@ -135,6 +135,7 @@ function addCustomer(customer) {
     try {
       const createdAt = new Date().toISOString();
       const updatedAt = createdAt;
+      const restaurantId = Store.get("restaurantId") || null;
 
       const stmt = db.prepare(`
         INSERT INTO customers (
@@ -146,7 +147,7 @@ function addCustomer(customer) {
       `);
 
       const result = stmt.run(
-        customer.restaurant_id,
+        restaurantId,
         customer.name || null,
         customer.phone || null,
         customer.email || null,

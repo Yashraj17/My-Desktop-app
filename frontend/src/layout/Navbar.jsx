@@ -6,12 +6,17 @@ import { RefreshCw, Maximize2, Moon, Sun } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import { LogOut } from "lucide-react"; // Add logout icon
 import { useNavigate } from "react-router-dom";
+import orderIcon from "../components/orders-icon.svg";
+import waiterIcon from "../components/waiter-icon.svg";
+import ReservationIcon from "../components/reservations-icon.svg";
+import TableIcon from "../components/table-icon.svg";
+import DrawerIcon from "../components/drawer-icon.svg";
 
 import {
   POSIcon,
   OrderIcon,
   WaiterIcon,
-  ReservationIcon,
+ // ReservationIcon,
   OpenResIcon,
   CloseResIcon,
   ViewIcon,
@@ -59,7 +64,6 @@ export default function Navbar({ isSidebarOpen, onToggleSidebar, onLogout }) {
   const [todayReservations, setTodayReservations] = useState(0);
   const [todayOrder, setTodayOrder] = useState(0);
   const navigate = useNavigate();
-  const [branchInfo, setBranchInfo] = useState(null); // 🏷️ Added for branch info
 
   const handleSignOut = () => {
     onLogout(); // call the App.js logout
@@ -95,46 +99,38 @@ export default function Navbar({ isSidebarOpen, onToggleSidebar, onLogout }) {
       }
     };
 
-    // 🏷️ Fetch branch info from local storage or DB
-    const fetchBranchInfo = async () => {
-      try {
-        const info = await window.api.getActiveBranch(); // 🧩 must exist in preload.js
-        if (info) setBranchInfo(info);
-        console.log(info, "branch info");
-      } catch (err) {
-        console.error("Error fetching branch info:", err);
-      }
-    };
-
     fetchTodayReservations();
     fetchTodayOrder();
-    fetchBranchInfo();
   }, []);
 
   const navItems = [
     {
-      icon: OrderIcon,
+      icon: orderIcon,
       label: "Orders",
       badge: todayOrder > 0 ? String(todayOrder) : "0", // dynamic badge
       badgeColor: "bg-[#000080]", // fixed: proper key-value
+      onClick: () => navigate("/orders"),
     },
-    {
-      icon: WaiterIcon,
-      label: "Waiter",
-      badge: "2",
-      badgeColor: "bg-[#000080]",
-    },
-    {
+     {
       icon: ReservationIcon,
       label: "Reservations",
       badge: todayReservations > 0 ? String(todayReservations) : "0", // dynamic badge
       badgeColor: "bg-[#000080]", // fixed: proper key-value
       onClick: () => navigate("/reservations"), // <-- navigation added
     },
-    { icon: OpenResIcon, label: "Open", badge: null },
-    { icon: CloseResIcon, label: "Close", badge: null },
-    { icon: ViewIcon, label: "View", badge: null },
-    { icon: POSIcon, label: "POS", badge: null },
+    {
+      icon: waiterIcon,
+      label: "Waiter",
+      badge: "2",
+      badgeColor: "bg-[#000080]",
+    },
+   
+    { icon: TableIcon, label: "Table", badge: null,onClick: () => navigate("/table/table"), },
+   { icon: DrawerIcon, label: "Drawer", badge: null },
+   // { icon: OpenResIcon, label: "Open", badge: null },
+   // { icon: CloseResIcon, label: "Close", badge: null },
+   // { icon: ViewIcon, label: "View", badge: null },
+   // { icon: POSIcon, label: "POS", badge: null },
   ];
 
   return (
@@ -154,29 +150,7 @@ export default function Navbar({ isSidebarOpen, onToggleSidebar, onLogout }) {
           </Button>
         </div>
 
-        {/* {branchInfo && (
-          <div
-            className="text-sm font-semibold mr-3 bg-white text-[#000080] px-3 py-1 rounded-full shadow-sm cursor-pointer"
-            title={`
-Name: ${branchInfo.name}
-ID: ${branchInfo.id}
-Restaurant: ${branchInfo.restaurant_id}
-Address: ${branchInfo.address?.replace(/\n/g, ", ")}
-Created: ${
-              branchInfo.created_at
-                ? new Date(branchInfo.created_at).toLocaleDateString()
-                : "-"
-            }
-Updated: ${
-              branchInfo.updated_at
-                ? new Date(branchInfo.updated_at).toLocaleDateString()
-                : "-"
-            }
-`}
-          >
-            {branchInfo.name || `Branch ID: ${branchInfo.id}`}
-          </div>
-        )} */}
+       
 
         <div className="flex-1 flex justify-between ps-6">
           {/* Center section - Navigation items */}
@@ -195,10 +169,17 @@ Updated: ${
                   style={{ cursor: item.onClick ? "pointer" : "default" }}
                 >
                   <div className="relative flex flex-col items-center justify-center gap-1 min-w-[64px]">
-                    {React.createElement(item.icon, {
-                      className:
-                        "h-5 w-5 transition-colors duration-300 text-gray-900 dark:text-gray-100",
-                    })}
+                   {item.icon &&
+  (typeof item.icon === "string" ? (
+    <img
+      src={item.icon}
+      alt={item.label}
+      className="h-5 w-5 min-w-[20px] transition-all"
+    />
+  ) : (
+    React.createElement(item.icon, { className: "h-5 w-5 min-w-[20px]" })
+  ))
+}
 
                     {item.badge && (
                       <Badge

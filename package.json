@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.7.0",
+    "apexcharts": "^5.3.5",
     "axios": "^1.11.0",
     "bcryptjs": "^3.0.2",
     "better-sqlite3": "^12.2.0",
@@ -27,6 +28,7 @@
     "knex": "^3.1.0",
     "lucide-react": "^0.536.0",
     "react": "^19.1.1",
+    "react-apexcharts": "^1.8.0",
     "react-dom": "^19.1.1",
     "react-draggable": "^4.5.0",
     "recharts": "^2.8.0",

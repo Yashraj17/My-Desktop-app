@@ -27,7 +27,7 @@ export function Reservations() {
   const [editingData, setEditingData] = useState(null);
   const [viewMode, setViewMode] = useState("cards"); // "cards" or "list"
   // Date filter states
-  const [dateRangeType, setDateRangeType] = useState("currentYear");
+  const [dateRangeType, setDateRangeType] = useState("today");
   const [startDate, setStartDate] = useState(startOfToday());
   const [endDate, setEndDate] = useState(endOfToday());
   const [selectedReservation, setSelectedReservation] = useState(null);
