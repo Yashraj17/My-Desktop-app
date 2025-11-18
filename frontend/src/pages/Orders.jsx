@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Calendar } from 'lucide-react';
 import OrderCard from '../components/orders/OrderItems';
+import { BillingDrawer } from '../components/pos/BillingDrawer';
 
 const dateRangeSelectData = [
     { value: 'today', label: 'Today' },
@@ -142,6 +143,8 @@ export function Orders() {
     const [filteredOrders, setFilteredOrders] = useState(mockOrders);
     const [dateError, setDateError] = useState('');
     const [order, setOrder] = useState([]);
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [selectedOrder, setSelectedOrder] = useState(null);
     
 
     useEffect(() => {
@@ -254,28 +257,48 @@ export function Orders() {
         };
     }, [autoRefresh, refreshInterval]);
 
-    const loadData = async () => {
+      const loadData = async () => {
         try {
-          const data = await window.api.getOrdersInfo();
-          const newData = data?.map((data)=>{
-            return {
-                id:data?.id,
-                orderNo:data?.order_number,
-                tableNo:data?.table_id,
-                order_status:data?.order_status,
-                total:data?.total
-            }
-          })
-          console.log("hello this is order",newData)
-          setOrder(newData);
+          const data = await window.api.getOrdersWithItems();
+        //   console.log("Orders loaded:", data);
+          setOrder(data);
         } catch (err) {
-          console.error("Failed to load areas:", err);
+          console.error("Failed to load orders:", err);
         }
       };
     
       useEffect(() => {
         loadData();
       }, []);
+
+      const handleOrderCardClick = (ord) => {
+        // Transform order items to match drawer format (add key and name if missing)
+        const transformedItems = ord.orderItems.map((item, idx) => ({
+          key: `${ord.order_number}-${idx}`,
+          id: item.menu_item_id,
+          name: item.name || `Item ${item.menu_item_id}`,
+          qty: item.quantity,
+          price: item.price,
+          amount: item.amount,
+        }));
+
+        const drawerData = {
+          orderNumber: ord.order_number,
+          admin: "Admin",
+          orderType: ord.order_type === 'dine_in' ? 'Dine In' : ord.order_type === 'delivery' ? 'Delivery' : 'Pickup',
+          status: ord.status || 'KOT',
+          items: transformedItems,
+          itemsCount: transformedItems.length,
+          discount: ord.discount_amount || 0,
+          subTotal: ord.sub_total,
+          vat: ord.vat || (ord.sub_total * 0.05),
+          total: ord.total,
+          balanceReturned: 0,
+        };
+
+        setSelectedOrder(drawerData);
+        setIsDrawerOpen(true);
+      };
 
     return (
         <div className="min-h-screen bg-white p-2">
@@ -418,11 +441,12 @@ export function Orders() {
             {/* Orders Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {order.length > 0 ? (
-                    order.map((order) => (
-                        <OrderCard 
-                            key={order.id}
-                            order={order}
-                        />
+                    order.map((ord, idx) => (
+                        <div key={ord.order_number || idx} onClick={() => handleOrderCardClick(ord)}>
+                            <OrderCard 
+                                order={ord}
+                            />
+                        </div>
                     ))
                 ) : (
                     <div className="col-span-full text-center py-12">
@@ -438,6 +462,13 @@ export function Orders() {
                     </div>
                 )}
             </div>
+
+            {/* Billing Drawer */}
+            <BillingDrawer
+                isOpen={isDrawerOpen}
+                onClose={() => setIsDrawerOpen(false)}
+                orderData={selectedOrder || {}}
+            />
         </div>
     );
 }

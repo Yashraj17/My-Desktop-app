@@ -40,6 +40,7 @@ import { Reservations } from "../pages/Reservations";
 import POS from "../pages/POS";
 import { Orders } from "../pages/Orders";
 import KOT from "../pages/KOT";
+import { OrderIcon } from "../components/svgIcons";
 
 const routes = [
     {
@@ -121,7 +122,7 @@ const routes = [
         component: POS
     },
     {
-        icon: Users,
+        icon: OrderIcon,
         label: "Orders",
         url: "/orders",
         hasDropdown: false,

@@ -89,6 +89,61 @@ function getMenuItems(searchTerm = "") {
   });
 }
 
+// function getMenuItemByMenuId(menuId) {
+//   return new Promise((resolve, reject) => {
+//     try {
+//       const currentBranchId = Store.get("branchId");
+
+//       const query = `
+//         SELECT 
+//           id,
+//           menu_id,
+//           item_category_id,
+//           item_name,
+//           image,
+//           description,
+//           type,
+//           price,
+//           preparation_time,
+//           is_available,
+//           show_on_customer_site,
+//           in_stock,
+//           sort_order,
+//           created_at,
+//           updated_at
+//         FROM menu_items
+//         WHERE branch_id = ? AND menu_id = ?
+//         ORDER BY id DESC
+//       `;
+
+//       // Important: menu_id is stored as TEXT, so make sure you're passing string type
+//       const rows = db.prepare(query).all(currentBranchId, String(menuId));
+
+//       const items = rows.map(row => ({
+//         id: row.id,
+//         menu_id: row.menu_id,
+//         item_category_id: row.item_category_id,
+//         item_name: row.item_name,
+//         image: row.image,
+//         description: row.description,
+//         type: row.type,
+//         price: row.price,
+//         preparation_time: row.preparation_time,
+//         is_available: row.is_available,
+//         show_on_customer_site: row.show_on_customer_site,
+//         in_stock: row.in_stock,
+//         sort_order: row.sort_order,
+//         created_at: row.created_at,
+//         updated_at: row.updated_at,
+//       }));
+
+//       resolve(items);
+//     } catch (err) {
+//       reject(err);
+//     }
+//   });
+// }
+
 function getMenuItemByMenuId(menuId) {
   return new Promise((resolve, reject) => {
     try {
@@ -96,46 +151,87 @@ function getMenuItemByMenuId(menuId) {
 
       const query = `
         SELECT 
-          id,
-          menu_id,
-          item_category_id,
-          item_name,
-          image,
-          description,
-          type,
-          price,
-          preparation_time,
-          is_available,
-          show_on_customer_site,
-          in_stock,
-          sort_order,
-          created_at,
-          updated_at
-        FROM menu_items
-        WHERE branch_id = ? AND menu_id = ?
-        ORDER BY id DESC
+          mi.id,
+          mi.menu_id,
+          mi.item_category_id,
+          mi.item_name,
+          mi.image,
+          mi.description,
+          mi.type,
+          mi.price,
+          mi.preparation_time,
+          mi.is_available,
+          mi.show_on_customer_site,
+          mi.in_stock,
+          mi.sort_order,
+          mi.created_at,
+          mi.updated_at,
+          miv.id as variation_id,
+          miv.variation,
+          miv.price as variation_price,
+          miv.menu_item_id,
+          miv.created_at as variation_created_at,
+          miv.updated_at as variation_updated_at,
+          miv.newfield1,
+          miv.newfield2,
+          miv.newfield3,
+          miv.isSync
+        FROM menu_items mi
+        LEFT JOIN menu_item_variations miv ON mi.id = miv.menu_item_id
+        WHERE mi.branch_id = ? AND mi.menu_id = ?
+        ORDER BY mi.id DESC, miv.id
       `;
 
-      // Important: menu_id is stored as TEXT, so make sure you're passing string type
       const rows = db.prepare(query).all(currentBranchId, String(menuId));
 
-      const items = rows.map(row => ({
-        id: row.id,
-        menu_id: row.menu_id,
-        item_category_id: row.item_category_id,
-        item_name: row.item_name,
-        image: row.image,
-        description: row.description,
-        type: row.type,
-        price: row.price,
-        preparation_time: row.preparation_time,
-        is_available: row.is_available,
-        show_on_customer_site: row.show_on_customer_site,
-        in_stock: row.in_stock,
-        sort_order: row.sort_order,
-        created_at: row.created_at,
-        updated_at: row.updated_at,
-      }));
+      // Group variations by menu item
+      const menuItemsMap = new Map();
+      
+      rows.forEach(row => {
+        const menuItemId = row.id;
+        
+        if (!menuItemsMap.has(menuItemId)) {
+          // Create menu item object
+          menuItemsMap.set(menuItemId, {
+            id: row.id,
+            menu_id: row.menu_id,
+            item_category_id: row.item_category_id,
+            item_name: row.item_name,
+            image: row.image,
+            description: row.description,
+            type: row.type,
+            price: row.price,
+            preparation_time: row.preparation_time,
+            is_available: row.is_available,
+            show_on_customer_site: row.show_on_customer_site,
+            in_stock: row.in_stock,
+            sort_order: row.sort_order,
+            created_at: row.created_at,
+            updated_at: row.updated_at,
+            variations: []
+          });
+        }
+        
+        // Add variation if it exists
+        if (row.variation_id) {
+          const menuItem = menuItemsMap.get(menuItemId);
+          menuItem.variations.push({
+            id: row.variation_id,
+            variation: row.variation,
+            price: row.variation_price,
+            menu_item_id: row.menu_item_id,
+            created_at: row.variation_created_at,
+            updated_at: row.variation_updated_at,
+            newfield1: row.newfield1,
+            newfield2: row.newfield2,
+            newfield3: row.newfield3,
+            isSync: row.isSync
+          });
+        }
+      });
+
+      // Convert map to array
+      const items = Array.from(menuItemsMap.values());
 
       resolve(items);
     } catch (err) {

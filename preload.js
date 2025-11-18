@@ -354,6 +354,10 @@ contextBridge.exposeInMainWorld("api", {
 
     //order
     getOrders: (search = "") => ipcRenderer.invoke("get-order", search),
+    // get orders with their items
+    getOrdersWithItems: (search = "") => ipcRenderer.invoke("get-orders-with-items", search),
+    // initiate order
+    initiateOrder: (orderData) => ipcRenderer.invoke("initiate-order", orderData),
 
     //Restaurants
     getRestaurants: (search = "") => ipcRenderer.invoke("get-restaurant", search),

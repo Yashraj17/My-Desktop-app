@@ -1,14 +1,6 @@
 import React,{useState} from "react"
 import { ShoppingCart, Users, DollarSign, BarChart3 } from "lucide-react"
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts"
+
 
 const data = [
   { date: "01 Oct", value: 20 },

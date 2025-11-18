@@ -7,6 +7,7 @@ import { useTheme } from "../context/ThemeContext";
 import { LogOut } from "lucide-react"; // Add logout icon
 import { useNavigate } from "react-router-dom";
 
+
 import {
   POSIcon,
   OrderIcon,
@@ -116,7 +117,9 @@ export default function Navbar({ isSidebarOpen, onToggleSidebar, onLogout }) {
       icon: OrderIcon,
       label: "Orders",
       badge: todayOrder > 0 ? String(todayOrder) : "0", // dynamic badge
-      badgeColor: "bg-[#000080]", // fixed: proper key-value
+      badgeColor: "bg-[#000080]",
+      onClick: () => navigate("/orders"),
+      // fixed: proper key-value
     },
     {
       icon: WaiterIcon,
@@ -134,7 +137,7 @@ export default function Navbar({ isSidebarOpen, onToggleSidebar, onLogout }) {
     { icon: OpenResIcon, label: "Open", badge: null },
     { icon: CloseResIcon, label: "Close", badge: null },
     { icon: ViewIcon, label: "View", badge: null },
-    { icon: POSIcon, label: "POS", badge: null },
+    { icon: POSIcon, label: "POS", badge: null ,onClick: () => navigate("/pos") },
   ];
 
   return (

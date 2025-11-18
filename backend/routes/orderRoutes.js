@@ -15,6 +15,14 @@ function orderRoutes() {
   ipcMain.handle("get-orders-info", (event, search = "") => {
     return controller.getOrdersInfo(search);
   });
+
+  ipcMain.handle("get-orders-with-items", (event, search = "") => {
+    return controller.getOrdersWithItems(search);
+  });
+
+  ipcMain.handle("initiate-order", (event, orderData) => {
+    return controller.initiateOrder(orderData);
+  });
 }
 
 module.exports = orderRoutes;

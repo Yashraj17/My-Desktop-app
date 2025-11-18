@@ -244,7 +244,7 @@ const columns = [
           : null,
       }))
     );
-
+    console.log("hello this is menu items data", itemsWithPaths);
     setItems(itemsWithPaths);
     setMenus(menus);
     setCategories(cats);
